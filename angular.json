@@ -113,5 +113,8 @@
       }
     }
   },
-  "defaultProject": "configuration-editor"
+  "defaultProject": "configuration-editor",
+  "cli": {
+    "packageManager": "yarn"
+  }
 }
