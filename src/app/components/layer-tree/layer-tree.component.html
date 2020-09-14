@@ -1,0 +1,9 @@
+<ul>
+  <ng-container *ngTemplateOutlet="nodeList; context: { $implicit: nodeList | async }"></ng-container>
+</ul>
+
+<ng-template #nodeList let-list>
+  <ng-container *ngFor="let node of list">
+    <li></li>
+  </ng-container>
+</ng-template>

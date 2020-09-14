@@ -1,0 +1,27 @@
+<div class="aside">
+  <div class="d-flex flex-column align-items-center p-0">
+    <ul>
+      <li [class.active]="activeIndex === 0">
+        <button nz-button nzType="link" (click)="activeIndex = 0">
+          <i nz-icon nzIconfont="icon-tuceng"></i>
+        </button>
+      </li>
+      <li [class.active]="activeIndex === 1">
+        <button nz-button nzType="link" (click)="activeIndex = 1">
+          <i nz-icon nzIconfont="icon-widgets"></i>
+        </button>
+      </li>
+    </ul>
+    <button class="mt-auto" nz-button nzType="link" (click)="collapsed = !collapsed">
+      <i nz-icon [nzType]="collapsed ? 'double-right' : 'double-left'"></i>
+    </button>
+  </div>
+</div>
+<div *ngIf="!collapsed" class="col p-0 fade-in">
+  <ng-container *ngIf="activeIndex === 0">
+    <ce-layer-tree></ce-layer-tree>
+  </ng-container>
+  <ng-container *ngIf="activeIndex === 1">
+    <ce-widget-list></ce-widget-list>
+  </ng-container>
+</div>
