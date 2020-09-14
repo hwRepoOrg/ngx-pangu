@@ -6,7 +6,7 @@ import { FormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { StoreModule } from '@ngrx/store';
-import { NzIconModule, NzIconService } from 'ng-zorro-antd';
+import { NzButtonModule, NzIconModule, NzIconService, NzInputNumberModule } from 'ng-zorro-antd';
 import { NzCardModule } from 'ng-zorro-antd/card';
 import { NZ_I18N, zh_CN } from 'ng-zorro-antd/i18n';
 import { environment } from 'src/environments/environment';
@@ -17,7 +17,7 @@ import { IStore } from './store/store';
 
 registerLocaleData(zh);
 
-const ANTD_MODULES = [NzCardModule, NzIconModule.forRoot([])];
+const ANTD_MODULES = [NzCardModule, NzIconModule.forRoot([]), NzButtonModule, NzInputNumberModule];
 
 const COMPONENTS = [ToolbarComponent];
 
