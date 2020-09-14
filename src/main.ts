@@ -11,7 +11,8 @@ if (environment.production) {
 const main = async () => platformBrowserDynamic().bootstrapModule(AppModule);
 
 if (environment.hmr) {
-  if (module.hasOwnProperty('hot')) {
+  // tslint:disable-next-line: no-string-literal
+  if (module['hot']) {
     hmrBootstrap(module, main);
   } else {
     console.error('HMR is not enabled for webpack-dev-server!');
