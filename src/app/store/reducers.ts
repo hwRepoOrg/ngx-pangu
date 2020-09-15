@@ -4,6 +4,7 @@ import {
   moveCanvas,
   removeNodes,
   resizeCanvas,
+  scaleCanvas,
   setBorderedNodes,
   setCanvasBackgroundColor,
   setCanvasBackgroundImage,
@@ -21,11 +22,12 @@ export const nodesReducer = createReducer<INode[]>(
 
 export const canvasStateReducer = createReducer<ICanvasState>(
   DEFAULT_STORE.canvasState,
-  on(moveCanvas, (state, { left, top }) => ({ ...state, left, top })),
-  on(resizeCanvas, (state, { width, height }) => ({ ...state, width, height })),
+  on(moveCanvas, (state, newState) => ({ ...state, ...newState })),
+  on(resizeCanvas, (state, newState) => ({ ...state, ...newState })),
   on(resizeCanvas, (state, newState) => ({ ...state, ...newState })),
   on(setSelectedNodes, (state, { ids }) => ({ ...state, selected: new Set(...ids) })),
   on(setBorderedNodes, (state, { ids }) => ({ ...state, bordered: new Set(...ids) })),
   on(setCanvasBackgroundColor, (state, { color }) => ({ ...state, backgroundColor: color })),
-  on(setCanvasBackgroundImage, (state, { image }) => ({ ...state, backgroundImage: image }))
+  on(setCanvasBackgroundImage, (state, { image }) => ({ ...state, backgroundImage: image })),
+  on(scaleCanvas, (state, newState) => ({ ...state, ...newState }))
 );

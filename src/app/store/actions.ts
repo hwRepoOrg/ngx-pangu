@@ -11,10 +11,7 @@ export const moveCanvas = createAction('[editor] Move canvas', props<{ left: num
 
 export const resizeCanvas = createAction('[editor] Resize canvas', props<{ width: number; height: number }>());
 
-export const scaleCanvas = createAction(
-  '[editor] Scale canvas',
-  props<{ width: number; height: number; left: number; top: number; scale: number }>()
-);
+export const scaleCanvas = createAction('[editor] Scale canvas', props<{ left?: number; top?: number; scale: number }>());
 
 export const setSelectedNodes = createAction('[editor] Set selected nodes', props<{ ids: string[] }>());
 
