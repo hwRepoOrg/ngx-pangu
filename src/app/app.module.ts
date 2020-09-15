@@ -6,17 +6,21 @@ import { FormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { StoreModule } from '@ngrx/store';
-import { NzButtonModule, NzIconModule, NzIconService, NzInputNumberModule, NzTabsModule } from 'ng-zorro-antd';
+import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzCardModule } from 'ng-zorro-antd/card';
+import { NzConfig, NZ_CONFIG } from 'ng-zorro-antd/core/config';
 import { NZ_I18N, zh_CN } from 'ng-zorro-antd/i18n';
+import { NzIconModule, NzIconService } from 'ng-zorro-antd/icon';
+import { NzInputNumberModule } from 'ng-zorro-antd/input-number';
+import { NzTabsModule } from 'ng-zorro-antd/tabs';
 import { environment } from 'src/environments/environment';
 import { AppComponent } from './app.component';
+import { LayerTreeComponent } from './components/layer-tree/layer-tree.component';
+import { LeftSideComponent } from './components/left-side/left-side.component';
 import { ToolbarComponent } from './components/toolbar/toolbar.component';
+import { WidgetListComponent } from './components/widget-list/widget-list.component';
 import { canvasStateReducer, nodesReducer } from './store/reducers';
 import { IStore } from './store/store';
-import { LeftSideComponent } from './components/left-side/left-side.component';
-import { LayerTreeComponent } from './components/layer-tree/layer-tree.component';
-import { WidgetListComponent } from './components/widget-list/widget-list.component';
 
 registerLocaleData(zh);
 
@@ -35,7 +39,10 @@ const COMPONENTS = [ToolbarComponent];
     ...ANTD_MODULES,
   ],
   declarations: [AppComponent, ...COMPONENTS, LeftSideComponent, LayerTreeComponent, WidgetListComponent],
-  providers: [{ provide: NZ_I18N, useValue: zh_CN }],
+  providers: [
+    { provide: NZ_I18N, useValue: zh_CN },
+    { provide: NZ_CONFIG, useFactory: () => ({ icon: { nzTheme: 'outline' } } as NzConfig) },
+  ],
   bootstrap: [AppComponent],
 })
 export class AppModule {
