@@ -11,4 +11,23 @@
   .left-side {
     width: 300px;
   }
+  .canvas-container {
+    position: relative;
+    overflow: hidden;
+    flex: 1;
+    background-color: #f0f0f0;
+    &.start-drag {
+      cursor: grab;
+      &.dragging {
+        cursor: grabbing;
+      }
+    }
+    .canvas-content {
+      position: absolute;
+      [ceNoZoomArea],
+      [ceZoomArea] {
+        position: absolute;
+      }
+    }
+  }
 }

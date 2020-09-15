@@ -1,4 +1,22 @@
 <ce-toolbar></ce-toolbar>
 <div class="col p-0 d-flex">
   <ce-left-side></ce-left-side>
+  <div
+    #ceDrag="ceDraggable"
+    #scaleEle
+    class="canvas-container"
+    ceDraggable
+    ceUseSpace
+    [class.start-drag]="ceDrag.spaceKeyDown"
+    [class.dragging]="startPoints"
+    (ceOnStart)="dragStart($event)"
+    (ceOnMove)="dragging($event)"
+    (ceOnStop)="dragEnd($event)"
+  >
+    <div class="canvas-content" [style.left.px]="canvasLeft" [style.top.px]="canvasTop">
+      <div ceNoZoomArea></div>
+      <div ceZoomArea></div>
+      <div ceNoZoomArea></div>
+    </div>
+  </div>
 </div>

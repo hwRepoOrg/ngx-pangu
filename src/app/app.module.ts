@@ -15,10 +15,14 @@ import { NzInputNumberModule } from 'ng-zorro-antd/input-number';
 import { NzTabsModule } from 'ng-zorro-antd/tabs';
 import { environment } from 'src/environments/environment';
 import { AppComponent } from './app.component';
+import { CanvasComponent } from './components/canvas/canvas.component';
 import { LayerTreeComponent } from './components/layer-tree/layer-tree.component';
 import { LeftSideComponent } from './components/left-side/left-side.component';
 import { ToolbarComponent } from './components/toolbar/toolbar.component';
 import { WidgetListComponent } from './components/widget-list/widget-list.component';
+import { DraggableDirective } from './directives/draggable.directive';
+import { NoZoomAreaDirective } from './directives/no-zoom-area.directive';
+import { ZoomAreaDirective } from './directives/zoom-area.directive';
 import { canvasStateReducer, nodesReducer } from './store/reducers';
 import { IStore } from './store/store';
 
@@ -26,7 +30,8 @@ registerLocaleData(zh);
 
 const ANTD_MODULES = [NzCardModule, NzIconModule.forRoot([]), NzButtonModule, NzInputNumberModule, NzTabsModule];
 
-const COMPONENTS = [ToolbarComponent];
+const COMPONENTS = [ToolbarComponent, LeftSideComponent, LayerTreeComponent, WidgetListComponent, CanvasComponent];
+const DIRECTIVES = [NoZoomAreaDirective, ZoomAreaDirective, DraggableDirective];
 
 @NgModule({
   imports: [
@@ -38,7 +43,7 @@ const COMPONENTS = [ToolbarComponent];
     HttpClientModule,
     ...ANTD_MODULES,
   ],
-  declarations: [AppComponent, ...COMPONENTS, LeftSideComponent, LayerTreeComponent, WidgetListComponent],
+  declarations: [AppComponent, ...COMPONENTS, ...DIRECTIVES],
   providers: [
     { provide: NZ_I18N, useValue: zh_CN },
     { provide: NZ_CONFIG, useFactory: () => ({ icon: { nzTheme: 'outline' } } as NzConfig) },
@@ -47,7 +52,6 @@ const COMPONENTS = [ToolbarComponent];
 })
 export class AppModule {
   constructor(private injector: Injector) {
-    console.log(this.injector.get(NzIconService));
     if (!environment.production) {
       if (document.querySelector('body>svg')) {
         document.body.removeChild(document.querySelector('body>svg'));
