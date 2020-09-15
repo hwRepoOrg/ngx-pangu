@@ -11,7 +11,7 @@
     [class.dragging]="startPoints"
     (ceOnStart)="dragStart($event)"
     (ceOnMove)="dragging($event)"
-    (ceOnStop)="dragEnd($event)"
+    (ceOnStop)="dragEnd()"
   >
     <div class="canvas-content" [style.left.px]="canvasLeft" [style.top.px]="canvasTop">
       <div ceNoZoomArea></div>
