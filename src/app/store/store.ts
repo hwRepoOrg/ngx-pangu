@@ -32,24 +32,27 @@ export interface IStore<T = any> {
 
 export const DEFAULT_STORE: IStore<any> = {
   nodes: [
-    { id: '1', name: 'test', width: 100, height: 50, left: 20, top: 20 },
+    { id: '1', name: 'test1', width: 100, height: 50, left: 20, top: 20 },
     {
       id: '2',
-      name: 'test',
-      width: 100,
-      height: 50,
+      name: 'test2',
+      width: 200,
+      height: 100,
       left: 20,
       top: 20,
-      children: [{ id: '3', name: 'test', width: 100, height: 50, left: 20, top: 20 }],
+      children: [
+        { id: '3', name: 'test3', width: 50, height: 30, left: 20, top: 20 },
+        { id: '4', name: 'test4', width: 50, height: 30, left: 60, top: 60, rotate: 20 },
+      ],
     },
   ],
   canvasState: {
     selected: new Set(),
     bordered: new Set(),
-    width: 1000,
-    height: 800,
-    scale: 1,
-    left: 100,
+    width: 1920,
+    height: 1080,
+    scale: 0.5,
+    left: 300,
     top: 100,
   },
 };
