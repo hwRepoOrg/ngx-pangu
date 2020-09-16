@@ -13,8 +13,10 @@
     (ceOnMove)="dragging($event)"
     (ceOnStop)="dragEnd()"
   >
-    <div class="canvas-content" [style.left.px]="canvasLeft" [style.top.px]="canvasTop">
-      <div ceNoZoomArea></div>
+    <div class="canvas-content" [style.transform]="matrix">
+      <div ceNoZoomArea>
+        <ce-canvas-grid></ce-canvas-grid>
+      </div>
       <div ceZoomArea></div>
       <div ceNoZoomArea></div>
     </div>

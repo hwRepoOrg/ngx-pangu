@@ -15,6 +15,7 @@ import { NzInputNumberModule } from 'ng-zorro-antd/input-number';
 import { NzTabsModule } from 'ng-zorro-antd/tabs';
 import { environment } from 'src/environments/environment';
 import { AppComponent } from './app.component';
+import { CanvasGridComponent } from './components/canvas-grid/canvas-grid.component';
 import { CanvasComponent } from './components/canvas/canvas.component';
 import { LayerTreeComponent } from './components/layer-tree/layer-tree.component';
 import { LeftSideComponent } from './components/left-side/left-side.component';
@@ -30,7 +31,7 @@ registerLocaleData(zh);
 
 const ANTD_MODULES = [NzCardModule, NzIconModule.forRoot([]), NzButtonModule, NzInputNumberModule, NzTabsModule];
 
-const COMPONENTS = [ToolbarComponent, LeftSideComponent, LayerTreeComponent, WidgetListComponent, CanvasComponent];
+const COMPONENTS = [ToolbarComponent, LeftSideComponent, LayerTreeComponent, WidgetListComponent, CanvasComponent, CanvasGridComponent];
 const DIRECTIVES = [NoZoomAreaDirective, ZoomAreaDirective, DraggableDirective];
 
 @NgModule({

@@ -18,6 +18,9 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   public canvasTop: number;
   public canvasScale: number;
   public startPoints: number[] = null;
+  public get matrix(): string {
+    return `matrix(1,0,0,1,${this.canvasLeft},${this.canvasTop})`;
+  }
   constructor(private store: Store<IStore>) {
     const selectCanvasState = createSelector(
       (state: IStore) => state.canvasState.left,
