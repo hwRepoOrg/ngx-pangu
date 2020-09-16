@@ -8,6 +8,12 @@
   margin-left: 0.5rem;
 }
 
-ce-zoom-area {
+[ceNoZoomArea] {
   display: block;
+  pointer-events: none;
+}
+
+[ceZoomArea],
+[ceNoZoomArea] {
+  position: absolute;
 }
