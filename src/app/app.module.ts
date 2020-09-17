@@ -15,6 +15,7 @@ import { NzInputNumberModule } from 'ng-zorro-antd/input-number';
 import { NzTabsModule } from 'ng-zorro-antd/tabs';
 import { environment } from 'src/environments/environment';
 import { AppComponent } from './app.component';
+import { BoxItemComponent } from './components/box-item/box-item.component';
 import { CanvasBackgroundComponent } from './components/canvas-background/canvas-background.component';
 import { CanvasGridComponent } from './components/canvas-grid/canvas-grid.component';
 import { CanvasComponent } from './components/canvas/canvas.component';
@@ -25,7 +26,7 @@ import { WidgetListComponent } from './components/widget-list/widget-list.compon
 import { DraggableDirective } from './directives/draggable.directive';
 import { NoZoomAreaDirective } from './directives/no-zoom-area.directive';
 import { ZoomAreaDirective } from './directives/zoom-area.directive';
-import { canvasStateReducer, nodesReducer } from './store/reducers';
+import reducers from './store/reducers';
 import { IStore } from './store/store';
 
 registerLocaleData(zh);
@@ -40,6 +41,7 @@ const COMPONENTS = [
   CanvasComponent,
   CanvasGridComponent,
   CanvasBackgroundComponent,
+  BoxItemComponent,
 ];
 const DIRECTIVES = [NoZoomAreaDirective, ZoomAreaDirective, DraggableDirective];
 
@@ -48,7 +50,7 @@ const DIRECTIVES = [NoZoomAreaDirective, ZoomAreaDirective, DraggableDirective];
     BrowserModule,
     CommonModule,
     BrowserAnimationsModule,
-    StoreModule.forRoot<IStore>({ nodes: nodesReducer, canvasState: canvasStateReducer }),
+    StoreModule.forRoot<IStore>(reducers),
     FormsModule,
     HttpClientModule,
     ...ANTD_MODULES,

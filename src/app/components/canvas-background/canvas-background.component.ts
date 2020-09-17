@@ -16,7 +16,7 @@ export class CanvasBackgroundComponent implements OnDestroy {
   private subscription = new Subscription();
   constructor(private store: Store<IStore>, public ds: DomSanitizer) {
     this.subscription.add(
-      this.store.select('canvasState').subscribe((state) => {
+      this.store.select('canvasBackground').subscribe((state) => {
         this.backgroundColor = state.backgroundColor;
         this.backgroundImage = state.backgroundImage;
       })

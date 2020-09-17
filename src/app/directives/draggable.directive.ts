@@ -55,6 +55,7 @@ export class DraggableDirective implements OnInit, OnDestroy {
     this.subscription.add(
       this.mouseEnter$
         .pipe(
+          filter(() => this.ceUseSpace),
           switchMap(() =>
             this.keyDown$.pipe(
               switchMap((e) => {

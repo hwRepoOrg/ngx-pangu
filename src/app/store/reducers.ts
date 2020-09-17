@@ -1,17 +1,19 @@
-import { createReducer, on } from '@ngrx/store';
+import { ActionReducerMap, createReducer, on } from '@ngrx/store';
 import {
+  addBorderedNodes,
   addNodes,
-  moveCanvas,
+  addSelectedNodes,
+  clearBorderedNodes,
+  clearSelectedNodes,
+  removeBorderedNodes,
   removeNodes,
-  resizeCanvas,
-  scaleCanvas,
-  setBorderedNodes,
-  setCanvasBackgroundColor,
-  setCanvasBackgroundImage,
-  setSelectedNodes,
+  removeSelectedNodes,
+  updateCanvasBackground,
+  updateCanvasPosition,
+  updateCanvasSize,
   updateNodes,
 } from './actions';
-import { DEFAULT_STORE, ICanvasState, INode } from './store';
+import { DEFAULT_STORE, ICanvasPosition, ICanvasSize, INode, IStore } from './store';
 
 export const nodesReducer = createReducer<INode[]>(
   DEFAULT_STORE.nodes,
@@ -20,14 +22,46 @@ export const nodesReducer = createReducer<INode[]>(
   on(updateNodes, (state, { nodes }) => state.map((item) => nodes.find((i) => i.id === item.id) ?? item))
 );
 
-export const canvasStateReducer = createReducer<ICanvasState>(
-  DEFAULT_STORE.canvasState,
-  on(moveCanvas, (state, newState) => ({ ...state, ...newState })),
-  on(resizeCanvas, (state, newState) => ({ ...state, ...newState })),
-  on(resizeCanvas, (state, newState) => ({ ...state, ...newState })),
-  on(setSelectedNodes, (state, { ids }) => ({ ...state, selected: new Set(...ids) })),
-  on(setBorderedNodes, (state, { ids }) => ({ ...state, bordered: new Set(...ids) })),
-  on(setCanvasBackgroundColor, (state, { color }) => ({ ...state, backgroundColor: color })),
-  on(setCanvasBackgroundImage, (state, { image }) => ({ ...state, backgroundImage: image })),
-  on(scaleCanvas, (state, newState) => ({ ...state, ...newState }))
+export const canvasSizeReducer = createReducer<ICanvasSize>(
+  DEFAULT_STORE.canvasSize,
+  on(updateCanvasSize, (state, newState) => ({ ...state, ...newState }))
 );
+
+export const canvasPositionReducer = createReducer<ICanvasPosition>(
+  DEFAULT_STORE.canvasPosition,
+  on(updateCanvasPosition, (state, newState) => ({ ...state, ...newState }))
+);
+
+export const canvasBackgroundReducer = createReducer(
+  DEFAULT_STORE.canvasBackground,
+  on(updateCanvasBackground, (state, newState) => ({ ...state, ...newState }))
+);
+
+export const selectedReducer = createReducer(
+  DEFAULT_STORE.selected,
+  on(clearSelectedNodes, () => new Set<string>()),
+  on(
+    addSelectedNodes,
+    (state, { ids }) => new Set<string>([...state, ...ids])
+  ),
+  on(removeSelectedNodes, (state, { ids }) => ids.reduce((s, id) => (s.delete(id) ? s : s), state))
+);
+
+export const borderedReducer = createReducer(
+  DEFAULT_STORE.bordered,
+  on(clearBorderedNodes, () => new Set<string>()),
+  on(
+    addBorderedNodes,
+    (state, { ids }) => new Set<string>([...state, ...ids])
+  ),
+  on(removeBorderedNodes, (state, { ids }) => ids.reduce((s, id) => (s.delete(id) ? s : s), state))
+);
+
+export default {
+  nodes: nodesReducer,
+  canvasBackground: canvasBackgroundReducer,
+  canvasPosition: canvasPositionReducer,
+  canvasSize: canvasSizeReducer,
+  selected: selectedReducer,
+  bordered: borderedReducer,
+} as ActionReducerMap<IStore>;

@@ -1,0 +1,8 @@
+<ce-box-item
+  *ngFor="let node of nodes; trackBy: nodeListTrackByFn"
+  ceDraggable
+  (ceOnStart)="boxMoveStart($event, node)"
+  (ceOnMove)="boxMoving($event)"
+  (ceOnStop)="boxMoveEnd()"
+  [node]="node"
+></ce-box-item>

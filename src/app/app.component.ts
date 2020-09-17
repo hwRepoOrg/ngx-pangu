@@ -1,8 +1,8 @@
 import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { createSelector, select, Store } from '@ngrx/store';
+import { Store } from '@ngrx/store';
 import { fromEvent, Subscription } from 'rxjs';
 import { filter } from 'rxjs/operators';
-import { moveCanvas, scaleCanvas } from './store/actions';
+import { updateCanvasPosition } from './store/actions';
 import { IStore } from './store/store';
 
 @Component({
@@ -22,14 +22,8 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
     return `matrix(1,0,0,1,${this.canvasLeft},${this.canvasTop})`;
   }
   constructor(private store: Store<IStore>) {
-    const selectCanvasState = createSelector(
-      (state: IStore) => state.canvasState.left,
-      (state: IStore) => state.canvasState.top,
-      (state: IStore) => state.canvasState.scale,
-      (left, top, scale) => ({ left, top, scale })
-    );
     this.subscription.add(
-      this.store.pipe(select(selectCanvasState)).subscribe((state) => {
+      this.store.select('canvasPosition').subscribe((state) => {
         this.canvasLeft = state.left;
         this.canvasTop = state.top;
         this.canvasScale = state.scale;
@@ -55,7 +49,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
     if (this.startPoints) {
       const [sx, sy, left, top] = this.startPoints;
       const [mx, my] = [ev.clientX - sx, ev.clientY - sy];
-      this.store.dispatch(moveCanvas({ left: left + mx, top: top + my }));
+      this.store.dispatch(updateCanvasPosition({ left: left + mx, top: top + my }));
     }
   }
 
@@ -67,7 +61,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
     const scaleEle = this.scaleEleRef.nativeElement;
     this.subscription.add(
       fromEvent<WheelEvent & { wheelDelta: number }>(scaleEle, 'wheel')
-        .pipe(filter((e) => e.ctrlKey))
+        .pipe(filter((e) => e.metaKey))
         .subscribe((e) => {
           e.preventDefault();
           e.stopPropagation();
@@ -76,7 +70,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
           const [x, y] = [e.clientX - containerBox.left, e.clientY - containerBox.top];
           if (this.canvasScale + wheelDelta >= 0.2) {
             this.store.dispatch(
-              scaleCanvas({
+              updateCanvasPosition({
                 scale: this.canvasScale + wheelDelta,
                 left: (this.canvasLeft - x) * (wheelDelta / this.canvasScale) + this.canvasLeft,
                 top: (this.canvasTop - y) * (wheelDelta / this.canvasScale) + this.canvasTop,

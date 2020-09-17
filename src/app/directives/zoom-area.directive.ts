@@ -1,6 +1,7 @@
 import { Directive, HostBinding } from '@angular/core';
-import { Store } from '@ngrx/store';
+import { select, Store } from '@ngrx/store';
 import { Subscription } from 'rxjs';
+import { SizeScaleSelector } from '../store/selectors';
 import { IStore } from '../store/store';
 
 @Directive({
@@ -18,7 +19,7 @@ export class ZoomAreaDirective {
   private subscription = new Subscription();
   constructor(private store: Store<IStore>) {
     this.subscription.add(
-      this.store.select('canvasState').subscribe((state) => {
+      this.store.pipe(select(SizeScaleSelector)).subscribe((state) => {
         this.scale = `scale(${state.scale})`;
         this.width = state.width;
         this.height = state.height;

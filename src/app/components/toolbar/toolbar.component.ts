@@ -2,7 +2,7 @@ import { Component, OnDestroy } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { Observable, Subscription } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { scaleCanvas } from 'src/app/store/actions';
+import { updateCanvasPosition } from 'src/app/store/actions';
 import { IStore } from 'src/app/store/store';
 
 @Component({
@@ -25,9 +25,9 @@ export class ToolbarComponent implements OnDestroy {
   private subscription = new Subscription();
 
   constructor(private store: Store<IStore>) {
-    this.selected$ = this.store.select('canvasState').pipe(map((state) => state.selected));
+    this.selected$ = this.store.select('selected');
     this.subscription.add(
-      this.store.select('canvasState').subscribe((state) => {
+      this.store.select('canvasPosition').subscribe((state) => {
         this.scale = state.scale;
       })
     );
@@ -38,6 +38,6 @@ export class ToolbarComponent implements OnDestroy {
   }
 
   setCanvasScale(scale: number): void {
-    this.store.dispatch(scaleCanvas({ scale: scale / 100 }));
+    this.store.dispatch(updateCanvasPosition({ scale: scale / 100 }));
   }
 }

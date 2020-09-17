@@ -15,7 +15,7 @@ export class CanvasGridComponent implements OnDestroy {
   constructor(private store: Store<IStore>) {
     this.subscription.add(
       this.store
-        .select('canvasState')
+        .select('canvasPosition')
         .pipe(map((state) => state.scale))
         .subscribe((scale) => (this.scale = scale))
     );

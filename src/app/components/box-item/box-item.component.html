@@ -1,0 +1,3 @@
+<ng-container *ngIf="node?.children && node?.children.length">
+  <ce-box-item *ngFor="let item of node.children" [node]="item"></ce-box-item>
+</ng-container>
