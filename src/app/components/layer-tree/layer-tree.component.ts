@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
+import { addBorderedNodes, clearBorderedNodes } from 'src/app/store/actions';
 import { INode, IStore } from 'src/app/store/store';
 
 @Component({
@@ -16,4 +17,12 @@ export class LayerTreeComponent implements OnInit {
   }
 
   ngOnInit(): void {}
+
+  clearBordered(): void {
+    this.store.dispatch(clearBorderedNodes());
+  }
+
+  showBordered(node: INode): void {
+    this.store.dispatch(addBorderedNodes({ ids: [node.id] }));
+  }
 }

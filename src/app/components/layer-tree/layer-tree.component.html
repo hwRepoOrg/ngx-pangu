@@ -5,7 +5,7 @@
 <ng-template #nodeList let-list let-dept="dept">
   <ng-container *ngFor="let node of list">
     <ng-container *ngIf="node.children?.length">
-      <li>
+      <li (pointerenter)="showBordered(node)" (pointerleave)="clearBordered()">
         <div class="title has-child" [style.padding-left.px]="dept * 20">
           <a class="arrow" (click)="openedKeys.has(node.id) ? openedKeys.delete(node.id) : openedKeys.add(node.id)">
             <i *ngIf="!openedKeys.has(node.id)" nz-icon nzType="caret-right"></i>
@@ -23,7 +23,7 @@
       </li>
     </ng-container>
     <ng-container *ngIf="!node.children?.length">
-      <li>
+      <li (pointerenter)="showBordered(node)" (pointerleave)="clearBordered()">
         <div class="title" [style.padding-left.px]="dept * 20">
           <span class="ml-2">{{ node.name }}</span>
         </div>
