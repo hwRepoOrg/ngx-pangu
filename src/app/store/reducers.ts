@@ -8,6 +8,7 @@ import {
   removeBorderedNodes,
   removeNodes,
   removeSelectedNodes,
+  setBorderedNodes,
   updateCanvasBackground,
   updateCanvasPosition,
   updateCanvasSize,
@@ -54,7 +55,8 @@ export const borderedReducer = createReducer(
     addBorderedNodes,
     (state, { ids }) => new Set<string>([...state, ...ids])
   ),
-  on(removeBorderedNodes, (state, { ids }) => ids.reduce((s, id) => (s.delete(id) ? s : s), state))
+  on(removeBorderedNodes, (state, { ids }) => ids.reduce((s, id) => (s.delete(id) ? s : s), state)),
+  on(setBorderedNodes, (state, { ids }) => new Set([...ids]))
 );
 
 export default {
