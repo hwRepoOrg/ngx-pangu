@@ -10,6 +10,11 @@ export class BoxItemComponent implements OnInit {
   @Input()
   public node: INode;
 
+  @HostBinding('id')
+  get id(): string {
+    return this.node?.id && `box-item-${this.node?.id}`;
+  }
+
   @HostBinding('style.left.px')
   get left(): number {
     return this.node.left;
