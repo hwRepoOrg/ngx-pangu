@@ -39,9 +39,9 @@ export interface IStore<T = any> {
 }
 
 export const DEFAULT_STORE: IStore<any> = {
-  nodes: new Array(500).fill(1).map(() => ({
-    id: `${Math.round(Math.random() * 1000000000)}`,
-    name: 'test1',
+  nodes: new Array(1000).fill(1).map((v, index) => ({
+    id: `${Math.round(Math.random() * 1000000000000)}`,
+    name: `test${index + 1}`,
     width: Math.round(Math.random() * 500),
     height: Math.round(Math.random() * 400),
     left: Math.round(Math.random() * 1000),
