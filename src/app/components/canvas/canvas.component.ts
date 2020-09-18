@@ -32,6 +32,8 @@ export class CanvasComponent implements OnDestroy {
   }
 
   boxMoveStart(ev: PointerEvent, node: INode): void {
+    ev.preventDefault();
+    ev.stopPropagation();
     this.pointerSnapshot = [ev.clientX, ev.clientY];
     this.nodesSnapshot.clear();
     if (this.selected.has(node.id)) {
