@@ -18,6 +18,9 @@
     background-color: #f0f0f0;
     &.start-drag {
       cursor: grab;
+      > * {
+        pointer-events: none;
+      }
       &.dragging {
         cursor: grabbing;
       }
