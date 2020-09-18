@@ -15,6 +15,7 @@ import { NzInputNumberModule } from 'ng-zorro-antd/input-number';
 import { NzTabsModule } from 'ng-zorro-antd/tabs';
 import { environment } from 'src/environments/environment';
 import { AppComponent } from './app.component';
+import { BorderedAreaComponent } from './components/bordered-area/bordered-area.component';
 import { BoxItemComponent } from './components/box-item/box-item.component';
 import { CanvasBackgroundComponent } from './components/canvas-background/canvas-background.component';
 import { CanvasGridComponent } from './components/canvas-grid/canvas-grid.component';
@@ -25,6 +26,7 @@ import { ToolbarComponent } from './components/toolbar/toolbar.component';
 import { WidgetListComponent } from './components/widget-list/widget-list.component';
 import { DraggableDirective } from './directives/draggable.directive';
 import { NoZoomAreaDirective } from './directives/no-zoom-area.directive';
+import { SelectorDirective } from './directives/selector.directive';
 import { ZoomAreaDirective } from './directives/zoom-area.directive';
 import reducers from './store/reducers';
 import { IStore } from './store/store';
@@ -42,8 +44,9 @@ const COMPONENTS = [
   CanvasGridComponent,
   CanvasBackgroundComponent,
   BoxItemComponent,
+  BorderedAreaComponent,
 ];
-const DIRECTIVES = [NoZoomAreaDirective, ZoomAreaDirective, DraggableDirective];
+const DIRECTIVES = [NoZoomAreaDirective, ZoomAreaDirective, DraggableDirective, SelectorDirective];
 
 @NgModule({
   imports: [

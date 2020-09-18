@@ -2,8 +2,9 @@ import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild } fr
 import { Store } from '@ngrx/store';
 import { fromEvent, Subscription } from 'rxjs';
 import { filter } from 'rxjs/operators';
-import { updateCanvasPosition } from './store/actions';
-import { IStore } from './store/store';
+import { ISelectorRect } from './directives/selector.directive';
+import { clearBorderedNodes, clearSelectedNodes, setBorderedNodes, updateCanvasPosition } from './store/actions';
+import { INode, IStore } from './store/store';
 
 @Component({
   selector: 'ce-root',
@@ -11,8 +12,8 @@ import { IStore } from './store/store';
   styleUrls: ['./app.component.less'],
 })
 export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
-  @ViewChild('scaleEle', { read: ElementRef })
-  private scaleEleRef: ElementRef<HTMLDivElement>;
+  @ViewChild('container', { read: ElementRef })
+  private containerEleRef: ElementRef<HTMLDivElement>;
   private subscription = new Subscription();
   public canvasLeft: number;
   public canvasTop: number;
@@ -21,6 +22,9 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   public get matrix(): string {
     return `matrix(1,0,0,1,${this.canvasLeft},${this.canvasTop})`;
   }
+  public selectorRect: ISelectorRect = null;
+  public nodes: INode[];
+  private nodesRectSnapshot: Map<string, Partial<DOMRect>> = null;
   constructor(private store: Store<IStore>) {
     this.subscription.add(
       this.store.select('canvasPosition').subscribe((state) => {
@@ -29,6 +33,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
         this.canvasScale = state.scale;
       })
     );
+    this.subscription.add(this.store.select('nodes').subscribe((nodes) => (this.nodes = nodes)));
   }
 
   ngOnInit(): void {}
@@ -58,7 +63,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   listenScaleEvent(): void {
-    const scaleEle = this.scaleEleRef.nativeElement;
+    const scaleEle = this.containerEleRef.nativeElement;
     this.subscription.add(
       fromEvent<WheelEvent & { wheelDelta: number }>(scaleEle, 'wheel')
         .pipe(filter((e) => e.metaKey))
@@ -80,4 +85,41 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
         })
     );
   }
+
+  selectorStart(): void {
+    this.store.dispatch(clearBorderedNodes());
+    this.store.dispatch(clearSelectedNodes());
+    const boxRect = this.containerEleRef.nativeElement.getBoundingClientRect();
+    this.nodesRectSnapshot = new Map(
+      this.nodes
+        .map((node) => {
+          const dom = document.querySelector(`#box-item-${node.id}`);
+          return [node.id, dom && dom.getBoundingClientRect()] as [string, DOMRect];
+        })
+        .filter(([, rect]) => !!rect)
+        .map(([id, { width, height, left, top }]) => [id, { width, height, left: left - boxRect.left, top: top - boxRect.top }])
+    );
+  }
+
+  selectorMoving(rect: ISelectorRect): void {
+    this.selectorRect = rect;
+    const ids = [];
+    this.nodesRectSnapshot.forEach((item, id) => {
+      if (isInBound(item, rect)) {
+        ids.push(id);
+      }
+    });
+    this.store.dispatch(setBorderedNodes({ ids }));
+  }
+
+  selectorEnd(): void {
+    this.selectorRect = null;
+    this.nodesRectSnapshot = null;
+  }
+}
+
+function isInBound(rect: Partial<DOMRect>, bound: ISelectorRect): boolean {
+  return (
+    rect.left >= bound.x && rect.top >= bound.y && rect.left + rect.width <= bound.x + bound.width && rect.top + rect.height <= bound.y + bound.height
+  );
 }

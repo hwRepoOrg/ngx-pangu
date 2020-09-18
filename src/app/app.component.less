@@ -1,3 +1,5 @@
+@import "../styles/ng-zorro-antd/theme.less";
+
 :host {
   display: flex;
   flex-direction: column;
@@ -27,6 +29,12 @@
     }
     .canvas-content {
       position: absolute;
+    }
+    .selector {
+      position: absolute;
+      box-sizing: border-box;
+      border: 1px solid @primary-color;
+      background-color: fade(@primary-color, 30);
     }
   }
 }

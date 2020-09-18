@@ -3,7 +3,7 @@
   <ce-left-side></ce-left-side>
   <div
     #ceDrag="ceDraggable"
-    #scaleEle
+    #container
     class="canvas-container"
     ceDraggable
     ceUseSpace
@@ -12,6 +12,11 @@
     (ceOnStart)="dragStart($event)"
     (ceOnMove)="dragging($event)"
     (ceOnStop)="dragEnd()"
+    ceSelector
+    [ceSelectorDisabled]="ceDrag.spaceKeyDown"
+    (ceOnSelectorStart)="selectorStart()"
+    (ceOnSelectorMoving)="selectorMoving($event)"
+    (ceOnSelectorStop)="selectorEnd()"
   >
     <div class="canvas-content" [style.transform]="matrix">
       <div ceNoZoomArea>
@@ -21,7 +26,17 @@
       <div ceZoomArea>
         <ce-canvas></ce-canvas>
       </div>
-      <div ceNoZoomArea></div>
+      <div ceNoZoomArea>
+        <ce-bordered-area></ce-bordered-area>
+      </div>
     </div>
+    <div
+      class="selector"
+      *ngIf="selectorRect"
+      [style.left.px]="selectorRect.x"
+      [style.top.px]="selectorRect.y"
+      [style.width.px]="selectorRect.width"
+      [style.height.px]="selectorRect.height"
+    ></div>
   </div>
 </div>

@@ -1,0 +1,9 @@
+<div
+  class="box-border"
+  *ngFor="let node of nodeList; trackBy: trackByFn"
+  [style.left.px]="node.left"
+  [style.top.px]="node.top"
+  [style.width.px]="node.width"
+  [style.height.px]="node.height"
+  [style.transform]="getRotate(node.rotate)"
+></div>
