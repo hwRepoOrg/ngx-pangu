@@ -10,6 +10,9 @@ import { filter, finalize, map, switchMap, takeUntil } from 'rxjs/operators';
 export class DraggableDirective implements OnInit, OnDestroy {
   @Input()
   @InputBoolean()
+  public ceDragDisabled = false;
+  @Input()
+  @InputBoolean()
   public ceUseSpace = false;
   @Output()
   public ceOnStart = new EventEmitter<PointerEvent>();
@@ -38,6 +41,7 @@ export class DraggableDirective implements OnInit, OnDestroy {
     this.listenSpaceKeyEvent();
     this.mouseDown$
       .pipe(
+        filter(() => !this.ceDragDisabled),
         filter(() => (this.ceUseSpace ? this.spaceKeyDown : true)),
         switchMap((startEv) => {
           this.ceOnStart.emit(startEv);
@@ -55,6 +59,7 @@ export class DraggableDirective implements OnInit, OnDestroy {
     this.subscription.add(
       this.mouseEnter$
         .pipe(
+          filter(() => !this.ceDragDisabled),
           filter(() => this.ceUseSpace),
           switchMap(() =>
             this.keyDown$.pipe(
