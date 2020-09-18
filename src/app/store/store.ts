@@ -39,21 +39,16 @@ export interface IStore<T = any> {
 }
 
 export const DEFAULT_STORE: IStore<any> = {
-  nodes: [
-    { id: '1', name: 'test1', width: 100, height: 50, left: 20, top: 20, borderWidth: 1, borderStyle: 'solid' },
-    {
-      id: '2',
-      name: 'test2',
-      width: 200,
-      height: 100,
-      left: 120,
-      top: 120,
-      borderWidth: 1,
-      borderStyle: 'solid',
-    },
-    { id: '3', name: 'test3', width: 50, height: 30, left: 20, top: 20, borderWidth: 1, borderStyle: 'solid' },
-    { id: '4', name: 'test4', width: 50, height: 30, left: 60, top: 60, rotate: 20, borderWidth: 1, borderStyle: 'solid' },
-  ],
+  nodes: new Array(500).fill(1).map(() => ({
+    id: `${Math.round(Math.random() * 1000000000)}`,
+    name: 'test1',
+    width: Math.round(Math.random() * 500),
+    height: Math.round(Math.random() * 400),
+    left: Math.round(Math.random() * 1000),
+    top: Math.round(Math.random() * 1000),
+    borderWidth: 1,
+    borderStyle: 'solid',
+  })),
   selected: new Set(),
   bordered: new Set(),
   canvasBackground: {},
