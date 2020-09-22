@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, HostBinding, OnDestroy, OnInit } from '@angular/core';
 import { select, Store } from '@ngrx/store';
 import { Subject, Subscription } from 'rxjs';
 import { filter, map, switchMap } from 'rxjs/operators';
@@ -14,6 +14,8 @@ export class ResizeHandleComponent implements OnInit, OnDestroy {
   private canvasChangeObserver: MutationObserver;
   private canvasChanged$ = new Subject();
   private subscription = new Subscription();
+  @HostBinding('style.display')
+  public display = 'none';
   constructor(private store: Store<IStore>) {}
 
   ngOnInit(): void {
@@ -24,9 +26,13 @@ export class ResizeHandleComponent implements OnInit, OnDestroy {
         .pipe(
           select(ResizeRefreshSelector),
           switchMap((res) => this.canvasChanged$.pipe(map(() => res))),
-          filter(([selected]) => !!selected.size)
+          map(([selected]) => {
+            this.display = selected.size ? 'block' : 'none';
+            return selected;
+          }),
+          filter((selected) => !!selected.size)
         )
-        .subscribe(([selected]) => {})
+        .subscribe((selected) => {})
     );
   }
 
