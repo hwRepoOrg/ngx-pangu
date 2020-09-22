@@ -66,7 +66,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
     const scaleEle = this.containerEleRef.nativeElement;
     this.subscription.add(
       fromEvent<WheelEvent & { wheelDelta: number }>(scaleEle, 'wheel')
-        .pipe(filter((e) => e.metaKey))
+        .pipe(filter((e) => e.ctrlKey))
         .subscribe((e) => {
           e.preventDefault();
           e.stopPropagation();
