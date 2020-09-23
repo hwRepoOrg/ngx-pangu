@@ -17,7 +17,7 @@ export class BorderedAreaComponent implements OnInit, OnDestroy {
   private bordered: Set<string>;
   private canvasSize: ICanvasSize;
   public get nodeList(): ({ id: string } & Partial<DOMRect & { rotate: number }>)[] {
-    return [...this.borderedNodeMap].map(([id, { width, height, left, top }]) => ({ id, width, height, left, top }));
+    return [...this.borderedNodeMap].map(([id, { width, height, left, top, rotate }]) => ({ id, width, height, left, top, rotate }));
   }
 
   constructor(private store: Store<IStore>, private utils: CeUtilsService) {}
@@ -40,7 +40,6 @@ export class BorderedAreaComponent implements OnInit, OnDestroy {
           filter(() => !!this.nodes && !!this.canvasSize),
           map((bordered) => {
             this.bordered = bordered;
-            console.log(bordered, this.bordered);
             if (bordered.size) {
               this.borderedNodeMap.forEach((...args) => {
                 if (!bordered.has(args[1])) {
