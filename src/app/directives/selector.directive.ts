@@ -18,6 +18,7 @@ export class SelectorDirective implements OnInit, OnDestroy {
   private move$ = fromEvent<PointerEvent>(window, 'pointermove');
   private up$ = fromEvent<PointerEvent>(window, 'pointerup');
   private startPointSnapshot: number[] = null;
+  private boxRect: DOMRect;
 
   @Input()
   @InputBoolean()
@@ -36,6 +37,7 @@ export class SelectorDirective implements OnInit, OnDestroy {
         .pipe(
           filter(() => !this.ceSelectorDisabled),
           switchMap((ev) => {
+            this.boxRect = this.eleRef.nativeElement.getBoundingClientRect();
             this.startPointSnapshot = [ev.clientX, ev.clientY];
             this.ceOnSelectorStart.emit();
             return this.move$.pipe(
@@ -49,19 +51,18 @@ export class SelectorDirective implements OnInit, OnDestroy {
         )
         .subscribe((e) => {
           if (this.startPointSnapshot) {
-            const boxRect = this.eleRef.nativeElement.getBoundingClientRect();
             let x: number;
             let y: number;
             const [mx, my] = [e.clientX - this.startPointSnapshot[0], e.clientY - this.startPointSnapshot[1]];
             if (mx >= 0) {
-              x = this.startPointSnapshot[0] - boxRect.left;
+              x = this.startPointSnapshot[0] - this.boxRect.left;
             } else {
-              x = e.clientX - boxRect.left;
+              x = e.clientX - this.boxRect.left;
             }
             if (my >= 0) {
-              y = this.startPointSnapshot[1] - boxRect.top;
+              y = this.startPointSnapshot[1] - this.boxRect.top;
             } else {
-              y = e.clientY - boxRect.top;
+              y = e.clientY - this.boxRect.top;
             }
             this.ceOnSelectorMoving.emit({ x, y, width: Math.abs(mx), height: Math.abs(my) });
           }

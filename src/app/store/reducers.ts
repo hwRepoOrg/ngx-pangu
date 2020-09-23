@@ -55,8 +55,11 @@ export const borderedReducer = createReducer(
     addBorderedNodes,
     (state, { ids }) => new Set<string>([...state, ...ids])
   ),
-  on(removeBorderedNodes, (state, { ids }) => ids.reduce((s, id) => (s.delete(id) ? s : s), state)),
-  on(setBorderedNodes, (state, { ids }) => new Set([...ids]))
+  on(
+    removeBorderedNodes,
+    (state, { ids }) => new Set<string>([...ids.reduce((s, id) => (s.delete(id) ? s : s), state)])
+  ),
+  on(setBorderedNodes, (...args) => new Set([...args[1].ids]))
 );
 
 export default {

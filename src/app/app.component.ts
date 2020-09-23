@@ -20,7 +20,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   public canvasScale: number;
   public startPoints: number[] = null;
   public get matrix(): string {
-    return `matrix(1,0,0,1,${this.canvasLeft},${this.canvasTop})`;
+    return `translate3d(${this.canvasLeft}px,${this.canvasTop}px,0)`;
   }
   public selectorRect: ISelectorRect = null;
   public nodes: INode[];

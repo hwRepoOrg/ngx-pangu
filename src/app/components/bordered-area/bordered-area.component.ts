@@ -1,9 +1,9 @@
-import { Component, ElementRef, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { Subject, Subscription } from 'rxjs';
-import { filter, map, switchMap } from 'rxjs/operators';
+import { Subscription } from 'rxjs';
+import { filter, map } from 'rxjs/operators';
 import { CeUtilsService } from 'src/app/services/utils.service';
-import { INode, IStore } from 'src/app/store/store';
+import { ICanvasSize, INode, IStore } from 'src/app/store/store';
 
 @Component({
   selector: 'ce-bordered-area',
@@ -11,51 +11,52 @@ import { INode, IStore } from 'src/app/store/store';
   styleUrls: ['./bordered-area.component.less'],
 })
 export class BorderedAreaComponent implements OnInit, OnDestroy {
-  private canvasChangeObserver: MutationObserver;
-  private canvasChanged$ = new Subject();
   private nodes: INode<any>[];
   public borderedNodeMap = new Map<string, Partial<DOMRect & { rotate: number }>>();
   private subscription = new Subscription();
   private bordered: Set<string>;
+  private canvasSize: ICanvasSize;
   public get nodeList(): ({ id: string } & Partial<DOMRect & { rotate: number }>)[] {
     return [...this.borderedNodeMap].map(([id, { width, height, left, top }]) => ({ id, width, height, left, top }));
   }
 
-  constructor(private store: Store<IStore>, private eleRef: ElementRef<HTMLDivElement>, private utils: CeUtilsService) {}
+  constructor(private store: Store<IStore>, private utils: CeUtilsService) {}
 
   ngOnInit(): void {
-    this.canvasChangeObserver = new MutationObserver(() => this.canvasChanged$.next());
-    this.canvasChangeObserver.observe(document.querySelector('[ceZoomArea]'), { attributes: true });
     this.subscription.add(this.store.select('nodes').subscribe((nodes) => (this.nodes = nodes)));
     this.subscription.add(
       this.store
-        .select('canvasPosition')
+        .select(({ canvasSize }) => ({ canvasSize }))
         .pipe(
-          filter(() => !!this.bordered),
-          switchMap(() => this.canvasChanged$)
+          map(({ canvasSize }) => (this.canvasSize = canvasSize)),
+          filter(() => !!this.bordered)
         )
-        .subscribe(() => this.refreshBorderedList(this.bordered, false))
+        .subscribe(() => this.refreshBorderedList(this.bordered))
     );
     this.subscription.add(
       this.store
         .select('bordered')
         .pipe(
-          filter(() => !!this.nodes),
+          filter(() => !!this.nodes && !!this.canvasSize),
           map((bordered) => {
             this.bordered = bordered;
-            this.borderedNodeMap.forEach((...args) => {
-              if (!bordered.has(args[1])) {
-                this.borderedNodeMap.delete(args[1]);
-              }
-            });
+            console.log(bordered, this.bordered);
+            if (bordered.size) {
+              this.borderedNodeMap.forEach((...args) => {
+                if (!bordered.has(args[1])) {
+                  this.borderedNodeMap.delete(args[1]);
+                }
+              });
+            } else {
+              this.borderedNodeMap.clear();
+            }
           })
         )
-        .subscribe(() => this.refreshBorderedList(this.bordered, true))
+        .subscribe(() => this.refreshBorderedList(this.bordered))
     );
   }
 
   ngOnDestroy(): void {
-    this.canvasChangeObserver.disconnect();
     this.subscription.unsubscribe();
   }
 
@@ -67,20 +68,16 @@ export class BorderedAreaComponent implements OnInit, OnDestroy {
     return `${args[1].id}-${args[1].width}-${args[1].height}-${args[1].left}-${args[1].top}-${args[1].rotate}`;
   }
 
-  refreshBorderedList(bordered: Set<string>, cache: boolean): void {
-    const boxRect = this.eleRef.nativeElement.getBoundingClientRect();
+  refreshBorderedList(bordered: Set<string>): void {
     bordered.forEach((id) => {
-      if (!cache || (cache && !this.borderedNodeMap.has(id))) {
-        const dom = document.querySelector(`#box-item-${id}`);
-        const { left, width, height, top } = dom.getClientRects()[0];
-        this.borderedNodeMap.set(id, {
-          width,
-          height,
-          left: left - boxRect.left,
-          top: top - boxRect.top,
-          rotate: this.utils.getNodeById(id, this.nodes).rotate,
-        });
-      }
+      const node = this.utils.getNodeById(id, this.nodes);
+      this.borderedNodeMap.set(id, {
+        width: (node.width / this.canvasSize.width) * 100,
+        height: (node.height / this.canvasSize.height) * 100,
+        left: (node.left / this.canvasSize.width) * 100,
+        top: (node.top / this.canvasSize.height) * 100,
+        rotate: node.rotate,
+      });
     });
   }
 }

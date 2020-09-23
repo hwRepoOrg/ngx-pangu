@@ -20,7 +20,7 @@ export class ZoomAreaDirective {
   constructor(private store: Store<IStore>) {
     this.subscription.add(
       this.store.pipe(select(SizeScaleSelector)).subscribe((state) => {
-        this.scale = `scale(${state.scale})`;
+        this.scale = `perspective(1px) scale(${state.scale})`;
         this.width = state.width;
         this.height = state.height;
       })
