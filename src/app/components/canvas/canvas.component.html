@@ -5,4 +5,6 @@
   (ceOnMove)="boxMoving($event)"
   (ceOnStop)="boxMoveEnd()"
   [node]="node"
+  (pointerenter)="showBorder(node.id)"
+  (pointerleave)="removeBorder(node.id)"
 ></ce-box-item>

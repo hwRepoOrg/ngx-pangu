@@ -36,10 +36,12 @@ export interface IStore<T = any> {
   canvasBackground: ICanvasBackground;
   canvasSize: ICanvasSize;
   canvasPosition: ICanvasPosition;
+  shadowVisible: boolean;
 }
 
 export const DEFAULT_STORE: IStore<any> = {
-  nodes: new Array(1000).fill(1).map((v, index) => ({
+  shadowVisible: false,
+  nodes: new Array(500).fill(1).map((v, index) => ({
     id: `${Math.round(Math.random() * 1000000000000)}`,
     name: `test${index + 1}`,
     width: Math.round(Math.random() * 500),
@@ -48,6 +50,7 @@ export const DEFAULT_STORE: IStore<any> = {
     top: Math.round(Math.random() * 1000),
     borderWidth: 1,
     borderStyle: 'solid',
+    rotate: [0, 30, 90, 100, 180, 200, 270][Math.round(Math.random() * 7)],
   })),
   selected: new Set(),
   bordered: new Set(),

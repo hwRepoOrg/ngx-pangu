@@ -15,6 +15,8 @@ export const updateCanvasBackground = createAction('[editor] Set canvas backgrou
 
 export const clearSelectedNodes = createAction('[editor] Clear selected nodes');
 
+export const setSelectedNodes = createAction('[editor] Set selected nodes', props<{ ids: string[] }>());
+
 export const addSelectedNodes = createAction('[editor] Add selected nodes', props<{ ids: string[] }>());
 
 export const removeSelectedNodes = createAction('[editor] Remove node from selected', props<{ ids: string[] }>());
@@ -26,3 +28,5 @@ export const addBorderedNodes = createAction('[editor] Add bordered nodes', prop
 export const removeBorderedNodes = createAction('[editor] Remove node from bordered', props<{ ids: string[] }>());
 
 export const setBorderedNodes = createAction('[editor] Set bordered nodes', props<{ ids: string[] }>());
+
+export const toggleShadowVisible = createAction('[editor] Set shadow dom visible', props<{ visible: boolean }>());

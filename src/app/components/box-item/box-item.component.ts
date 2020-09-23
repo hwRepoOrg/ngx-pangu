@@ -1,4 +1,4 @@
-import { Component, Host, HostBinding, Input, OnInit } from '@angular/core';
+import { Component, HostBinding, Input, OnInit } from '@angular/core';
 import { INode } from 'src/app/store/store';
 
 @Component({
@@ -15,14 +15,19 @@ export class BoxItemComponent implements OnInit {
     return this.node?.id && `box-item-${this.node?.id}`;
   }
 
-  @HostBinding('style.left.px')
-  get left(): number {
-    return this.node.left;
+  @HostBinding('style.transform')
+  get transform(): string {
+    return `translateX(${this.node.left}px) translateY(${this.node.top}px) translateZ(0) rotate(${this.node.rotate ?? 0}deg)`;
   }
-  @HostBinding('style.top.px')
-  get top(): number {
-    return this.node.top;
-  }
+
+  // @HostBinding('style.left.px')
+  // get left(): number {
+  //   return this.node.left;
+  // }
+  // @HostBinding('style.top.px')
+  // get top(): number {
+  //   return this.node.top;
+  // }
   @HostBinding('style.width.px')
   get width(): number {
     return this.node.width;
@@ -42,10 +47,6 @@ export class BoxItemComponent implements OnInit {
   @HostBinding('style.border-width.px')
   get borderWidth(): number {
     return this.node.borderWidth;
-  }
-  @HostBinding('style.transform')
-  get transform(): string {
-    return `rotate(${this.node.rotate}deg)`;
   }
 
   constructor() {}

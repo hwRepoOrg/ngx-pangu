@@ -1,7 +1,7 @@
 import { Component, OnDestroy } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { Subscription } from 'rxjs';
-import { addSelectedNodes, clearSelectedNodes, updateNodes } from 'src/app/store/actions';
+import { addBorderedNodes, addSelectedNodes, clearSelectedNodes, removeBorderedNodes, updateNodes } from 'src/app/store/actions';
 import { ICanvasPosition, INode, IStore } from 'src/app/store/store';
 
 @Component({
@@ -71,5 +71,15 @@ export class CanvasComponent implements OnDestroy {
   boxMoveEnd(): void {
     this.pointerSnapshot = null;
     this.nodesSnapshot.clear();
+  }
+
+  showBorder(id: string): void {
+    this.store.dispatch(addBorderedNodes({ ids: [id] }));
+  }
+
+  removeBorder(id: string): void {
+    if (!this.selected.has(id)) {
+      this.store.dispatch(removeBorderedNodes({ ids: [id] }));
+    }
   }
 }

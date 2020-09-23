@@ -1,7 +1,7 @@
 import { Directive, ElementRef, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { InputBoolean } from 'ng-zorro-antd';
 import { fromEvent, Observable, Subscription } from 'rxjs';
-import { filter, finalize, map, switchMap, takeUntil } from 'rxjs/operators';
+import { filter, finalize, map, switchMap, takeUntil, throttleTime } from 'rxjs/operators';
 
 @Directive({
   selector: '[ceDraggable]',

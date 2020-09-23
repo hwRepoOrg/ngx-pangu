@@ -23,15 +23,20 @@ export class BorderedAreaComponent implements OnInit, OnDestroy {
   constructor(private store: Store<IStore>, private utils: CeUtilsService) {}
 
   ngOnInit(): void {
-    this.subscription.add(this.store.select('nodes').subscribe((nodes) => (this.nodes = nodes)));
+    this.subscription.add(
+      this.store.select('nodes').subscribe((nodes) => {
+        this.nodes = nodes;
+        this.refreshBorderedList();
+      })
+    );
     this.subscription.add(
       this.store
-        .select(({ canvasSize }) => ({ canvasSize }))
+        .select('canvasSize')
         .pipe(
-          map(({ canvasSize }) => (this.canvasSize = canvasSize)),
+          map((canvasSize) => (this.canvasSize = canvasSize)),
           filter(() => !!this.bordered)
         )
-        .subscribe(() => this.refreshBorderedList(this.bordered))
+        .subscribe(() => this.refreshBorderedList())
     );
     this.subscription.add(
       this.store
@@ -51,7 +56,7 @@ export class BorderedAreaComponent implements OnInit, OnDestroy {
             }
           })
         )
-        .subscribe(() => this.refreshBorderedList(this.bordered))
+        .subscribe(() => this.refreshBorderedList(true))
     );
   }
 
@@ -67,16 +72,21 @@ export class BorderedAreaComponent implements OnInit, OnDestroy {
     return `${args[1].id}-${args[1].width}-${args[1].height}-${args[1].left}-${args[1].top}-${args[1].rotate}`;
   }
 
-  refreshBorderedList(bordered: Set<string>): void {
-    bordered.forEach((id) => {
-      const node = this.utils.getNodeById(id, this.nodes);
-      this.borderedNodeMap.set(id, {
-        width: (node.width / this.canvasSize.width) * 100,
-        height: (node.height / this.canvasSize.height) * 100,
-        left: (node.left / this.canvasSize.width) * 100,
-        top: (node.top / this.canvasSize.height) * 100,
-        rotate: node.rotate,
-      });
+  refreshBorderedList(cache = false): void {
+    if (!this.bordered || !this.nodes) {
+      return;
+    }
+    this.bordered.forEach((id) => {
+      if (!cache || (cache && !this.borderedNodeMap.has(id))) {
+        const node = this.utils.getNodeById(id, this.nodes);
+        this.borderedNodeMap.set(id, {
+          width: (node.width / this.canvasSize.width) * 100,
+          height: (node.height / this.canvasSize.height) * 100,
+          left: (node.left / this.canvasSize.width) * 100,
+          top: (node.top / this.canvasSize.height) * 100,
+          rotate: node.rotate,
+        });
+      }
     });
   }
 }

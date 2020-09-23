@@ -1,7 +1,7 @@
 import { Directive, ElementRef, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { InputBoolean } from 'ng-zorro-antd';
 import { fromEvent, Subscription } from 'rxjs';
-import { filter, finalize, switchMap, takeUntil } from 'rxjs/operators';
+import { filter, finalize, switchMap, takeUntil, throttleTime } from 'rxjs/operators';
 
 export interface ISelectorRect {
   x: number;

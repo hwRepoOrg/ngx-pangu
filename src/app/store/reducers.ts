@@ -9,6 +9,7 @@ import {
   removeNodes,
   removeSelectedNodes,
   setBorderedNodes,
+  setSelectedNodes,
   updateCanvasBackground,
   updateCanvasPosition,
   updateCanvasSize,
@@ -45,7 +46,8 @@ export const selectedReducer = createReducer(
     addSelectedNodes,
     (state, { ids }) => new Set<string>([...state, ...ids])
   ),
-  on(removeSelectedNodes, (state, { ids }) => ids.reduce((s, id) => (s.delete(id) ? s : s), state))
+  on(removeSelectedNodes, (state, { ids }) => ids.reduce((s, id) => (s.delete(id) ? s : s), state)),
+  on(setSelectedNodes, (...args) => new Set([...args[1].ids]))
 );
 
 export const borderedReducer = createReducer(
