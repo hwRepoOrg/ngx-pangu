@@ -1,7 +1,7 @@
-import { Directive, ElementRef, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
+import { ChangeDetectorRef, Directive, ElementRef, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { InputBoolean } from 'ng-zorro-antd';
 import { fromEvent, Observable, Subscription } from 'rxjs';
-import { filter, finalize, map, switchMap, takeUntil, throttleTime } from 'rxjs/operators';
+import { filter, finalize, map, switchMap, takeUntil } from 'rxjs/operators';
 
 @Directive({
   selector: '[ceDraggable]',
@@ -31,7 +31,7 @@ export class DraggableDirective implements OnInit, OnDestroy {
   private mouseLeave$: Observable<PointerEvent>;
   private keyDown$ = fromEvent<KeyboardEvent>(document, 'keydown');
   private keyUp$ = fromEvent<KeyboardEvent>(document, 'keyup');
-  constructor(private eleRef: ElementRef<HTMLElement>) {
+  constructor(private eleRef: ElementRef<HTMLElement>, private cdr: ChangeDetectorRef) {
     this.mouseDown$ = fromEvent<PointerEvent>(this.eleRef.nativeElement, 'pointerdown');
     this.mouseEnter$ = fromEvent<PointerEvent>(this.eleRef.nativeElement, 'pointerenter');
     this.mouseLeave$ = fromEvent<PointerEvent>(this.eleRef.nativeElement, 'pointerleave');
@@ -65,6 +65,7 @@ export class DraggableDirective implements OnInit, OnDestroy {
             this.keyDown$.pipe(
               switchMap((e) => {
                 this.spaceKeyDown = e.key === ' ';
+                this.cdr.detectChanges();
                 if (this.spaceKeyDown) {
                   e.preventDefault();
                   e.stopPropagation();
