@@ -1,10 +1,11 @@
-import { Component, HostBinding, Input, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, HostBinding, Input, OnInit } from '@angular/core';
 import { INode } from 'src/app/store/store';
 
 @Component({
   selector: 'ce-box-item',
   templateUrl: './box-item.component.html',
   styleUrls: ['./box-item.component.less'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class BoxItemComponent implements OnInit {
   @Input()
@@ -20,14 +21,6 @@ export class BoxItemComponent implements OnInit {
     return `translateX(${this.node.left}px) translateY(${this.node.top}px) translateZ(0) rotate(${this.node.rotate ?? 0}deg)`;
   }
 
-  // @HostBinding('style.left.px')
-  // get left(): number {
-  //   return this.node.left;
-  // }
-  // @HostBinding('style.top.px')
-  // get top(): number {
-  //   return this.node.top;
-  // }
   @HostBinding('style.width.px')
   get width(): number {
     return this.node.width;

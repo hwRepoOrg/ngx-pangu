@@ -1,7 +1,7 @@
-import { AfterViewInit, Component, ElementRef, OnDestroy, ViewChild } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, OnDestroy, ViewChild } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { fromEvent, Subject, Subscription } from 'rxjs';
-import { filter, throttleTime } from 'rxjs/operators';
+import { fromEvent, Subscription } from 'rxjs';
+import { filter } from 'rxjs/operators';
 import { ISelectorRect } from './directives/selector.directive';
 import { clearBorderedNodes, clearSelectedNodes, setBorderedNodes, setSelectedNodes, updateCanvasPosition } from './store/actions';
 import { ICanvasPosition, INode, IStore } from './store/store';
@@ -10,9 +10,10 @@ import { ICanvasPosition, INode, IStore } from './store/store';
   selector: 'ce-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.less'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AppComponent implements AfterViewInit, OnDestroy {
-  @ViewChild('container', { read: ElementRef })
+  @ViewChild('container', { read: ElementRef, static: true })
   private containerEleRef: ElementRef<HTMLDivElement>;
   private subscription = new Subscription();
   private canvasPosition: ICanvasPosition;
@@ -24,21 +25,13 @@ export class AppComponent implements AfterViewInit, OnDestroy {
   public nodes: INode[];
   private nodesRectSnapshot: Map<string, Partial<DOMRect>> = null;
   private nodeIdList: string[] = null;
-  private selector$ = new Subject<ISelectorRect>();
-  constructor(private store: Store<IStore>) {
-    this.subscription.add(this.store.select('canvasPosition').subscribe((canvasPosition) => (this.canvasPosition = canvasPosition)));
-    this.subscription.add(this.store.select('nodes').subscribe((nodes) => (this.nodes = nodes)));
+  constructor(private store: Store<IStore>, private cdr: ChangeDetectorRef) {
     this.subscription.add(
-      this.selector$.pipe(throttleTime(33)).subscribe((rect) => {
-        this.nodeIdList = [];
-        this.nodesRectSnapshot.forEach((item, id) => {
-          if (isInBound(item, rect)) {
-            this.nodeIdList.push(id);
-          }
-        });
-        this.store.dispatch(setBorderedNodes({ ids: this.nodeIdList }));
+      this.store.select('canvasPosition').subscribe((canvasPosition) => {
+        this.canvasPosition = canvasPosition;
       })
     );
+    this.subscription.add(this.store.select('nodes').subscribe((nodes) => (this.nodes = nodes)));
   }
 
   ngAfterViewInit(): void {
@@ -90,8 +83,7 @@ export class AppComponent implements AfterViewInit, OnDestroy {
   }
 
   selectorStart(): void {
-    this.store.dispatch(clearBorderedNodes());
-    this.store.dispatch(clearSelectedNodes());
+    this.clearSelectAndBorder();
     const boxRect = this.containerEleRef.nativeElement.getBoundingClientRect();
     this.nodesRectSnapshot = new Map<string, Partial<DOMRect>>();
     this.nodes.forEach((node) => {
@@ -105,14 +97,27 @@ export class AppComponent implements AfterViewInit, OnDestroy {
 
   selectorMoving(rect: ISelectorRect): void {
     this.selectorRect = rect;
-    this.selector$.next(rect);
   }
 
   selectorEnd(): void {
-    this.store.dispatch(setSelectedNodes({ ids: [...this.nodeIdList] }));
+    if (this.selectorRect) {
+      this.nodeIdList = [];
+      this.nodesRectSnapshot.forEach((item, id) => {
+        if (isInBound(item, this.selectorRect)) {
+          this.nodeIdList.push(id);
+        }
+      });
+      this.store.dispatch(setBorderedNodes({ ids: [...this.nodeIdList] }));
+      this.store.dispatch(setSelectedNodes({ ids: [...this.nodeIdList] }));
+    }
     this.nodeIdList = [];
     this.selectorRect = null;
     this.nodesRectSnapshot = null;
+  }
+
+  private clearSelectAndBorder(): void {
+    this.store.dispatch(clearBorderedNodes());
+    this.store.dispatch(clearSelectedNodes());
   }
 }
 

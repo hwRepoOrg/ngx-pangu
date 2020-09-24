@@ -1,4 +1,4 @@
-import { Component, OnDestroy } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnDestroy } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { Subscription } from 'rxjs';
 import { addBorderedNodes, addSelectedNodes, clearSelectedNodes, removeBorderedNodes, updateNodes } from 'src/app/store/actions';
@@ -8,6 +8,7 @@ import { ICanvasPosition, INode, IStore } from 'src/app/store/store';
   selector: 'ce-canvas',
   templateUrl: './canvas.component.html',
   styleUrls: ['./canvas.component.less'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CanvasComponent implements OnDestroy {
   public nodes: INode[];
