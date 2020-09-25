@@ -1,4 +1,4 @@
-import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, OnDestroy, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, OnDestroy, ViewChild } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { fromEvent, Subscription } from 'rxjs';
 import { filter } from 'rxjs/operators';
@@ -10,7 +10,6 @@ import { ICanvasPosition, INode, IStore } from './store/store';
   selector: 'ce-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.less'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AppComponent implements AfterViewInit, OnDestroy {
   @ViewChild('container', { read: ElementRef, static: true })
@@ -23,7 +22,7 @@ export class AppComponent implements AfterViewInit, OnDestroy {
   public nodes: INode[];
   private nodesRectSnapshot: Map<string, Partial<DOMRect>> = null;
   private nodeIdList: string[] = null;
-  constructor(private store: Store<IStore>, private cdr: ChangeDetectorRef) {
+  constructor(private store: Store<IStore>) {
     this.subscription.add(
       this.store.select('canvasPosition').subscribe((canvasPosition) => {
         this.canvasPosition = canvasPosition;

@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { Subscription } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
@@ -9,7 +9,6 @@ import { ICanvasSize, INode, IStore } from 'src/app/store/store';
   selector: 'ce-bordered-area',
   templateUrl: './bordered-area.component.html',
   styleUrls: ['./bordered-area.component.less'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class BorderedAreaComponent implements OnInit, OnDestroy {
   private nodes: INode<any>[];
@@ -21,7 +20,7 @@ export class BorderedAreaComponent implements OnInit, OnDestroy {
     return [...this.borderedNodeMap].map(([id, { width, height, left, top, rotate }]) => ({ id, width, height, left, top, rotate }));
   }
 
-  constructor(private store: Store<IStore>, private utils: CeUtilsService, private cdr: ChangeDetectorRef) {}
+  constructor(private store: Store<IStore>, private utils: CeUtilsService) {}
 
   ngOnInit(): void {
     this.subscription.add(
@@ -89,6 +88,5 @@ export class BorderedAreaComponent implements OnInit, OnDestroy {
         });
       }
     });
-    this.cdr.detectChanges();
   }
 }

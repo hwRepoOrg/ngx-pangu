@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { Observable, Subscription } from 'rxjs';
 import { addBorderedNodes, removeBorderedNodes } from 'src/app/store/actions';
@@ -8,7 +8,6 @@ import { INode, IStore } from 'src/app/store/store';
   selector: 'ce-layer-tree',
   templateUrl: './layer-tree.component.html',
   styleUrls: ['./layer-tree.component.less'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LayerTreeComponent implements OnInit, OnDestroy {
   public openedKeys = new Set<string>();

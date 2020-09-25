@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, HostBinding, OnDestroy } from '@angular/core';
+import { Component, HostBinding, OnDestroy } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { Subscription } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
@@ -9,7 +9,6 @@ import { ICanvasPosition, ICanvasSize, INode, IStore } from 'src/app/store/store
   selector: 'ce-resize-handle',
   templateUrl: './resize-handle.component.html',
   styleUrls: ['./resize-handle.component.less'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ResizeHandleComponent implements OnDestroy {
   @HostBinding('style.display')

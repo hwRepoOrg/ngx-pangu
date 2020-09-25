@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, HostBinding, OnDestroy } from '@angular/core';
+import { Component, HostBinding, OnDestroy } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 import { Store } from '@ngrx/store';
 import { Subscription } from 'rxjs';
@@ -8,7 +8,6 @@ import { IStore } from 'src/app/store/store';
   selector: 'ce-canvas-background',
   templateUrl: './canvas-background.component.html',
   styleUrls: ['./canvas-background.component.less'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CanvasBackgroundComponent implements OnDestroy {
   @HostBinding('style.background-color')

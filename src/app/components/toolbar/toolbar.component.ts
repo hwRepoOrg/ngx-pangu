@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, OnDestroy } from '@angular/core';
+import { Component, OnDestroy } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { Observable, Subscription } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -9,7 +9,6 @@ import { IStore } from 'src/app/store/store';
   selector: 'ce-toolbar',
   templateUrl: './toolbar.component.html',
   styleUrls: ['./toolbar.component.less'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ToolbarComponent implements OnDestroy {
   public selected$: Observable<Set<string>>;

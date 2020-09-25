@@ -1,11 +1,10 @@
-import { ChangeDetectionStrategy, Component, HostBinding, Input, OnInit } from '@angular/core';
+import { Component, HostBinding, Input, OnInit } from '@angular/core';
 import { INode } from 'src/app/store/store';
 
 @Component({
   selector: 'ce-box-item',
   templateUrl: './box-item.component.html',
   styleUrls: ['./box-item.component.less'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class BoxItemComponent implements OnInit {
   @Input()

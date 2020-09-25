@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, OnDestroy } from '@angular/core';
+import { Component, OnDestroy } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { Subscription } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -8,7 +8,6 @@ import { IStore } from 'src/app/store/store';
   selector: 'ce-canvas-grid',
   templateUrl: './canvas-grid.component.html',
   styleUrls: ['./canvas-grid.component.less'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CanvasGridComponent implements OnDestroy {
   public scale: number;
