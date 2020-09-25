@@ -18,9 +18,7 @@ export class AppComponent implements AfterViewInit, OnDestroy {
   private subscription = new Subscription();
   private canvasPosition: ICanvasPosition;
   public startPoints: number[] = [];
-  public get matrix(): string {
-    return `translate3d(${this.canvasPosition.left}px,${this.canvasPosition.top}px,0)`;
-  }
+  public matrix: string;
   public selectorRect: ISelectorRect = null;
   public nodes: INode[];
   private nodesRectSnapshot: Map<string, Partial<DOMRect>> = null;
@@ -29,6 +27,7 @@ export class AppComponent implements AfterViewInit, OnDestroy {
     this.subscription.add(
       this.store.select('canvasPosition').subscribe((canvasPosition) => {
         this.canvasPosition = canvasPosition;
+        this.matrix = `translate3d(${this.canvasPosition.left}px,${this.canvasPosition.top}px,0)`;
       })
     );
     this.subscription.add(this.store.select('nodes').subscribe((nodes) => (this.nodes = nodes)));
@@ -97,19 +96,17 @@ export class AppComponent implements AfterViewInit, OnDestroy {
 
   selectorMoving(rect: ISelectorRect): void {
     this.selectorRect = rect;
+    this.nodeIdList = [];
+    this.nodesRectSnapshot.forEach((item, id) => {
+      if (isInBound(item, this.selectorRect)) {
+        this.nodeIdList.push(id);
+      }
+    });
+    this.store.dispatch(setBorderedNodes({ ids: [...this.nodeIdList] }));
+    this.store.dispatch(setSelectedNodes({ ids: [...this.nodeIdList] }));
   }
 
   selectorEnd(): void {
-    if (this.selectorRect) {
-      this.nodeIdList = [];
-      this.nodesRectSnapshot.forEach((item, id) => {
-        if (isInBound(item, this.selectorRect)) {
-          this.nodeIdList.push(id);
-        }
-      });
-      this.store.dispatch(setBorderedNodes({ ids: [...this.nodeIdList] }));
-      this.store.dispatch(setSelectedNodes({ ids: [...this.nodeIdList] }));
-    }
     this.nodeIdList = [];
     this.selectorRect = null;
     this.nodesRectSnapshot = null;
