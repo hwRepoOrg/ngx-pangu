@@ -3,7 +3,7 @@
 </ul>
 
 <ng-template #nodeList let-list let-dept="dept">
-  <ng-container *ngFor="let node of list">
+  <ng-container *ngFor="let node of list; trackBy: layerTrackByFn">
     <ng-container *ngIf="node.children?.length">
       <li (pointerenter)="showBordered(node)" (pointerleave)="clearBordered(node.id)">
         <div class="title has-child" [style.padding-left.px]="dept * 20">

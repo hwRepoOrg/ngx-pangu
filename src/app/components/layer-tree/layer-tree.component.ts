@@ -40,4 +40,8 @@ export class LayerTreeComponent implements OnInit, OnDestroy {
   showBordered(node: INode): void {
     this.store.dispatch(addBorderedNodes({ ids: [node.id] }));
   }
+
+  layerTrackByFn(index: number, node: INode): string {
+    return `box-item-${node.id}-${node.zIndex}`;
+  }
 }
