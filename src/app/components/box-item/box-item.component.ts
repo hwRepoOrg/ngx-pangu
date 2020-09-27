@@ -41,6 +41,11 @@ export class BoxItemComponent implements OnInit {
     return this.node.borderWidth;
   }
 
+  @HostBinding('style.z-index')
+  get zIndex(): number {
+    return this.node.zIndex;
+  }
+
   constructor() {}
 
   ngOnInit(): void {}

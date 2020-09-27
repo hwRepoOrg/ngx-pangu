@@ -9,6 +9,7 @@ export interface INode<T = any> {
   left: number;
   top: number;
   rotate: number;
+  zIndex: number;
   borderStyle?: string;
   borderWidth?: number;
   borderColor?: string;
@@ -49,6 +50,7 @@ export const DEFAULT_STORE: IStore<any> = {
     height: Math.round(Math.random() * 400 + 10),
     left: Math.round(Math.random() * 1000) + 100,
     top: Math.round(Math.random() * 1000) + 100,
+    zIndex: index + 1,
     borderWidth: 1,
     borderStyle: 'solid',
     rotate: [0, 30, 90, 100, 180, 200, 270][Math.round(Math.random() * 7)],
