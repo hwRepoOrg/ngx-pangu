@@ -1,5 +1,5 @@
 <ul class="layer-list">
-  <ng-container *ngTemplateOutlet="nodeList; context: { $implicit: nodes$ | async, dept: 1 }"></ng-container>
+  <ng-container *ngTemplateOutlet="nodeList; context: { $implicit: nodes, dept: 1 }"></ng-container>
 </ul>
 
 <ng-template #nodeList let-list let-dept="dept">

@@ -1,6 +1,8 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { Observable, Subscription } from 'rxjs';
+import { Subscription } from 'rxjs';
+import { map } from 'rxjs/operators';
+import { CeUtilsService } from 'src/app/services/utils.service';
 import { addBorderedNodes, removeBorderedNodes } from 'src/app/store/actions';
 import { INode, IStore } from 'src/app/store/store';
 
@@ -11,11 +13,16 @@ import { INode, IStore } from 'src/app/store/store';
 })
 export class LayerTreeComponent implements OnInit, OnDestroy {
   public openedKeys = new Set<string>();
-  public nodes$: Observable<INode[]>;
+  public nodes: INode[];
   public selected: Set<string>;
   private subscription = new Subscription();
-  constructor(private store: Store<IStore>) {
-    this.nodes$ = this.store.select('nodes');
+  constructor(private store: Store<IStore>, private utils: CeUtilsService) {
+    this.subscription.add(
+      this.store
+        .select('nodes')
+        .pipe(map((nodes) => this.utils.sortNodeListByIndex(nodes)))
+        .subscribe((nodes) => (this.nodes = nodes))
+    );
     this.subscription.add(this.store.select('selected').subscribe((selected) => (this.selected = selected)));
   }
 

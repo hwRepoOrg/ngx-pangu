@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import * as _ from 'lodash';
 import { evaluate } from 'mathjs';
 import { INode } from '../store/store';
 
@@ -102,5 +103,15 @@ export class CeUtilsService {
     const t = Math.min(tl[1], tr[1], bl[1], br[1]);
     const b = Math.max(tl[1], tr[1], bl[1], br[1]);
     return { left: l, top: t, width: r - l, height: b - t };
+  }
+
+  sortNodeListByIndex(list?: INode[]): INode[] {
+    return (
+      list &&
+      _.chain(list)
+        .sortBy((item) => item.zIndex)
+        .map((item) => ({ ...item, children: this.sortNodeListByIndex(item.children) }))
+        .value()
+    );
   }
 }
