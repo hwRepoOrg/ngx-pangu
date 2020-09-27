@@ -165,7 +165,7 @@ function getRotate(cx: number, cy: number, sx: number, sy: number, ex: number, e
   );
   const y = getLineYAxisByXAxis(ex, cx, cy, sx, sy);
 
-  return ey > y ? (originalRotate > 180 ? -rotate : rotate) : originalRotate > 180 ? rotate : -rotate;
+  return ey >= y ? (originalRotate > 180 ? -rotate : rotate) : originalRotate > 180 ? rotate : -rotate;
 }
 
 function getLineYAxisByXAxis(x: number, cx: number, cy: number, sx: number, sy: number): number {
