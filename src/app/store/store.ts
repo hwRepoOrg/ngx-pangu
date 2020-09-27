@@ -1,13 +1,14 @@
 export interface INode<T = any> {
   id: string;
   name: string;
+  locked?: boolean;
   data?: T;
   children?: INode[];
   width: number;
   height: number;
   left: number;
   top: number;
-  rotate?: number;
+  rotate: number;
   borderStyle?: string;
   borderWidth?: number;
   borderColor?: string;
@@ -41,11 +42,11 @@ export interface IStore<T = any> {
 
 export const DEFAULT_STORE: IStore<any> = {
   shadowVisible: false,
-  nodes: new Array(1500).fill(1).map((v, index) => ({
+  nodes: new Array(10).fill(1).map((v, index) => ({
     id: `${Math.round(Math.random() * 1000000000000)}`,
     name: `test${index + 1}`,
-    width: Math.round(Math.random() * 500),
-    height: Math.round(Math.random() * 400),
+    width: Math.round(Math.random() * 500 + 10),
+    height: Math.round(Math.random() * 400 + 10),
     left: Math.round(Math.random() * 1000) + 100,
     top: Math.round(Math.random() * 1000) + 100,
     borderWidth: 1,

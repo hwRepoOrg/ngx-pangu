@@ -84,13 +84,15 @@ export class AppComponent implements AfterViewInit, OnDestroy {
     this.clearSelectAndBorder();
     const boxRect = this.containerEleRef.nativeElement.getBoundingClientRect();
     this.nodesRectSnapshot = new Map<string, Partial<DOMRect>>();
-    this.nodes.forEach((node) => {
-      const rect = document.querySelector(`#box-item-${node.id}`)?.getBoundingClientRect();
-      if (rect) {
-        const { width, height, left, top } = rect;
-        this.nodesRectSnapshot.set(node.id, { width, height, left: left - boxRect.left, top: top - boxRect.top });
-      }
-    });
+    this.nodes
+      .filter((node) => !node.locked)
+      .forEach((node) => {
+        const rect = document.querySelector(`#box-item-${node.id}`)?.getBoundingClientRect();
+        if (rect) {
+          const { width, height, left, top } = rect;
+          this.nodesRectSnapshot.set(node.id, { width, height, left: left - boxRect.left, top: top - boxRect.top });
+        }
+      });
   }
 
   selectorMoving(rect: ISelectorRect): void {
