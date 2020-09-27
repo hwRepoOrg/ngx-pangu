@@ -14,6 +14,11 @@ export interface INode<T = any> {
   borderWidth?: number;
   borderColor?: string;
   borderRadius?: number;
+  backgroundColor?: string;
+  backgroundImage?: string;
+  backgroundRepeat?: string;
+  backgroundPosition?: string;
+  backgroundSize?: string;
 }
 
 export interface ICanvasBackground {

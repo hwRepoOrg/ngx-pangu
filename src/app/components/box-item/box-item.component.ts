@@ -1,4 +1,5 @@
 import { Component, HostBinding, Input, OnInit } from '@angular/core';
+import { SafeStyle } from '@angular/platform-browser';
 import { INode } from 'src/app/store/store';
 
 @Component({
@@ -44,6 +45,15 @@ export class BoxItemComponent implements OnInit {
   @HostBinding('style.z-index')
   get zIndex(): number {
     return this.node.zIndex;
+  }
+
+  @HostBinding('style.background')
+  get background(): SafeStyle {
+    return `${this.node.backgroundRepeat ?? ''} ${this.node.backgroundPosition ?? ''} url(${this.node.backgroundImage ?? ''}) ${
+      this.node.backgroundColor ?? ''
+    }`
+      .trim()
+      .replace(/^url\(\)$/, '');
   }
 
   constructor() {}
