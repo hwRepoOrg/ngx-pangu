@@ -1,7 +1,7 @@
 import { Component, OnDestroy } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { Subscription } from 'rxjs';
-import { addBorderedNodes, addSelectedNodes, clearSelectedNodes, removeBorderedNodes, updateNodes } from 'src/app/store/actions';
+import { addBorderedNodes, addSelectedNodes, clearBorderedNodes, clearSelectedNodes, removeBorderedNodes, updateNodes } from 'src/app/store/actions';
 import { ICanvasPosition, INode, IStore } from 'src/app/store/store';
 
 @Component({
@@ -42,6 +42,7 @@ export class CanvasComponent implements OnDestroy {
         this.nodesSnapshot.set(item.id, { ...item });
       });
     } else {
+      this.store.dispatch(clearBorderedNodes());
       this.store.dispatch(clearSelectedNodes());
       this.store.dispatch(addSelectedNodes({ ids: [node.id] }));
       this.nodesSnapshot.set(node.id, { ...node });
