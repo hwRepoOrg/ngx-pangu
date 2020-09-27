@@ -35,6 +35,7 @@ export class SelectorDirective implements OnInit, OnDestroy {
     this.subscription.add(
       fromEvent<PointerEvent>(this.eleRef.nativeElement, 'pointerdown')
         .pipe(
+          filter((e) => e.button === 0),
           filter(() => !this.ceSelectorDisabled),
           switchMap((ev) => {
             this.boxRect = this.eleRef.nativeElement.getBoundingClientRect();

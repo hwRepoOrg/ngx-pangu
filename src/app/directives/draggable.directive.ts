@@ -32,7 +32,7 @@ export class DraggableDirective implements OnInit, OnDestroy {
   private keyDown$ = fromEvent<KeyboardEvent>(document, 'keydown');
   private keyUp$ = fromEvent<KeyboardEvent>(document, 'keyup');
   constructor(private eleRef: ElementRef<HTMLElement>, private cdr: ChangeDetectorRef) {
-    this.mouseDown$ = fromEvent<PointerEvent>(this.eleRef.nativeElement, 'pointerdown');
+    this.mouseDown$ = fromEvent<PointerEvent>(this.eleRef.nativeElement, 'pointerdown').pipe(filter((e) => e.button === 0));
     this.mouseEnter$ = fromEvent<PointerEvent>(this.eleRef.nativeElement, 'pointerenter');
     this.mouseLeave$ = fromEvent<PointerEvent>(this.eleRef.nativeElement, 'pointerleave');
   }
