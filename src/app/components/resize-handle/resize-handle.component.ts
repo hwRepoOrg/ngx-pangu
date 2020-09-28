@@ -123,8 +123,8 @@ export class ResizeHandleComponent implements OnDestroy {
     this.rotateSnapshot = [
       rect.left + rect.width / 2,
       rect.top + rect.height / 2,
-      event.clientX,
-      event.clientY,
+      rect.left + rect.width / 2,
+      rect.top + rect.height / 2 - 100,
       this.utils.getNodeById([...this.selected][0], this.nodes),
     ];
   }
@@ -134,13 +134,10 @@ export class ResizeHandleComponent implements OnDestroy {
       const [cx, cy, sx, sy, node] = this.rotateSnapshot;
       const ex = event.clientX;
       const ey = event.clientY;
-      const moveRotate = getRotate(cx, cy, sx, sy, ex, ey, node.rotate ?? 0);
-      const patchedRotate = (node.rotate ?? 0) + Math.round(moveRotate);
-      const relativeRotate = patchedRotate >= 360 ? patchedRotate % 360 : patchedRotate;
-      const absoluteRotate = relativeRotate < 0 ? 360 + relativeRotate : relativeRotate;
+      const rotate = Math.round(getRotate(cx, cy, sx, sy, ex, ey));
       this.store.dispatch(
         updateNodes({
-          nodes: [{ ...node, rotate: absoluteRotate }],
+          nodes: [{ ...node, rotate: rotate === 360 ? 0 : rotate }],
         })
       );
     }
@@ -151,9 +148,9 @@ export class ResizeHandleComponent implements OnDestroy {
   }
 }
 
-function getRotate(cx: number, cy: number, sx: number, sy: number, ex: number, ey: number, originalRotate: number): number {
+function getRotate(cx: number, cy: number, sx: number, sy: number, ex: number, ey: number): number {
   const rotate = evaluate(
-    `acos(((cx-sx)^2+(cy-sy)^2+(cx-ex)^2+(cy-ey)^2 - (sx-ex)^2-(sy-ey)^2)/(2*sqrt((cx-sx)^2+(cy-sy)^2)*sqrt((cx-ex)^2+(cy-ey)^2)))*180/PI`,
+    `acos(((cy-sy)^2+(cx-sx)^2+(cx-ex)^2+(cy-ey)^2 - ((ex-sx)^2+(ey-sy)^2))/(2*sqrt((cy-sy)^2+(cx-sx)^2)*sqrt((cx-ex)^2+(cy-ey)^2)))*180/PI`,
     {
       cx,
       cy,
@@ -163,11 +160,13 @@ function getRotate(cx: number, cy: number, sx: number, sy: number, ex: number, e
       sy,
     }
   );
-  const y = getLineYAxisByXAxis(ex, cx, cy, sx, sy);
-
-  return ey >= y ? (originalRotate > 180 ? -rotate : rotate) : originalRotate > 180 ? rotate : -rotate;
-}
-
-function getLineYAxisByXAxis(x: number, cx: number, cy: number, sx: number, sy: number): number {
-  return evaluate(`(x - cx)*(sy-cy)/(sx-cx)+cy`, { x, cx, cy, sx, sy });
+  if (ex === sx) {
+    return 180;
+  }
+  if (ex > sx) {
+    return rotate;
+  }
+  if (ex < sx) {
+    return 360 - rotate;
+  }
 }
