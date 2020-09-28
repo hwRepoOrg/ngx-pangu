@@ -148,6 +148,10 @@ export class ResizeHandleComponent implements OnDestroy {
   }
 }
 
+/**
+ * 通过矩形中心店坐标C(cx,cy)中心点和Y轴平行线在中心点上方的一点S(sx,sy),旋转落点E(ex,ey)
+ * 利用三角形余弦定理，求出∠SCE的角度，再通过ex和sx的大小判断旋转的角度为内角还是外角
+ */
 function getRotate(cx: number, cy: number, sx: number, sy: number, ex: number, ey: number): number {
   const rotate = evaluate(
     `acos(((cy-sy)^2+(cx-sx)^2+(cx-ex)^2+(cy-ey)^2 - ((ex-sx)^2+(ey-sy)^2))/(2*sqrt((cy-sy)^2+(cx-sx)^2)*sqrt((cx-ex)^2+(cy-ey)^2)))*180/PI`,
