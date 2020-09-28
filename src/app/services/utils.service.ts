@@ -115,7 +115,10 @@ export class CeUtilsService {
     );
   }
 
-  public getCrossPoint(PA: [number, number], PB: [number, number], PD: [number, number]): [number, number] {
+  /**
+   * 通过直线的斜率方程和直线上两点A，B以及直线外一点D，求出D点上直线AB的垂线DC和直线AB的交点C的坐标
+   */
+  public getVerticalLineCrossPoint(PA: [number, number], PB: [number, number], PD: [number, number]): [number, number] {
     const [PAx, PAy] = PA;
     const [PBx, PBy] = PB;
     const [PDx, PDy] = PD;
