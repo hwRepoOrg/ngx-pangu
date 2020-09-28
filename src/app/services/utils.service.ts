@@ -105,7 +105,7 @@ export class CeUtilsService {
     return { left: l, top: t, width: r - l, height: b - t };
   }
 
-  sortNodeListByIndex(list?: INode[]): INode[] {
+  public sortNodeListByIndex(list?: INode[]): INode[] {
     return (
       list &&
       _.chain(list)
@@ -113,5 +113,28 @@ export class CeUtilsService {
         .map((item) => ({ ...item, children: this.sortNodeListByIndex(item.children) }))
         .value()
     );
+  }
+
+  public getCrossPoint(PA: [number, number], PB: [number, number], PD: [number, number]): [number, number] {
+    const [PAx, PAy] = PA;
+    const [PBx, PBy] = PB;
+    const [PDx, PDy] = PD;
+    const L1k = (PAx - PBy) / (PAx - PBx);
+    const L2k = -1 / L1k;
+    const a = PAy - L1k * PAx;
+    const b = PDy - L2k * PDx;
+    const x = (b - a) / (L1k - L2k);
+    const y = L1k * x + a;
+    return [x, y];
+  }
+}
+
+export function getPointInLine(x: number | null, y: number | null, line: [[number, number], [number, number]]): number {
+  const [[x1, y1], [x2, y2]] = line;
+  if (x) {
+    return evaluate(`(x-x1)*(y2-y1)/(x2-x1)+y1`, { x1, y1, x2, y2, x });
+  }
+  if (y) {
+    return evaluate(`(y-y1)*(x2-x1)/(y2-y1)+x1`, { x1, y1, x2, y2, y });
   }
 }
