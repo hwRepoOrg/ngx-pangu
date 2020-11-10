@@ -174,7 +174,8 @@ export class CeUtilsService {
   }
 
   /**
-   * 通过元素在所在坐标系内四个顶点的坐标，使用直线的两点方程求出两两对点所在直线的交点（矩形的中心点），使用勾股定理求出元素宽高，转换后得到元素在所在坐标系的宽、高、x轴坐标和y轴坐标
+   * 通过元素在所在坐标系内四个顶点的坐标，使用直线的两点方程求出两两对点所在直线的交点（矩形的中心点），
+   * 使用勾股定理求出元素宽高，转换后得到元素在所在坐标系的宽、高、x轴坐标和y轴坐标
    * width = sqrt((trx - tlx)^2 + (try - tly)^2)
    * height = sqrt((blx - tlx)^2 + (bly - tly)^2)
    * a1*x + b1*y + c1 = 0
@@ -219,5 +220,34 @@ export class CeUtilsService {
       bl: [(item.bl[0] - group.left) / group.width, (item.bl[1] - group.top) / group.height],
       br: [(item.br[0] - group.left) / group.width, (item.br[1] - group.top) / group.height],
     };
+  }
+
+  /**
+   * 通过矩形中心点坐标C(cx,cy)中心点和Y轴平行线在中心点上方的一点S(sx,sy),旋转落点E(ex,ey),利用三角形余弦定理，
+   * 求出∠SCE的角度，再通过ex和sx的大小判断旋转的角度为内角还是外角
+   * @param cx 中心点x坐标
+   * @param cy 中心点y坐标
+   * @param sx 与中心点相同的x坐标
+   * @param sy 与中心点同x坐标的上方一点的y坐标
+   * @param ex 旋转终点x坐标
+   * @param ey x旋转终点y坐标
+   */
+  public getRotate(cx: number, cy: number, sx: number, sy: number, ex: number, ey: number): number {
+    const rotate =
+      (Math.acos(
+        ((cy - sy) ** 2 + (cx - sx) ** 2 + (cx - ex) ** 2 + (cy - ey) ** 2 - ((ex - sx) ** 2 + (ey - sy) ** 2)) /
+          (2 * Math.sqrt((cy - sy) ** 2 + (cx - sx) ** 2) * Math.sqrt((cx - ex) ** 2 + (cy - ey) ** 2))
+      ) *
+        180) /
+      Math.PI;
+    if (ex === sx) {
+      return 180;
+    }
+    if (ex > sx) {
+      return rotate;
+    }
+    if (ex < sx) {
+      return 360 - rotate;
+    }
   }
 }
