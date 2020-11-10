@@ -10,6 +10,13 @@ interface IAbsolutePosition {
   br: IPosition;
 }
 
+interface IDOMRect {
+  width: number;
+  height: number;
+  left: number;
+  top: number;
+}
+
 const SPECIAL_ROTATE = new Set([0, 90, 180, 270, 360]);
 
 @Injectable({ providedIn: 'root' })
@@ -167,9 +174,7 @@ export class CeUtilsService {
   }
 
   /**
-   * 通过元素在所在坐标系内四个顶点的坐标，使用直线的两点方程求出两两对点所
-   * 在直线的交点（矩形的中心点），使用勾股定理求出元素宽高，转换后得到元素
-   * 在所在坐标系的宽、高、x轴坐标和y轴坐标
+   * 通过元素在所在坐标系内四个顶点的坐标，使用直线的两点方程求出两两对点所在直线的交点（矩形的中心点），使用勾股定理求出元素宽高，转换后得到元素在所在坐标系的宽、高、x轴坐标和y轴坐标
    * width = sqrt((trx - tlx)^2 + (try - tly)^2)
    * height = sqrt((blx - tlx)^2 + (bly - tly)^2)
    * a1*x + b1*y + c1 = 0
@@ -199,6 +204,20 @@ export class CeUtilsService {
       height: +height.toFixed(7),
       left: +(cx - width / 2).toFixed(7),
       top: +(cy - height / 2).toFixed(7),
+    };
+  }
+
+  /**
+   * 获取元素的四个顶点在外包围盒的矩形内的坐标的百分比
+   * @param group 元素外包围盒
+   * @param item 元素的四个顶点坐标
+   */
+  public getItemPercentInGroup(group: IDOMRect, item: IAbsolutePosition): IAbsolutePosition {
+    return {
+      tl: [(item.tl[0] - group.left) / group.width, (item.tl[1] - group.top) / group.height],
+      tr: [(item.tr[0] - group.left) / group.width, (item.tr[1] - group.top) / group.height],
+      bl: [(item.bl[0] - group.left) / group.width, (item.bl[1] - group.top) / group.height],
+      br: [(item.br[0] - group.left) / group.width, (item.br[1] - group.top) / group.height],
     };
   }
 }
