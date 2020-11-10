@@ -1,7 +1,5 @@
 import { Injectable } from '@angular/core';
 import * as _ from 'lodash';
-import { evaluate } from 'mathjs';
-import * as mathjs from 'mathjs';
 import { INode } from '../store/store';
 
 type IPosition = [number, number];
@@ -64,22 +62,16 @@ export class CeUtilsService {
     if (SPECIAL_ROTATE.has(rotate)) {
       return this.getAbsolutePositionSpecial(cx, cy, width, height, rotate);
     } else {
-      const r = evaluate(`sqrt((${width} / 2) ^ 2 + (${height} / 2) ^ 2)`);
-      const patchRad1 = evaluate(`atan((${height}/2) / (${width}/2))`);
-      const patchRad2 = evaluate(`atan((${width}/2) / (${height}/2))`);
-      const currentRad = evaluate(`${rotate}*PI/180`);
-      const scope = { cx, cy, r, patchRad1, patchRad2, currentRad };
+      const r = Math.sqrt(Math.pow(width / 2, 2) + Math.pow(height / 2, 2));
+      const patchRad1 = Math.atan(height / 2 / (width / 2));
+      const patchRad2 = Math.atan(width / 2 / (height / 2));
+      const currentRad = (rotate * Math.PI) / 180;
+
       return {
-        tl: [evaluate(`cx - cos(currentRad + patchRad1) * r`, scope), evaluate(`cy - sin(currentRad + patchRad1) * r`, scope)],
-        tr: [
-          evaluate(`cx - cos(currentRad + patchRad1 + patchRad2 * 2) * r`, scope),
-          evaluate(`cy - sin(currentRad + patchRad1 + patchRad2 * 2) * r`, scope),
-        ],
-        bl: [evaluate(`cx - cos(currentRad - patchRad1) * r`, scope), evaluate(`cy - sin(currentRad - patchRad1) * r`, scope)],
-        br: [
-          evaluate(`cx - cos(currentRad - patchRad1 - patchRad2 * 2) * r`, scope),
-          evaluate(`cy - sin(currentRad - patchRad1 - patchRad2 * 2) * r`, scope),
-        ],
+        tl: [cx - Math.cos(currentRad + patchRad1) * r, cy - Math.sin(currentRad + patchRad1) * r],
+        tr: [cx - Math.cos(currentRad + patchRad1 + patchRad2 * 2) * r, cy - Math.sin(currentRad + patchRad1 + patchRad2 * 2) * r],
+        bl: [cx - Math.cos(currentRad - patchRad1) * r, cy - Math.sin(currentRad - patchRad1) * r],
+        br: [cx - Math.cos(currentRad - patchRad1 - patchRad2 * 2) * r, cy - Math.sin(currentRad - patchRad1 - patchRad2 * 2) * r],
       };
     }
   }
