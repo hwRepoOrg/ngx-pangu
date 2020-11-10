@@ -69,7 +69,7 @@ export class CeUtilsService {
     if (SPECIAL_ROTATE.has(rotate)) {
       return this.getAbsolutePositionSpecial(cx, cy, width, height, rotate);
     } else {
-      const r = Math.sqrt(Math.pow(width / 2, 2) + Math.pow(height / 2, 2));
+      const r = Math.sqrt((width / 2) ** 2 + (height / 2) ** 2);
       const patchRad1 = Math.atan(height / 2 / (width / 2));
       const patchRad2 = Math.atan(width / 2 / (height / 2));
       const currentRad = (rotate * Math.PI) / 180;
@@ -186,9 +186,9 @@ export class CeUtilsService {
    */
   public getRelativePosition(position: IAbsolutePosition): Partial<DOMRect> {
     const { tl, bl, br, tr } = position;
-    const width: number = Math.sqrt(Math.pow(tr[0] - tl[0], 2) + Math.pow(tr[1] - tl[1], 2));
+    const width: number = Math.sqrt((tr[0] - tl[0]) ** 2 + (tr[1] - tl[1]) ** 2);
 
-    const height: number = Math.sqrt(Math.pow(bl[0] - tl[0], 2) + Math.pow(bl[1] - tl[1], 2));
+    const height: number = Math.sqrt((bl[0] - tl[0]) ** 2 + (bl[1] - tl[1]) ** 2);
 
     const a1 = br[1] - tl[1];
     const b1 = tl[0] - br[0];

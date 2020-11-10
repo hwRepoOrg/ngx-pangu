@@ -1,6 +1,5 @@
 import { Component, ElementRef, HostBinding, OnDestroy } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { evaluate } from 'mathjs';
 import { Subscription } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
 import { CeUtilsService } from 'src/app/services/utils.service';
@@ -149,21 +148,22 @@ export class ResizeHandleComponent implements OnDestroy {
 }
 
 /**
- * 通过矩形中心店坐标C(cx,cy)中心点和Y轴平行线在中心点上方的一点S(sx,sy),旋转落点E(ex,ey)
- * 利用三角形余弦定理，求出∠SCE的角度，再通过ex和sx的大小判断旋转的角度为内角还是外角
+ * 通过矩形中心店坐标C(cx,cy)中心点和Y轴平行线在中心点上方的一点S(sx,sy),旋转落点E(ex,ey),利用三角形余弦定理，求出∠SCE的角度，再通过ex和sx的大小判断旋转的角度为内角还是外角
+ * @param cx 中心点x坐标
+ * @param cy 中心点y坐标
+ * @param sx 旋转起点x坐标
+ * @param sy 旋转起点y坐标
+ * @param ex 旋转终点x坐标
+ * @param ey x旋转终点y坐标
  */
 function getRotate(cx: number, cy: number, sx: number, sy: number, ex: number, ey: number): number {
-  const rotate = evaluate(
-    `acos(((cy-sy)^2+(cx-sx)^2+(cx-ex)^2+(cy-ey)^2 - ((ex-sx)^2+(ey-sy)^2))/(2*sqrt((cy-sy)^2+(cx-sx)^2)*sqrt((cx-ex)^2+(cy-ey)^2)))*180/PI`,
-    {
-      cx,
-      cy,
-      ex,
-      ey,
-      sx,
-      sy,
-    }
-  );
+  const rotate =
+    (Math.acos(
+      ((cy - sy) ** 2 + (cx - sx) ** 2 + (cx - ex) ** 2 + (cy - ey) ** 2 - ((ex - sx) ** 2 + (ey - sy) ** 2)) /
+        (2 * Math.sqrt((cy - sy) ** 2 + (cx - sx) ** 2) * Math.sqrt((cx - ex) ** 2 + (cy - ey) ** 2))
+    ) *
+      180) /
+    Math.PI;
   if (ex === sx) {
     return 180;
   }

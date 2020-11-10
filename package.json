@@ -22,7 +22,6 @@
     "@ant-design/icons-angular": "^9.0.1",
     "@ngrx/store": "^10.0.0",
     "lodash": "^4.17.20",
-    "mathjs": "^7.2.0",
     "ng-zorro-antd": "^9.3.0",
     "rxjs": "~6.6.0",
     "tslib": "^2.0.0",
