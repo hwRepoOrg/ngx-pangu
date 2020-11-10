@@ -250,4 +250,14 @@ export class CeUtilsService {
       return 360 - rotate;
     }
   }
+
+  /**
+   * 通过向量四边形法则求出向量ab、向量ac的对角线ad的d点坐标, ab + ac = ad
+   * @param ab 向量ab
+   * @param ac 向量ac
+   * @param a a点坐标
+   */
+  public getPointByVectorSum(ab: [number, number], ac: [number, number], a: [number, number]): [number, number] {
+    return [ab[0] + ac[0] + a[0], ab[1] + ac[1] + a[1]];
+  }
 }
