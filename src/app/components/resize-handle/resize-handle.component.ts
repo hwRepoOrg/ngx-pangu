@@ -3,7 +3,6 @@ import { Store } from '@ngrx/store';
 import { Subscription } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
 import { CeUtilsService } from 'src/app/services/utils.service';
-import { updateNodes } from 'src/app/store/actions';
 import { ICanvasPosition, INode, IStore } from 'src/app/store/store';
 
 @Component({
@@ -28,8 +27,8 @@ export class ResizeHandleComponent implements OnDestroy {
   public selected: Set<string>;
   private canvasPosition: ICanvasPosition;
   private nodes: INode[];
-  public rotateSnapshot: [number, number, number, number, INode] = null;
-  constructor(private store: Store<IStore>, private utils: CeUtilsService, private eleRef: ElementRef<HTMLElement>) {
+
+  constructor(private store: Store<IStore>, private utils: CeUtilsService, public eleRef: ElementRef<HTMLElement>) {
     this.subscription.add(
       this.store.select('canvasPosition').subscribe((state) => {
         this.canvasPosition = state;
@@ -113,36 +112,5 @@ export class ResizeHandleComponent implements OnDestroy {
       this.height = height * this.canvasPosition.scale;
       this.transform = `rotate(${rotate ?? 0}deg)`;
     });
-  }
-
-  rotateStart(event: PointerEvent): void {
-    event.stopPropagation();
-    event.preventDefault();
-    const rect = this.eleRef.nativeElement.getBoundingClientRect().toJSON();
-    this.rotateSnapshot = [
-      rect.left + rect.width / 2,
-      rect.top + rect.height / 2,
-      rect.left + rect.width / 2,
-      rect.top + rect.height / 2 - 100,
-      this.utils.getNodeById([...this.selected][0], this.nodes),
-    ];
-  }
-
-  rotating(event: PointerEvent): void {
-    if (this.rotateSnapshot) {
-      const [cx, cy, sx, sy, node] = this.rotateSnapshot;
-      const ex = event.clientX;
-      const ey = event.clientY;
-      const rotate = Math.round(this.utils.getRotate(cx, cy, sx, sy, ex, ey));
-      this.store.dispatch(
-        updateNodes({
-          nodes: [{ ...node, rotate: rotate === 360 ? 0 : rotate }],
-        })
-      );
-    }
-  }
-
-  rotateStop(): void {
-    this.rotateSnapshot = null;
   }
 }

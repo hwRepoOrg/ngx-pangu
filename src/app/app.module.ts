@@ -23,6 +23,7 @@ import { CanvasComponent } from './components/canvas/canvas.component';
 import { LayerTreeComponent } from './components/layer-tree/layer-tree.component';
 import { LeftSideComponent } from './components/left-side/left-side.component';
 import { ResizeHandleComponent } from './components/resize-handle/resize-handle.component';
+import { RotateHandleComponent } from './components/resize-handle/rotate-handle/rotate-handle.component';
 import { ToolbarComponent } from './components/toolbar/toolbar.component';
 import { WidgetListComponent } from './components/widget-list/widget-list.component';
 import { DraggableDirective } from './directives/draggable.directive';
@@ -46,6 +47,7 @@ const COMPONENTS = [
   CanvasBackgroundComponent,
   BoxItemComponent,
   ResizeHandleComponent,
+  RotateHandleComponent,
   BorderedAreaComponent,
 ];
 const DIRECTIVES = [NoZoomAreaDirective, ZoomAreaDirective, DraggableDirective, SelectorDirective];
