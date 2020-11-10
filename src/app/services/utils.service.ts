@@ -200,10 +200,10 @@ export class CeUtilsService {
     const cy = (a2 * c1 - a1 * c2) / (a1 * b2 - a2 * b1);
 
     return {
-      width: +width.toFixed(7),
-      height: +height.toFixed(7),
-      left: +(cx - width / 2).toFixed(7),
-      top: +(cy - height / 2).toFixed(7),
+      width: width.precision(10),
+      height: height.precision(10),
+      left: (cx - width / 2).precision(10),
+      top: (cy - height / 2).precision(10),
     };
   }
 

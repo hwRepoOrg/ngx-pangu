@@ -18,16 +18,18 @@ export class BoxItemComponent implements OnInit {
 
   @HostBinding('style.transform')
   get transform(): string {
-    return `translateX(${this.node.left}px) translateY(${this.node.top}px) translateZ(0) rotate(${this.node.rotate ?? 0}deg)`;
+    return `translateX(${this.node.left.precision(10)}px) translateY(${this.node.top.precision(10)}px) translateZ(0) rotate(${
+      this.node.rotate.precision(10) ?? 0
+    }deg)`;
   }
 
   @HostBinding('style.width.px')
   get width(): number {
-    return this.node.width;
+    return this.node.width.precision(10);
   }
   @HostBinding('style.height.px')
   get height(): number {
-    return this.node.height;
+    return this.node.height.precision(10);
   }
   @HostBinding('style.border-style')
   get borderStyle(): string {
@@ -39,7 +41,7 @@ export class BoxItemComponent implements OnInit {
   }
   @HostBinding('style.border-width.px')
   get borderWidth(): number {
-    return this.node.borderWidth;
+    return this.node.borderWidth.precision(10);
   }
 
   @HostBinding('style.z-index')
