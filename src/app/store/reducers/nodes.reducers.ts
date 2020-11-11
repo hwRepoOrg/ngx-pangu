@@ -1,6 +1,6 @@
 import { createReducer, on } from '@ngrx/store';
-import { CeUtilsService, IDOMRect } from '../../services/utils.service';
-import { addNodes, removeNodes, updateNodes, updateNodesSize } from '../actions';
+import { CeUtilsService, genNodeId, IDOMRect } from '../../services/utils.service';
+import { addNodes, groupNodes, removeNodes, updateNodes, updateNodesSize } from '../actions';
 import { DEFAULT_STORE, INode } from '../store';
 
 /**
@@ -41,23 +41,79 @@ function recursiveUpdateNodeChildrenSize(nodes: INode[], oldParentRect: IDOMRect
   });
 }
 
+function updateNodesSizeReducer(state: INode[], { nodesSizeMap }: { nodesSizeMap: Map<string, IDOMRect> }): INode[] {
+  return state.map((node) => {
+    if (!nodesSizeMap.has(node.id)) {
+      return node;
+    } else {
+      const newNode = { ...node, ...nodesSizeMap.get(node.id) };
+      if (node.children && node.children.length) {
+        return { ...newNode, children: recursiveUpdateNodeChildrenSize(newNode.children, { ...node }, { ...newNode }) };
+      } else {
+        return newNode;
+      }
+    }
+  });
+}
+
+function groupNodesReducer(state: INode[], { ids }: { ids: string[] }): INode[] {
+  const nodeMap = new Map<string, INode>();
+  ids.forEach((id) => {
+    const node = state.find((i) => i.id === id);
+    if (node) {
+      nodeMap.set(id, node);
+    }
+  });
+  const groupRect = CeUtilsService.shared.getOuterBoundingBox(
+    ids
+      .filter((id) => nodeMap.has(id))
+      .map((id) => {
+        const node = nodeMap.get(id);
+        return CeUtilsService.shared.getAbsolutePosition(
+          node.left + node.width / 2,
+          node.top + node.height / 2,
+          node.width,
+          node.height,
+          node.rotate
+        );
+      })
+  );
+  const groupNode: INode = {
+    id: genNodeId(),
+    name: 'Group',
+    ...groupRect,
+    rotate: 0,
+    zIndex: Math.max(...state.filter((node) => !nodeMap.has(node.id)).map((node) => node.zIndex)) + 1,
+    children: ids
+      .filter((id) => nodeMap.has(id))
+      .map((id) => {
+        const node = nodeMap.get(id);
+        const { bl, br, tl, tr } = CeUtilsService.shared.getAbsolutePosition(
+          node.left + node.width / 2,
+          node.top + node.height / 2,
+          node.width,
+          node.height,
+          node.rotate
+        );
+        return {
+          ...node,
+          ...CeUtilsService.shared.getRelativePosition({
+            bl: [bl[0] - groupRect.left, bl[1] - groupRect.top],
+            br: [br[0] - groupRect.left, br[1] - groupRect.top],
+            tl: [tl[0] - groupRect.left, tl[1] - groupRect.top],
+            tr: [tr[0] - groupRect.left, tr[1] - groupRect.top],
+          }),
+        };
+      }),
+  };
+  return [...state.filter((node) => !nodeMap.has(node.id)), groupNode];
+}
+
 export const nodesReducer = createReducer<INode[]>(
   DEFAULT_STORE.nodes,
   on(addNodes, (state, { nodes }) => [...state, ...nodes]),
   on(removeNodes, (state, { nodes }) => [...state].filter((node) => !nodes.find((i) => i.id === node.id))),
   on(updateNodes, (state, { nodes }) => state.map((item) => nodes.find((i) => i.id === item.id) ?? item)),
-  on(updateNodesSize, (state, { nodesSizeMap }) => {
-    return state.map((node) => {
-      if (!nodesSizeMap.has(node.id)) {
-        return node;
-      } else {
-        const newNode = { ...node, ...nodesSizeMap.get(node.id) };
-        if (node.children && node.children.length) {
-          return { ...newNode, children: recursiveUpdateNodeChildrenSize(newNode.children, { ...node }, { ...newNode }) };
-        } else {
-          return newNode;
-        }
-      }
-    });
-  })
+  on(updateNodesSize, updateNodesSizeReducer),
+  on(groupNodes, groupNodesReducer)
 );
