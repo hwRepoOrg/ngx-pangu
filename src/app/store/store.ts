@@ -1,3 +1,5 @@
+import { genNodeId } from '../services/utils.service';
+
 export interface INode<T = any> {
   id: string;
   name: string;
@@ -47,7 +49,7 @@ export interface IStore<T = any> {
 
 export const DEFAULT_STORE: IStore<any> = {
   nodes: new Array(10).fill(1).map((v, index) => ({
-    id: `${Math.round(Math.random() * 1000000000000)}`,
+    id: genNodeId(),
     name: `test${index + 1}`,
     width: Math.round(Math.random() * 500 + 10),
     height: Math.round(Math.random() * 400 + 10),

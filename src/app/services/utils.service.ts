@@ -21,6 +21,10 @@ export type IRectDirection = 'tl' | 't' | 'tr' | 'r' | 'br' | 'b' | 'bl' | 'l';
 
 const SPECIAL_ROTATE = new Set([0, 90, 180, 270, 360]);
 
+export function genNodeId() {
+  return `${Date.now()}${Math.round(Math.random() * 1000000000000)}`;
+}
+
 @Injectable({ providedIn: 'root' })
 export class CeUtilsService {
   public static shared: CeUtilsService;
@@ -143,12 +147,38 @@ export class CeUtilsService {
    * @param top 在所在坐标系中y轴的坐标
    * @param rotate 旋转角度
    */
-  public getBoundingBox(width: number, height: number, left: number, top: number, rotate = 0): Partial<DOMRect> {
-    const { tl, tr, bl, br } = this.getAbsolutePosition(left + width / 2, top + height / 2, width, height, rotate);
-    const l = Math.min(tl[0], tr[0], bl[0], br[0]);
-    const r = Math.max(tl[0], tr[0], bl[0], br[0]);
-    const t = Math.min(tl[1], tr[1], bl[1], br[1]);
-    const b = Math.max(tl[1], tr[1], bl[1], br[1]);
+  public getBoundingBox(width: number, height: number, left: number, top: number, rotate = 0): IDOMRect {
+    const position = this.getAbsolutePosition(left + width / 2, top + height / 2, width, height, rotate);
+    const l = Math.min(...this.getAxisListByPosition('x', [position]));
+    const r = Math.max(...this.getAxisListByPosition('x', [position]));
+    const t = Math.min(...this.getAxisListByPosition('y', [position]));
+    const b = Math.max(...this.getAxisListByPosition('y', [position]));
+    return { left: l, top: t, width: r - l, height: b - t };
+  }
+
+  /**
+   * 通过盒子的聚堆坐标列表获取对应坐标的值的集合
+   * @param axis 要获取的坐标轴
+   * @param positions 绝对坐标列表
+   */
+  public getAxisListByPosition(axis: 'x' | 'y', positions: IAbsolutePosition[]): number[] {
+    switch (axis) {
+      case 'x':
+        return positions.reduce((arr, position) => [...arr, position.bl[0], position.br[0], position.tl[0], position.tr[0]], []);
+      case 'y':
+        return positions.reduce((arr, position) => [...arr, position.bl[1], position.br[1], position.tl[1], position.tr[1]], []);
+    }
+  }
+
+  /**
+   * 获取多个盒子的最小外包围盒的尺寸
+   * @param positions 盒子绝对坐标列表
+   */
+  public getOuterBoundingBox(positions: IAbsolutePosition[]): IDOMRect {
+    const l = Math.min(...this.getAxisListByPosition('x', positions));
+    const r = Math.max(...this.getAxisListByPosition('x', positions));
+    const t = Math.min(...this.getAxisListByPosition('y', positions));
+    const b = Math.max(...this.getAxisListByPosition('y', positions));
     return { left: l, top: t, width: r - l, height: b - t };
   }
 
