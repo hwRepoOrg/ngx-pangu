@@ -19,7 +19,7 @@ export class BoxItemComponent implements OnInit {
   @HostBinding('style.transform')
   get transform(): string {
     return `translateX(${this.node.left.precision(10)}px) translateY(${this.node.top.precision(10)}px) translateZ(0) rotate(${
-      this.node.rotate.precision(10) ?? 0
+      this.node.rotate?.precision(10) ?? 0
     }deg)`;
   }
 
