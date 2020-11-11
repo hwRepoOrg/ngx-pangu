@@ -2,25 +2,33 @@ import { Injectable } from '@angular/core';
 import * as _ from 'lodash';
 import { INode } from '../store/store';
 
-type IPosition = [number, number];
-interface IAbsolutePosition {
+export type IPosition = [number, number];
+export interface IAbsolutePosition {
   tl: IPosition;
   tr: IPosition;
   bl: IPosition;
   br: IPosition;
 }
 
-interface IDOMRect {
+export interface IDOMRect {
   width: number;
   height: number;
   left: number;
   top: number;
 }
 
+export type IRectDirection = 'tl' | 't' | 'tr' | 'r' | 'br' | 'b' | 'bl' | 'l';
+
 const SPECIAL_ROTATE = new Set([0, 90, 180, 270, 360]);
 
 @Injectable({ providedIn: 'root' })
 export class CeUtilsService {
+  public static shared: CeUtilsService;
+
+  constructor() {
+    CeUtilsService.shared = this;
+  }
+
   public getNodeById<T = any>(id: string, nodes: INode<T>[]): INode<T> {
     let flag = false;
     let node: INode<T>;
@@ -51,7 +59,7 @@ export class CeUtilsService {
     const [[x1, y1], [x2, y2]] = line;
     switch (direction) {
       case 'x':
-        return ((n - y1) * (x2 - x2)) / (y2 - y1) + x1;
+        return ((n - y1) * (x2 - x1)) / (y2 - y1) + x1;
       case 'y':
         return ((n - x1) * (y2 - y1)) / (x2 - x1) + y1;
     }
@@ -185,7 +193,7 @@ export class CeUtilsService {
    * 解方程组可得两条直线的交点x,y
    * @param position 元素在所在坐标系内四个顶点的坐标
    */
-  public getRelativePosition(position: IAbsolutePosition): Partial<DOMRect> {
+  public getRelativePosition(position: IAbsolutePosition): IDOMRect {
     const { tl, bl, br, tr } = position;
     const width: number = Math.sqrt((tr[0] - tl[0]) ** 2 + (tr[1] - tl[1]) ** 2);
 
@@ -213,7 +221,7 @@ export class CeUtilsService {
    * @param group 元素外包围盒
    * @param item 元素的四个顶点坐标
    */
-  public getItemPercentInGroup(group: IDOMRect, item: IAbsolutePosition): IAbsolutePosition {
+  public getItemPercentPositionInGroup(group: IDOMRect, item: IAbsolutePosition): IAbsolutePosition {
     return {
       tl: [(item.tl[0] - group.left) / group.width, (item.tl[1] - group.top) / group.height],
       tr: [(item.tr[0] - group.left) / group.width, (item.tr[1] - group.top) / group.height],
@@ -259,5 +267,14 @@ export class CeUtilsService {
    */
   public getPointByVectorSum(ab: [number, number], ac: [number, number], a: [number, number]): [number, number] {
     return [ab[0] + ac[0] + a[0], ab[1] + ac[1] + a[1]];
+  }
+
+  /**
+   * 获取两点之间的线段长度
+   * @param point1 点1
+   * @param point2 点2
+   */
+  public getDistanceBeforeToPoint(point1: [number, number], point2: [number, number]): number {
+    return Math.sqrt((point1[0] - point2[0]) ** 2 + (point1[1] - point2[1]) ** 2);
   }
 }
