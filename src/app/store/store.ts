@@ -43,11 +43,9 @@ export interface IStore<T = any> {
   canvasBackground: ICanvasBackground;
   canvasSize: ICanvasSize;
   canvasPosition: ICanvasPosition;
-  shadowVisible: boolean;
 }
 
 export const DEFAULT_STORE: IStore<any> = {
-  shadowVisible: false,
   nodes: new Array(10).fill(1).map((v, index) => ({
     id: `${Math.round(Math.random() * 1000000000000)}`,
     name: `test${index + 1}`,
