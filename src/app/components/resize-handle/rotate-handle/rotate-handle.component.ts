@@ -21,14 +21,8 @@ export class RotateHandleComponent implements OnInit, OnDestroy {
   constructor(@Optional() @SkipSelf() private parent: ResizeHandleComponent, private store: Store<IStore>, private utils: CeUtilsService) {}
 
   ngOnInit(): void {
-    this.subscription.add(
-      this.store
-        .select((state) => ({ selected: state.selected, nodes: state.nodes }))
-        .subscribe((state) => {
-          this.selected = state.selected;
-          this.nodes = state.nodes;
-        })
-    );
+    this.subscription.add(this.store.select('selected').subscribe((selected) => (this.selected = selected)));
+    this.subscription.add(this.store.select('nodes').subscribe((nodes) => (this.nodes = nodes)));
   }
 
   ngOnDestroy(): void {
