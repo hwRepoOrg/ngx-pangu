@@ -235,13 +235,19 @@ export class CeUtilsService {
     const [PAx, PAy] = PA;
     const [PBx, PBy] = PB;
     const [PDx, PDy] = PD;
-    const L1k = (PAx - PBy) / (PAx - PBx);
-    const L2k = -1 / L1k;
-    const a = PAy - L1k * PAx;
-    const b = PDy - L2k * PDx;
-    const x = (b - a) / (L1k - L2k);
-    const y = L1k * x + a;
-    return [x, y];
+    if (PAx === PBx) {
+      return [PAx, PDy];
+    } else if (PAy === PBy) {
+      return [PDx, PAy];
+    } else {
+      const L1k = (PAy - PBy) / (PAx - PBx);
+      const L2k = -1 / L1k;
+      const a = PAy - L1k * PAx;
+      const b = PDy - L2k * PDx;
+      const x = (b - a) / (L1k - L2k);
+      const y = L1k * x + a;
+      return [x, y];
+    }
   }
 
   /**
