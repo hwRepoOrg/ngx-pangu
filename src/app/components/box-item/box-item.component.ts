@@ -41,7 +41,7 @@ export class BoxItemComponent implements OnInit {
   }
   @HostBinding('style.border-width.px')
   get borderWidth(): number {
-    return this.node.borderWidth.precision(10);
+    return this.node.borderWidth?.precision(10);
   }
 
   @HostBinding('style.z-index')
