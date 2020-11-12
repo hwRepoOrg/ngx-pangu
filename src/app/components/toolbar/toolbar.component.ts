@@ -2,8 +2,9 @@ import { Component, OnDestroy } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { Observable, Subscription } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { CeUtilsService } from 'src/app/services/utils.service';
 import { clearBorderedNodes, clearSelectedNodes, groupNodes, updateCanvasPosition } from 'src/app/store/actions';
-import { IStore } from 'src/app/store/store';
+import { INode, IStore } from 'src/app/store/store';
 
 @Component({
   selector: 'ce-toolbar',
@@ -20,13 +21,18 @@ export class ToolbarComponent implements OnDestroy {
     return this.selected$.pipe(map((state) => state.size <= 1));
   }
   public get breakStatus$(): Observable<boolean> {
-    return this.selected$.pipe(map((state) => state.size > 1 || state.size === 0));
+    return this.selected$.pipe(
+      map((state) => (state.size === 1 ? [...state][0] : false)),
+      map((id) => id && !!this.utils.getNodeById(id as string, this.nodes)?.children?.length)
+    );
   }
+  private nodes: INode[] = [];
   private selected: Set<string>;
   private subscription = new Subscription();
 
-  constructor(private store: Store<IStore>) {
+  constructor(private store: Store<IStore>, private utils: CeUtilsService) {
     this.selected$ = this.store.select('selected');
+    this.subscription.add(this.store.select('nodes').subscribe((nodes) => (this.nodes = nodes)));
     this.subscription.add(this.store.select('canvasPosition').subscribe((state) => (this.scale = state.scale)));
     this.subscription.add(this.selected$.subscribe((selected) => (this.selected = selected)));
   }
