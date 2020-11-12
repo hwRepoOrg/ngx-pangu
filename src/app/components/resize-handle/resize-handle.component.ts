@@ -153,6 +153,7 @@ export class ResizeHandleComponent implements OnDestroy {
         const percentPosition = this.utils.getItemPercentPositionInGroup({ ...this.groupRectSnapshot }, nodeAbsolutePosition);
         this.nodePositionSnapshotList.set(id, percentPosition);
       } else {
+        this.resizeMode = 'SINGLE';
         this.nodePositionSnapshotList.set(id, nodeAbsolutePosition);
       }
     });
@@ -204,6 +205,58 @@ export class ResizeHandleComponent implements OnDestroy {
     const { scale } = this.canvasPosition;
     const { relative } = this.resizePointSnapshot;
     const endPointer: [number, number] = [relative[0] + mx / scale, relative[1] + my / scale];
+    let newDOMRect: IDOMRect;
+    this.nodePositionSnapshotList.forEach(({ bl, br, tl, tr }, id) => {
+      let newTLPoint: [number, number];
+      let newTRPoint: [number, number];
+      let newBLPoint: [number, number];
+      let newBRPoint: [number, number];
+      switch (direction) {
+        case 'tl':
+          newTRPoint = this.utils.getVerticalLineCrossPoint(br, tr, endPointer);
+          newBLPoint = this.utils.getVerticalLineCrossPoint(br, bl, endPointer);
+          newDOMRect = this.utils.getRelativePosition({ tl: endPointer, tr: newTRPoint, bl: newBLPoint, br });
+          break;
+        case 'tr':
+          newTLPoint = this.utils.getVerticalLineCrossPoint(bl, tl, endPointer);
+          newBRPoint = this.utils.getVerticalLineCrossPoint(bl, br, endPointer);
+          newDOMRect = this.utils.getRelativePosition({ tl: newTLPoint, tr: endPointer, bl, br: newBRPoint });
+          break;
+        case 'bl':
+          newTLPoint = this.utils.getVerticalLineCrossPoint(tr, tl, endPointer);
+          newBRPoint = this.utils.getVerticalLineCrossPoint(tr, br, endPointer);
+          newDOMRect = this.utils.getRelativePosition({ tl: newTLPoint, tr, bl: endPointer, br: newBRPoint });
+          break;
+        case 'br':
+          newTRPoint = this.utils.getVerticalLineCrossPoint(tl, tr, endPointer);
+          newBLPoint = this.utils.getVerticalLineCrossPoint(tl, bl, endPointer);
+          newDOMRect = this.utils.getRelativePosition({ tl, tr: newTRPoint, bl: newBLPoint, br: endPointer });
+          break;
+        case 't':
+          newTLPoint = this.utils.getVerticalLineCrossPoint(bl, tl, endPointer);
+          newTRPoint = this.utils.getVerticalLineCrossPoint(br, tr, endPointer);
+          newDOMRect = this.utils.getRelativePosition({ tl: newTLPoint, tr: newTRPoint, bl, br });
+          break;
+        case 'r':
+          newTRPoint = this.utils.getVerticalLineCrossPoint(tl, tr, endPointer);
+          newBRPoint = this.utils.getVerticalLineCrossPoint(bl, br, endPointer);
+          newDOMRect = this.utils.getRelativePosition({ tl, tr: newTRPoint, bl, br: newBRPoint });
+          break;
+        case 'b':
+          newBLPoint = this.utils.getVerticalLineCrossPoint(tl, bl, endPointer);
+          newBRPoint = this.utils.getVerticalLineCrossPoint(tr, br, endPointer);
+          newDOMRect = this.utils.getRelativePosition({ tl, tr, bl: newBLPoint, br: newBRPoint });
+          break;
+        case 'l':
+          newTLPoint = this.utils.getVerticalLineCrossPoint(tr, tl, endPointer);
+          newBLPoint = this.utils.getVerticalLineCrossPoint(br, bl, endPointer);
+          newDOMRect = this.utils.getRelativePosition({ tl: newTLPoint, tr, bl: newBLPoint, br });
+          break;
+      }
+      this.store.dispatch(
+        updateNodesSize({ nodesSizeMap: new Map<string, IDOMRect>([[id, newDOMRect]]) })
+      );
+    });
   }
 }
 
