@@ -21,7 +21,7 @@ export type IRectDirection = 'tl' | 't' | 'tr' | 'r' | 'br' | 'b' | 'bl' | 'l';
 
 const SPECIAL_ROTATE = new Set([0, 90, 180, 270, 360]);
 
-export function genNodeId() {
+export function genNodeId(): string {
   return `${Date.now()}${Math.round(Math.random() * 1000000000000)}`;
 }
 
@@ -33,6 +33,11 @@ export class CeUtilsService {
     CeUtilsService.shared = this;
   }
 
+  /**
+   * 通过节点ID在树中查找节点
+   * @param id 节点ID
+   * @param nodes 节点树
+   */
   public getNodeById<T = any>(id: string, nodes: INode<T>[]): INode<T> {
     let flag = false;
     let node: INode<T>;
@@ -49,6 +54,34 @@ export class CeUtilsService {
       }
     }
     return node;
+  }
+
+  /**
+   * 通过节点ID查找节点及节点所有父级
+   * @param id 节点ID
+   * @param nodes 节点树
+   */
+  public getNodeAndParentListById<T = any>(id: string, nodes: INode<T>[]): INode[] {
+    const rootIdSet = new Set(nodes.map((node) => node.id));
+    let flag = false;
+    let path: INode[] = [];
+    const stack = [...nodes];
+    while (!flag && stack.length) {
+      const node = stack.shift();
+      if (rootIdSet.has(node.id)) {
+        path = [];
+      }
+      if (node.id === id) {
+        flag = true;
+        path.unshift(node);
+      } else {
+        if (node.children && node.children.length) {
+          path.unshift(node);
+          stack.unshift(...node.children);
+        }
+      }
+    }
+    return path;
   }
 
   /**
