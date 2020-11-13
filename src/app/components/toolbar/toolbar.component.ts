@@ -46,9 +46,10 @@ export class ToolbarComponent implements OnDestroy {
   }
 
   groupNodes(): void {
+    const ids = [...this.selected];
     this.store.dispatch(clearSelectedNodes());
     this.store.dispatch(clearBorderedNodes());
-    this.store.dispatch(groupNodes({ ids: [...this.selected] }));
+    this.store.dispatch(groupNodes({ ids }));
   }
 
   breakNode(): void {
