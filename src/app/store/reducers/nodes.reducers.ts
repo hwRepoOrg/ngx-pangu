@@ -136,33 +136,23 @@ function groupNodesReducer(state: INode[], { ids }: { ids: string[] }): INode[] 
   return [...state.filter((node) => !nodeMap.has(node.id)), groupNode];
 }
 
-/**
- * 通过获取父节点中心点坐标和原始子节点中心点坐标，将向量（父节点中心点-子节点原始中心点）
- * 旋转父节点旋转的角度(rotate)后得到向量（父节点中心点-子节点中心点）然后利用向量旋转的
- * 公式直接求出子节点中心点坐标
- * x1 = x0*cos(rotate) - y0*sin(rotate)
- * y1 = x0*sin(rotate) - y0*cos(rotate)
- * @param state 节点树
- * @param  id 要打散的节点ID
- */
 function breakNodeReducer(state: INode[], { id }: { id: string }): INode[] {
   const [node, ...parents] = CeUtilsService.shared.getNodeAndParentListById(id, state);
-  const [nodeCenterX, nodeCenterY] = [node.left + node.width / 2, node.top + node.height / 2];
   const newNodes = node.children.map((child) => {
-    const [childOriginalCenterX, childOriginalCenterY] = [
-      child.left + child.width / 2 + node.left - nodeCenterX,
-      child.top + child.height / 2 + node.top - nodeCenterY,
-    ];
-    const newCenterX =
-      childOriginalCenterX * Math.cos((node.rotate * Math.PI) / 180) - childOriginalCenterY * Math.sin((node.rotate * Math.PI) / 180) + nodeCenterX;
-    const newCenterY =
-      childOriginalCenterY * Math.cos((node.rotate * Math.PI) / 180) + childOriginalCenterX * Math.sin((node.rotate * Math.PI) / 180) + nodeCenterY;
-    console.log(newCenterX, newCenterY);
+    const [newCenterX, newCenterY] = CeUtilsService.shared.getChildPositionBaseOnParentCoordinateSystem(node, node.rotate, child);
     return { ...child, rotate: (child.rotate ?? 0) + (node.rotate ?? 0), left: newCenterX - child.width / 2, top: newCenterY - child.height / 2 };
   });
   if (!parents.length) {
     return [...state.filter((i) => i.id !== node.id), ...newNodes];
   } else {
+    let parent = parents.shift();
+    parent.children = [...parent.children.filter((child) => child.id !== node.id), ...newNodes];
+    while (parents.length) {
+      const nextParent = parents.shift();
+      nextParent.children = nextParent.children.map((child) => (child.id === parent.id ? parent : child));
+      parent = nextParent;
+    }
+    return [...state.filter((i) => i.id !== parent.id), parent];
   }
 }
 
