@@ -1,5 +1,5 @@
 import { Directive, ElementRef, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
-import { InputBoolean } from 'ng-zorro-antd';
+import { InputBoolean } from 'ng-zorro-antd/core/util';
 import { fromEvent, Subscription } from 'rxjs';
 import { filter, finalize, switchMap, takeUntil } from 'rxjs/operators';
 
