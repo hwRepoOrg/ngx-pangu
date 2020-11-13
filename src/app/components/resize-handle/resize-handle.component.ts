@@ -89,17 +89,19 @@ export class ResizeHandleComponent implements OnDestroy {
     const bottomSet = new Set<number>();
     this.selected.forEach((id) => {
       const node = this.utils.getNodeById(id, this.nodes);
-      const { bl, br, tl, tr } = this.utils.getAbsolutePosition(
-        node.left + node.width / 2,
-        node.top + node.height / 2,
-        node.width,
-        node.height,
-        node.rotate
-      );
-      leftSet.add(Math.min(tl[0], tr[0], bl[0], br[0]));
-      topSet.add(Math.min(tl[1], tr[1], bl[1], br[1]));
-      rightSet.add(Math.max(tl[0], tr[0], bl[0], br[0]));
-      bottomSet.add(Math.max(tl[1], tr[1], bl[1], br[1]));
+      if (node) {
+        const { bl, br, tl, tr } = this.utils.getAbsolutePosition(
+          node.left + node.width / 2,
+          node.top + node.height / 2,
+          node.width,
+          node.height,
+          node.rotate
+        );
+        leftSet.add(Math.min(tl[0], tr[0], bl[0], br[0]));
+        topSet.add(Math.min(tl[1], tr[1], bl[1], br[1]));
+        rightSet.add(Math.max(tl[0], tr[0], bl[0], br[0]));
+        bottomSet.add(Math.max(tl[1], tr[1], bl[1], br[1]));
+      }
     });
     const left = Math.min(...leftSet);
     const right = Math.max(...rightSet);
@@ -114,12 +116,15 @@ export class ResizeHandleComponent implements OnDestroy {
 
   refreshSingleResizeHandle(): void {
     this.selected.forEach((id) => {
-      const { left, top, width, height, rotate } = this.utils.getNodeById(id, this.nodes);
-      this.left = left * this.canvasPosition.scale;
-      this.top = top * this.canvasPosition.scale;
-      this.width = width * this.canvasPosition.scale;
-      this.height = height * this.canvasPosition.scale;
-      this.rotate = rotate ?? 0;
+      const node = this.utils.getNodeById(id, this.nodes);
+      if (node) {
+        const { left, top, width, height, rotate } = node;
+        this.left = left * this.canvasPosition.scale;
+        this.top = top * this.canvasPosition.scale;
+        this.width = width * this.canvasPosition.scale;
+        this.height = height * this.canvasPosition.scale;
+        this.rotate = rotate ?? 0;
+      }
     });
   }
 
