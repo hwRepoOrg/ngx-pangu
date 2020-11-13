@@ -346,4 +346,27 @@ export class CeUtilsService {
   public getDistanceBeforeToPoint(point1: [number, number], point2: [number, number]): number {
     return Math.sqrt((point1[0] - point2[0]) ** 2 + (point1[1] - point2[1]) ** 2);
   }
+
+  /**
+   * 通过获取父节点中心点坐标和原始子节点中心点坐标，将向量（父节点中心点-子节点原始中心点）
+   * 旋转父节点旋转的角度(rotate)后得到向量（父节点中心点-子节点中心点）然后利用向量旋转的
+   * 公式直接求出子节点中心点坐标
+   * x1 = x0*cos(rotate) - y0*sin(rotate)
+   * y1 = x0*sin(rotate) - y0*cos(rotate)
+   * @param parentRect 父元素尺寸
+   * @param parentRotate 父元素旋转角度
+   * @param childRect 子元素尺寸
+   */
+  public getChildPositionBaseOnParentCoordinateSystem(parentRect: IDOMRect, parentRotate: number, childRect: IDOMRect): [number, number] {
+    const parentCenter = [parentRect.left + parentRect.width / 2, parentRect.top + parentRect.height / 2];
+    const originalCenter = [childRect.left + childRect.width / 2 + parentRect.left, childRect.top + childRect.height / 2 + parentRect.top];
+    return [
+      (originalCenter[0] - parentCenter[0]) * Math.cos((parentRotate * Math.PI) / 180) -
+        (originalCenter[1] - parentCenter[1]) * Math.sin((parentRotate * Math.PI) / 180) +
+        parentCenter[0],
+      (originalCenter[1] - parentCenter[1]) * Math.cos((parentRotate * Math.PI) / 180) +
+        (originalCenter[0] - parentCenter[0]) * Math.sin((parentRotate * Math.PI) / 180) +
+        parentCenter[1],
+    ];
+  }
 }
