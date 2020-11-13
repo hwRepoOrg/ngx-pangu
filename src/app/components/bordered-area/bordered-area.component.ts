@@ -78,14 +78,21 @@ export class BorderedAreaComponent implements OnInit, OnDestroy {
     }
     this.bordered.forEach((id) => {
       if (!cache || (cache && !this.borderedNodeMap.has(id))) {
-        const node = this.utils.getNodeById(id, this.nodes);
+        const [node, ...parents] = this.utils.getNodeAndParentListById(id, this.nodes);
+        let child = { ...node };
+        let center = [node.left + node.width / 2, node.top + node.height / 2];
+        while (parents.length) {
+          const parent = parents.shift();
+          center = this.utils.getChildPositionBaseOnParentCoordinateSystem(parent, parent.rotate ?? 0, child);
+          child = { ...child, left: center[0] - child.width / 2, top: center[1] - child.height / 2, rotate: child.rotate + parent.rotate };
+        }
         if (node) {
           this.borderedNodeMap.set(id, {
-            width: (node.width / this.canvasSize.width) * 100,
-            height: (node.height / this.canvasSize.height) * 100,
-            left: (node.left / this.canvasSize.width) * 100,
-            top: (node.top / this.canvasSize.height) * 100,
-            rotate: node.rotate,
+            width: (child.width / this.canvasSize.width) * 100,
+            height: (child.height / this.canvasSize.height) * 100,
+            left: (child.left / this.canvasSize.width) * 100,
+            top: (child.top / this.canvasSize.height) * 100,
+            rotate: child.rotate,
           });
         }
       }
