@@ -3,15 +3,7 @@ import { Store } from '@ngrx/store';
 import { Observable, Subscription } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { CeUtilsService } from 'src/app/services/utils.service';
-import {
-  breakNode,
-  clearBorderedNodes,
-  clearSelectedNodes,
-  groupNodes,
-  setBorderedNodes,
-  setSelectedNodes,
-  updateCanvasPosition,
-} from 'src/app/store/actions';
+import { breakNode, clearBorderedNodes, clearSelectedNodes, groupNodes, updateCanvasPosition } from 'src/app/store/actions';
 import { INode, IStore } from 'src/app/store/store';
 
 @Component({
