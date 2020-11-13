@@ -9,10 +9,12 @@ import { StoreModule } from '@ngrx/store';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzCardModule } from 'ng-zorro-antd/card';
 import { NzConfig, NZ_CONFIG } from 'ng-zorro-antd/core/config';
+import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
 import { NZ_I18N, zh_CN } from 'ng-zorro-antd/i18n';
 import { NzIconModule, NzIconService } from 'ng-zorro-antd/icon';
 import { NzInputNumberModule } from 'ng-zorro-antd/input-number';
 import { NzTabsModule } from 'ng-zorro-antd/tabs';
+import { NzTreeModule } from 'ng-zorro-antd/tree';
 import { environment } from 'src/environments/environment';
 import { AppComponent } from './app.component';
 import { BorderedAreaComponent } from './components/bordered-area/bordered-area.component';
@@ -35,7 +37,7 @@ import { IStore } from './store/store';
 
 registerLocaleData(zh);
 
-const ANTD_MODULES = [NzCardModule, NzIconModule.forRoot([]), NzButtonModule, NzInputNumberModule, NzTabsModule];
+const ANTD_MODULES = [NzCardModule, NzIconModule.forRoot([]), NzButtonModule, NzInputNumberModule, NzTabsModule, NzTreeModule, NzDropDownModule];
 
 const COMPONENTS = [
   ToolbarComponent,
