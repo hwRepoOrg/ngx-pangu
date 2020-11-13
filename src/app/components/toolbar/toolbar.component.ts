@@ -3,7 +3,15 @@ import { Store } from '@ngrx/store';
 import { Observable, Subscription } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { CeUtilsService } from 'src/app/services/utils.service';
-import { clearBorderedNodes, clearSelectedNodes, groupNodes, updateCanvasPosition } from 'src/app/store/actions';
+import {
+  breakNode,
+  clearBorderedNodes,
+  clearSelectedNodes,
+  groupNodes,
+  setBorderedNodes,
+  setSelectedNodes,
+  updateCanvasPosition,
+} from 'src/app/store/actions';
 import { INode, IStore } from 'src/app/store/store';
 
 @Component({
@@ -46,8 +54,15 @@ export class ToolbarComponent implements OnDestroy {
   }
 
   groupNodes(): void {
-    this.store.dispatch(groupNodes({ ids: [...this.selected] }));
     this.store.dispatch(clearSelectedNodes());
     this.store.dispatch(clearBorderedNodes());
+    this.store.dispatch(groupNodes({ ids: [...this.selected] }));
+  }
+
+  breakNode(): void {
+    const node = this.utils.getNodeById([...this.selected][0], this.nodes);
+    this.store.dispatch(clearSelectedNodes());
+    this.store.dispatch(clearBorderedNodes());
+    this.store.dispatch(breakNode({ id: node.id }));
   }
 }

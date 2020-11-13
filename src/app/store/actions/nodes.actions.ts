@@ -11,3 +11,5 @@ export const updateNodes = createAction('[editor] Update nodes', props<{ nodes: 
 export const updateNodesSize = createAction('[editor] Update nodes size', props<{ nodesSizeMap: Map<string, IDOMRect> }>());
 
 export const groupNodes = createAction('[editor] Group nodes', props<{ ids: string[] }>());
+
+export const breakNode = createAction('[editor] Break node', props<{ id: string }>());

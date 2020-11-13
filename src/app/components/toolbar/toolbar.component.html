@@ -8,7 +8,7 @@
     </div>
     <div class="d-flex ml-auto align-items-center">
       <button [disabled]="groupStatus$ | async" (click)="groupNodes()" nz-button nzType="link"><i nz-icon nzIconfont="icon-group"></i></button>
-      <button [disabled]="!(breakStatus$ | async)" nz-button nzType="link"><i nz-icon nzIconfont="icon-break"></i></button>
+      <button [disabled]="!(breakStatus$ | async)" (click)="breakNode()" nz-button nzType="link"><i nz-icon nzIconfont="icon-break"></i></button>
     </div>
     <div class="d-flex ml-auto align-items-center">
       <button [disabled]="groupStatus$ | async" nz-button nzType="link"><i nz-icon nzIconfont="icon-horizontal-between"></i></button>
