@@ -159,7 +159,7 @@ function breakNodeReducer(state: INode[], { id }: { id: string }): INode[] {
 export const nodesReducer = createReducer<INode[]>(
   DEFAULT_STORE.nodes,
   on(addNodes, (state, { nodes }) => [...state, ...nodes]),
-  on(removeNodes, (state, { nodes }) => [...state].filter((node) => !nodes.find((i) => i.id === node.id))),
+  on(removeNodes, (state, { ids }) => [...state].filter((node) => !ids.find((i) => i === node.id))),
   on(updateNodes, (state, { nodes }) => state.map((item) => nodes.find((i) => i.id === item.id) ?? item)),
   on(updateNodesSize, updateNodesSizeReducer),
   on(groupNodes, groupNodesReducer),

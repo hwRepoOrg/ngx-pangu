@@ -4,7 +4,7 @@ import { INode } from '../store';
 
 export const addNodes = createAction('[editor] Add nodes', props<{ nodes: INode[] }>());
 
-export const removeNodes = createAction('[editor] Remove nodes', props<{ nodes: INode[] }>());
+export const removeNodes = createAction('[editor] Remove nodes', props<{ ids: string[] }>());
 
 export const updateNodes = createAction('[editor] Update nodes', props<{ nodes: INode[] }>());
 
