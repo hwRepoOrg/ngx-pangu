@@ -1,33 +1,41 @@
-<ul class="layer-list">
-  <ng-container *ngTemplateOutlet="nodeList; context: { $implicit: nodes, dept: 1 }"></ng-container>
-</ul>
-
-<ng-template #nodeList let-list let-dept="dept">
-  <ng-container *ngFor="let node of list; trackBy: layerTrackByFn">
-    <ng-container *ngIf="node.children?.length">
-      <li (pointerenter)="showBordered(node)" (pointerleave)="clearBordered(node.id)">
-        <div class="title has-child" [style.padding-left.px]="dept * 20">
-          <a class="arrow" (click)="openedKeys.has(node.id) ? openedKeys.delete(node.id) : openedKeys.add(node.id)">
-            <i *ngIf="!openedKeys.has(node.id)" nz-icon nzType="caret-right"></i>
-            <i *ngIf="openedKeys.has(node.id)" nz-icon nzType="caret-down"></i>
-          </a>
-          <div class="d-flex align-items-center">
-            <i *ngIf="!openedKeys.has(node.id)" nz-icon nzType="folder"></i>
-            <i *ngIf="openedKeys.has(node.id)" nz-icon nzType="folder-open"></i>
-            <span class="ml-2">{{ node.name }}</span>
-          </div>
-        </div>
-        <ul *ngIf="openedKeys.has(node.id)" class="children">
-          <ng-container *ngTemplateOutlet="nodeList; context: { $implicit: node.children, dept: dept + 1 }"></ng-container>
-        </ul>
-      </li>
-    </ng-container>
-    <ng-container *ngIf="!node.children?.length">
-      <li (pointerenter)="showBordered(node)" (pointerleave)="clearBordered(node.id)">
-        <div class="title" [style.padding-left.px]="dept * 20">
-          <span class="ml-2">{{ node.name }}</span>
-        </div>
-      </li>
-    </ng-container>
-  </ng-container>
-</ng-template>
+<nz-tree
+  [nzData]="nodes"
+  nzDraggable
+  nzBlockNode
+  nzMultiple
+  [nzSelectedKeys]="selectedKeys"
+  [nzExpandedKeys]="expandedKeys"
+  [nzTreeTemplate]="nzTreeTemplate"
+  [nzExpandedIcon]="multiExpandedIconTpl"
+  (nzOnDrop)="drop($event)"
+  (nzClick)="clickNode($event)"
+  (nzExpandChange)="expandGroup($event)"
+>
+  <ng-template #multiExpandedIconTpl let-node let-origin="origin">
+    <i *ngIf="!node.isLeaf" nz-icon [nzType]="node.isExpanded ? 'folder-open' : 'folder'" class="ant-tree-switcher-line-icon"></i>
+  </ng-template>
+  <ng-template #nzTreeTemplate let-node="origin">
+    <div
+      class="layer"
+      [class.locked]="node.locked"
+      (contextmenu)="contextMenu($event, menu, node)"
+      (mouseenter)="showBordered(node.id)"
+      (mouseleave)="clearBordered(node.id)"
+    >
+      <span>{{ node.title }}</span>
+    </div>
+    <nz-dropdown-menu #menu="nzDropdownMenu">
+      <ul nz-menu>
+        <li nz-menu-item class="action-item" (click)="deleteNodes()">
+          <i nz-icon nzType="delete"></i>
+          <span>删除</span>
+        </li>
+        <li *ngIf="node.children && node.children.length" nz-menu-item (click)="breakNode(node.id)" class="action-item">
+          <i nz-icon nzIconfont="icon-break"></i>
+          <span>打散</span>
+          <span class="shortcuts"> ctrl+shift+G </span>
+        </li>
+      </ul>
+    </nz-dropdown-menu>
+  </ng-template>
+</nz-tree>

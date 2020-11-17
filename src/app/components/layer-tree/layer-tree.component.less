@@ -1,3 +1,5 @@
+@import "../../../styles/ng-zorro-antd/theme.less";
+
 :host {
   position: relative;
   display: block;
@@ -9,27 +11,25 @@
     position: absolute;
     right: 0;
   }
-  ul {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    .title {
-      position: relative;
-      display: flex;
-      align-items: center;
-      line-height: 1.5;
-      padding-top: 3px;
-      padding-bottom: 3px;
-      &:hover {
-        background: rgb(247, 247, 247) none repeat scroll 0% 0%;
-      }
-      .arrow {
-        position: absolute;
-        left: 0;
-      }
-      &.selected {
-        background: rgb(242, 248, 255) none repeat scroll 0% 0%;
-      }
+
+  .layer {
+    display: flex;
+    align-items: center;
+    &.locked {
+      color: @text-color-secondary;
+    }
+  }
+}
+
+::ng-deep {
+  .action-item {
+    display: flex;
+    min-width: 200px;
+    justify-content: flex-start;
+    align-items: center;
+    .shortcuts {
+      margin-left: auto;
+      color: @text-color-secondary;
     }
   }
 }
