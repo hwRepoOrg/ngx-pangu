@@ -1,8 +1,9 @@
 <nz-tree
-  [nzData]="nodes"
+  #layerTree
   nzDraggable
   nzBlockNode
   nzMultiple
+  [nzData]="nodes"
   [nzSelectedKeys]="selectedKeys"
   [nzExpandedKeys]="expandedKeys"
   [nzTreeTemplate]="nzTreeTemplate"
@@ -30,10 +31,15 @@
           <i nz-icon nzType="delete"></i>
           <span>删除</span>
         </li>
+        <li *ngIf="groupStatus" nz-menu-item class="action-item">
+          <i nz-icon nzIconfont="icon-group"></i>
+          <span>组合</span>
+          <span class="shortcuts"> ctrl+shift+G </span>
+        </li>
         <li *ngIf="node.children && node.children.length" nz-menu-item (click)="breakNode(node.id)" class="action-item">
           <i nz-icon nzIconfont="icon-break"></i>
           <span>打散</span>
-          <span class="shortcuts"> ctrl+shift+G </span>
+          <span class="shortcuts"> ctrl+shift+B </span>
         </li>
       </ul>
     </nz-dropdown-menu>

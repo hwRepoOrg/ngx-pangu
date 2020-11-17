@@ -1,7 +1,7 @@
-import { Component, OnDestroy } from '@angular/core';
+import { Component, OnDestroy, ViewChild } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { NzContextMenuService, NzDropdownMenuComponent } from 'ng-zorro-antd/dropdown';
-import { NzFormatEmitEvent, NzTreeNode, NzTreeNodeOptions } from 'ng-zorro-antd/tree';
+import { NzFormatEmitEvent, NzTreeComponent, NzTreeNode, NzTreeNodeOptions } from 'ng-zorro-antd/tree';
 import { Subscription } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
 import { CeUtilsService } from 'src/app/services/utils.service';
@@ -28,7 +28,18 @@ export class LayerTreeComponent implements OnDestroy {
   public selected: Set<string>;
   public selectedKeys: string[];
   public expandedKeys: string[];
+  @ViewChild('layerTree', { read: NzTreeComponent })
+  public layerTree: NzTreeComponent;
   private subscription = new Subscription();
+  public get groupStatus(): boolean {
+    return this.selectedKeys.length > 1
+      ? !this.selectedKeys.find((id) => {
+          const node = this.layerTree.getSelectedNodeList().find((item) => item.key === id);
+          return node && node.parentNode;
+        })
+      : false;
+  }
+
   constructor(private store: Store<IStore>, private utils: CeUtilsService, private contextMenuSrv: NzContextMenuService) {
     this.subscription.add(
       this.store
@@ -106,8 +117,11 @@ export class LayerTreeComponent implements OnDestroy {
   clickNode(event: NzFormatEmitEvent): void {
     if (event.node) {
       if (event.node.parentNode) {
+        this.store.dispatch(clearSelectedNodes());
+        this.store.dispatch(clearBorderedNodes());
+        this.setSelected([event.node.key]);
       } else {
-        this.setSelected(event.keys);
+        this.setSelected(event.selectedKeys.filter((node) => !node.parentNode).map((node) => node.key));
       }
     }
   }
