@@ -153,8 +153,11 @@ function groupNodesReducer(state: INode[], { ids }: { ids: string[] }): INode[] 
 function breakNodeReducer(state: INode[], { id }: { id: string }): INode[] {
   const [node, ...parents] = CeUtilsService.shared.getNodeAndParentListById(id, state);
   const newNodes = node.children.map((child) => {
-    const [newCenterX, newCenterY] = CeUtilsService.shared.getChildPositionBaseOnParentCoordinateSystem(node, node.rotate, child);
-    return { ...child, rotate: (child.rotate ?? 0) + (node.rotate ?? 0), left: newCenterX - child.width / 2, top: newCenterY - child.height / 2 };
+    return {
+      ...child,
+      ...CeUtilsService.shared.getChildPositionBaseOnParentCoordinateSystem(node, node.rotate, child),
+      rotate: (child.rotate ?? 0) + (node.rotate ?? 0),
+    };
   });
   if (!parents.length) {
     return [...state.filter((i) => i.id !== node.id), ...newNodes];

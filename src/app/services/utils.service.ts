@@ -357,10 +357,10 @@ export class CeUtilsService {
    * @param parentRotate 父元素旋转角度
    * @param childRect 子元素尺寸
    */
-  public getChildPositionBaseOnParentCoordinateSystem(parentRect: IDOMRect, parentRotate: number, childRect: IDOMRect): [number, number] {
+  public getChildPositionBaseOnParentCoordinateSystem(parentRect: IDOMRect, parentRotate: number, childRect: IDOMRect): IDOMRect {
     const parentCenter = [parentRect.left + parentRect.width / 2, parentRect.top + parentRect.height / 2];
     const originalCenter = [childRect.left + childRect.width / 2 + parentRect.left, childRect.top + childRect.height / 2 + parentRect.top];
-    return [
+    const [newCenterX, newCenterY] = [
       (originalCenter[0] - parentCenter[0]) * Math.cos((parentRotate * Math.PI) / 180) -
         (originalCenter[1] - parentCenter[1]) * Math.sin((parentRotate * Math.PI) / 180) +
         parentCenter[0],
@@ -368,5 +368,6 @@ export class CeUtilsService {
         (originalCenter[0] - parentCenter[0]) * Math.sin((parentRotate * Math.PI) / 180) +
         parentCenter[1],
     ];
+    return { left: newCenterX - childRect.width / 2, top: newCenterY - childRect.height / 2, width: childRect.width, height: childRect.height };
   }
 }

@@ -80,11 +80,13 @@ export class BorderedAreaComponent implements OnInit, OnDestroy {
       if (!cache || (cache && !this.borderedNodeMap.has(id))) {
         const [node, ...parents] = this.utils.getNodeAndParentListById(id, this.nodes);
         let child = { ...node };
-        let center = [node.left + node.width / 2, node.top + node.height / 2];
         while (parents.length) {
           const parent = parents.shift();
-          center = this.utils.getChildPositionBaseOnParentCoordinateSystem(parent, parent.rotate ?? 0, child);
-          child = { ...child, left: center[0] - child.width / 2, top: center[1] - child.height / 2, rotate: child.rotate + parent.rotate };
+          child = {
+            ...child,
+            ...this.utils.getChildPositionBaseOnParentCoordinateSystem(parent, parent.rotate ?? 0, child),
+            rotate: child.rotate + parent.rotate,
+          };
         }
         if (node) {
           this.borderedNodeMap.set(id, {
