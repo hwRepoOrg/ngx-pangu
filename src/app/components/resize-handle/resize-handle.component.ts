@@ -145,7 +145,7 @@ export class ResizeHandleComponent implements OnDestroy {
       relative: [(event.clientX - canvasRect.left) / scale, (event.clientY - canvasRect.top) / scale],
     };
     this.selected.forEach((id) => {
-      const node = this.nodes.find((i) => i.id === id);
+      const node = this.utils.getNodeById(id, this.nodes);
       const nodeAbsolutePosition = this.utils.getAbsolutePosition(
         node.left + node.width / 2,
         node.top + node.height / 2,
@@ -210,56 +210,9 @@ export class ResizeHandleComponent implements OnDestroy {
     const { scale } = this.canvasPosition;
     const { relative } = this.resizePointSnapshot;
     const endPointer: [number, number] = [relative[0] + mx / scale, relative[1] + my / scale];
-    let newDOMRect: IDOMRect;
-    this.nodePositionSnapshotList.forEach(({ bl, br, tl, tr }, id) => {
-      let newTLPoint: [number, number];
-      let newTRPoint: [number, number];
-      let newBLPoint: [number, number];
-      let newBRPoint: [number, number];
-      switch (direction) {
-        case 'tl':
-          newTRPoint = this.utils.getVerticalLineCrossPoint(br, tr, endPointer);
-          newBLPoint = this.utils.getVerticalLineCrossPoint(br, bl, endPointer);
-          newDOMRect = this.utils.getRelativePosition({ tl: endPointer, tr: newTRPoint, bl: newBLPoint, br });
-          break;
-        case 'tr':
-          newTLPoint = this.utils.getVerticalLineCrossPoint(bl, tl, endPointer);
-          newBRPoint = this.utils.getVerticalLineCrossPoint(bl, br, endPointer);
-          newDOMRect = this.utils.getRelativePosition({ tl: newTLPoint, tr: endPointer, bl, br: newBRPoint });
-          break;
-        case 'bl':
-          newTLPoint = this.utils.getVerticalLineCrossPoint(tr, tl, endPointer);
-          newBRPoint = this.utils.getVerticalLineCrossPoint(tr, br, endPointer);
-          newDOMRect = this.utils.getRelativePosition({ tl: newTLPoint, tr, bl: endPointer, br: newBRPoint });
-          break;
-        case 'br':
-          newTRPoint = this.utils.getVerticalLineCrossPoint(tl, tr, endPointer);
-          newBLPoint = this.utils.getVerticalLineCrossPoint(tl, bl, endPointer);
-          newDOMRect = this.utils.getRelativePosition({ tl, tr: newTRPoint, bl: newBLPoint, br: endPointer });
-          break;
-        case 't':
-          newTLPoint = this.utils.getVerticalLineCrossPoint(bl, tl, endPointer);
-          newTRPoint = this.utils.getVerticalLineCrossPoint(br, tr, endPointer);
-          newDOMRect = this.utils.getRelativePosition({ tl: newTLPoint, tr: newTRPoint, bl, br });
-          break;
-        case 'r':
-          newTRPoint = this.utils.getVerticalLineCrossPoint(tl, tr, endPointer);
-          newBRPoint = this.utils.getVerticalLineCrossPoint(bl, br, endPointer);
-          newDOMRect = this.utils.getRelativePosition({ tl, tr: newTRPoint, bl, br: newBRPoint });
-          break;
-        case 'b':
-          newBLPoint = this.utils.getVerticalLineCrossPoint(tl, bl, endPointer);
-          newBRPoint = this.utils.getVerticalLineCrossPoint(tr, br, endPointer);
-          newDOMRect = this.utils.getRelativePosition({ tl, tr, bl: newBLPoint, br: newBRPoint });
-          break;
-        case 'l':
-          newTLPoint = this.utils.getVerticalLineCrossPoint(tr, tl, endPointer);
-          newBLPoint = this.utils.getVerticalLineCrossPoint(br, bl, endPointer);
-          newDOMRect = this.utils.getRelativePosition({ tl: newTLPoint, tr, bl: newBLPoint, br });
-          break;
-      }
+    this.nodePositionSnapshotList.forEach((position, id) => {
       this.store.dispatch(
-        updateNodesSize({ nodesSizeMap: new Map<string, IDOMRect>([[id, newDOMRect]]) })
+        updateNodesSize({ nodesSizeMap: new Map<string, IDOMRect>([[id, getDOMRectByDirectionAndPosition(direction, position, endPointer)]]) })
       );
     });
   }
@@ -305,5 +258,47 @@ function getGroupRectByDirectionPoint(direction: IRectDirection, absolutePoint: 
       return { left: absolutePoint.tl[0], top: absolutePoint.tl[1], width: point[0] - absolutePoint.bl[0], height: point[1] - absolutePoint.tr[1] };
     case 'bl':
       return { left: point[0], top: absolutePoint.tl[1], width: absolutePoint.br[0] - point[0], height: point[1] - absolutePoint.tl[1] };
+  }
+}
+
+function getDOMRectByDirectionAndPosition(direction: IRectDirection, position: IAbsolutePosition, endPointer: [number, number]): IDOMRect {
+  const { bl, br, tl, tr } = position;
+  let newTLPoint: [number, number];
+  let newTRPoint: [number, number];
+  let newBLPoint: [number, number];
+  let newBRPoint: [number, number];
+  switch (direction) {
+    case 'tl':
+      newTRPoint = CeUtilsService.shared.getVerticalLineCrossPoint(br, tr, endPointer);
+      newBLPoint = CeUtilsService.shared.getVerticalLineCrossPoint(br, bl, endPointer);
+      return CeUtilsService.shared.getRelativePosition({ tl: endPointer, tr: newTRPoint, bl: newBLPoint, br });
+    case 'tr':
+      newTLPoint = CeUtilsService.shared.getVerticalLineCrossPoint(bl, tl, endPointer);
+      newBRPoint = CeUtilsService.shared.getVerticalLineCrossPoint(bl, br, endPointer);
+      return CeUtilsService.shared.getRelativePosition({ tl: newTLPoint, tr: endPointer, bl, br: newBRPoint });
+    case 'bl':
+      newTLPoint = CeUtilsService.shared.getVerticalLineCrossPoint(tr, tl, endPointer);
+      newBRPoint = CeUtilsService.shared.getVerticalLineCrossPoint(tr, br, endPointer);
+      return CeUtilsService.shared.getRelativePosition({ tl: newTLPoint, tr, bl: endPointer, br: newBRPoint });
+    case 'br':
+      newTRPoint = CeUtilsService.shared.getVerticalLineCrossPoint(tl, tr, endPointer);
+      newBLPoint = CeUtilsService.shared.getVerticalLineCrossPoint(tl, bl, endPointer);
+      return CeUtilsService.shared.getRelativePosition({ tl, tr: newTRPoint, bl: newBLPoint, br: endPointer });
+    case 't':
+      newTLPoint = CeUtilsService.shared.getVerticalLineCrossPoint(bl, tl, endPointer);
+      newTRPoint = CeUtilsService.shared.getVerticalLineCrossPoint(br, tr, endPointer);
+      return CeUtilsService.shared.getRelativePosition({ tl: newTLPoint, tr: newTRPoint, bl, br });
+    case 'r':
+      newTRPoint = CeUtilsService.shared.getVerticalLineCrossPoint(tl, tr, endPointer);
+      newBRPoint = CeUtilsService.shared.getVerticalLineCrossPoint(bl, br, endPointer);
+      return CeUtilsService.shared.getRelativePosition({ tl, tr: newTRPoint, bl, br: newBRPoint });
+    case 'b':
+      newBLPoint = CeUtilsService.shared.getVerticalLineCrossPoint(tl, bl, endPointer);
+      newBRPoint = CeUtilsService.shared.getVerticalLineCrossPoint(tr, br, endPointer);
+      return CeUtilsService.shared.getRelativePosition({ tl, tr, bl: newBLPoint, br: newBRPoint });
+    case 'l':
+      newTLPoint = CeUtilsService.shared.getVerticalLineCrossPoint(tr, tl, endPointer);
+      newBLPoint = CeUtilsService.shared.getVerticalLineCrossPoint(br, bl, endPointer);
+      return CeUtilsService.shared.getRelativePosition({ tl: newTLPoint, tr, bl: newBLPoint, br });
   }
 }
