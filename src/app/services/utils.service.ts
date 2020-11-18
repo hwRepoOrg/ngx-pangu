@@ -41,6 +41,7 @@ export class CeUtilsService {
   public getNodeById<T = any>(id: string, nodes: INode<T>[]): INode<T> {
     let flag = false;
     let node: INode<T>;
+    let parent = null;
     const stack = [...nodes];
     while (!flag && stack.length) {
       const item = stack.pop();
@@ -49,11 +50,12 @@ export class CeUtilsService {
         node = item;
       } else {
         if (item.children && item.children.length) {
+          parent = item;
           stack.push(...item.children);
         }
       }
     }
-    return node;
+    return { ...node, parentNode: parent };
   }
 
   /**
