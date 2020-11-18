@@ -1,4 +1,4 @@
-import { Component, HostBinding, Input, OnInit } from '@angular/core';
+import { Component, HostBinding, Input } from '@angular/core';
 import { SafeStyle } from '@angular/platform-browser';
 import { INode } from 'src/app/store/store';
 
@@ -7,7 +7,7 @@ import { INode } from 'src/app/store/store';
   templateUrl: './box-item.component.html',
   styleUrls: ['./box-item.component.less'],
 })
-export class BoxItemComponent implements OnInit {
+export class BoxItemComponent {
   @Input()
   public node: INode;
 
@@ -57,8 +57,4 @@ export class BoxItemComponent implements OnInit {
       .trim()
       .replace(/^url\(\)$/, '');
   }
-
-  constructor() {}
-
-  ngOnInit(): void {}
 }
