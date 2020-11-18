@@ -69,18 +69,34 @@ function recursiveUpdateNodeChildrenSize(nodes: INode[], oldParentRect: IDOMRect
 // }
 
 function updateNodesSizeReducer(state: INode[], { nodesSizeMap }: { nodesSizeMap: Map<string, IDOMRect> }): INode[] {
-  return state.map((node) => {
-    if (!nodesSizeMap.has(node.id)) {
-      return node;
-    } else {
-      const newNode = { ...node, ...nodesSizeMap.get(node.id) };
-      if (node.children && node.children.length) {
-        return { ...newNode, children: recursiveUpdateNodeChildrenSize(newNode.children, { ...node }, { ...newNode }) };
-      } else {
-        return newNode;
-      }
+  let inSameLayer = true;
+  const ids = [...nodesSizeMap.keys()];
+  let parent: INode;
+  while (inSameLayer && ids.length) {
+    const id = ids.pop();
+    const node = CeUtilsService.shared.getNodeById(id, state);
+    if (!parent) {
+      parent = node.parentNode;
     }
-  });
+    inSameLayer = parent?.id === node.parentNode?.id;
+  }
+
+  if (!inSameLayer) {
+    return state;
+  } else {
+    if (!parent) {
+      return state.map((node) => {
+        const newNode = { ...node, ...nodesSizeMap.get(node.id) };
+        if (node.children && node.children.length) {
+          return { ...newNode, children: recursiveUpdateNodeChildrenSize(newNode.children, { ...node }, { ...newNode }) };
+        } else {
+          return newNode;
+        }
+      });
+    } else {
+      return state;
+    }
+  }
 }
 
 function groupNodesReducer(state: INode[], { ids }: { ids: string[] }): INode[] {
