@@ -4,17 +4,9 @@ import { NzContextMenuService, NzDropdownMenuComponent } from 'ng-zorro-antd/dro
 import { NzFormatEmitEvent, NzTreeComponent, NzTreeNode, NzTreeNodeOptions } from 'ng-zorro-antd/tree';
 import { Subscription } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
+import { ActionsService } from 'src/app/services/actions.service';
 import { CeUtilsService } from 'src/app/services/utils.service';
-import {
-  addBorderedNodes,
-  breakNode,
-  clearBorderedNodes,
-  clearSelectedNodes,
-  removeBorderedNodes,
-  removeNodes,
-  setBorderedNodes,
-  setSelectedNodes,
-} from 'src/app/store/actions';
+import { addBorderedNodes, removeBorderedNodes, setSelectedNodes } from 'src/app/store/actions';
 import { INode, IStore } from 'src/app/store/store';
 
 @Component({
@@ -24,12 +16,14 @@ import { INode, IStore } from 'src/app/store/store';
 })
 export class LayerTreeComponent implements OnDestroy {
   public openedKeys = new Set<string>();
-  public nodes: NzTreeNodeOptions[];
+  public treeNodes: NzTreeNodeOptions[];
   public selected: Set<string>;
   public selectedKeys: string[];
   public expandedKeys: string[];
   @ViewChild('layerTree', { read: NzTreeComponent })
   public layerTree: NzTreeComponent;
+  private nodes: INode[];
+  private parentKey: string;
   private subscription = new Subscription();
   public get groupStatus(): boolean {
     return this.selectedKeys.length > 1
@@ -40,13 +34,19 @@ export class LayerTreeComponent implements OnDestroy {
       : false;
   }
 
-  constructor(private store: Store<IStore>, private utils: CeUtilsService, private contextMenuSrv: NzContextMenuService) {
+  constructor(
+    private store: Store<IStore>,
+    private utils: CeUtilsService,
+    private contextMenuSrv: NzContextMenuService,
+    public actions: ActionsService
+  ) {
     this.subscription.add(
       this.store
         .select('nodes')
         .pipe(debounceTime(300))
         .subscribe((nodes) => {
-          this.nodes = this.transferNodesToNzNodes(this.utils.sortNodeListByIndex(nodes));
+          this.nodes = nodes;
+          this.treeNodes = this.transferNodesToNzNodes(this.utils.sortNodeListByIndex(nodes));
           this.selectedKeys = [...this.selected];
           this.expandedKeys = this.expandedKeys && [...this.expandedKeys];
         })
@@ -73,11 +73,6 @@ export class LayerTreeComponent implements OnDestroy {
     this.store.dispatch(addBorderedNodes({ ids: [id] }));
   }
 
-  setSelected(ids: string[]): void {
-    this.store.dispatch(setSelectedNodes({ ids }));
-    this.store.dispatch(setBorderedNodes({ ids }));
-  }
-
   layerTrackByFn(index: number, node: INode): string {
     return `box-item-${node.id}-${node.zIndex}`;
   }
@@ -101,27 +96,34 @@ export class LayerTreeComponent implements OnDestroy {
     this.contextMenuSrv.create(event, menu);
   }
 
-  breakNode(id: string): void {
-    this.store.dispatch(clearSelectedNodes());
-    this.store.dispatch(clearBorderedNodes());
-    this.store.dispatch(breakNode({ id }));
+  getParentKey(parentNode?: NzTreeNode): string {
+    return parentNode?.key ?? 'root';
   }
 
-  deleteNodes(): void {
-    const ids = [...this.selected];
-    this.store.dispatch(clearSelectedNodes());
-    this.store.dispatch(clearBorderedNodes());
-    this.store.dispatch(removeNodes({ ids }));
+  multipleSelected(event: NzFormatEmitEvent): void {
+    if (!this.parentKey) {
+      this.parentKey = this.getParentKey(event.node.parentNode);
+    }
+    this.actions.setSelectedNodes(event.selectedKeys.filter((node) => this.getParentKey(node.parentNode) === this.parentKey).map((node) => node.key));
   }
 
   clickNode(event: NzFormatEmitEvent): void {
     if (event.node) {
-      if (event.node.parentNode) {
-        this.store.dispatch(clearSelectedNodes());
-        this.store.dispatch(clearBorderedNodes());
-        this.setSelected([event.node.key]);
-      } else {
-        this.setSelected(event.selectedKeys.filter((node) => !node.parentNode).map((node) => node.key));
+      if (/Win|Linux/.test(navigator.platform)) {
+        if (event.event.ctrlKey) {
+          this.multipleSelected(event);
+        } else {
+          this.parentKey = this.getParentKey(event.node.parentNode);
+          this.actions.setSelectedNode(event.node.key);
+        }
+      }
+      if (/Mac/.test(navigator.platform)) {
+        if (event.event.metaKey) {
+          this.multipleSelected(event);
+        } else {
+          this.parentKey = this.getParentKey(event.node.parentNode);
+          this.actions.setSelectedNode(event.node.key);
+        }
       }
     }
   }

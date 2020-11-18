@@ -3,7 +3,7 @@
   nzDraggable
   nzBlockNode
   nzMultiple
-  [nzData]="nodes"
+  [nzData]="treeNodes"
   [nzSelectedKeys]="selectedKeys"
   [nzExpandedKeys]="expandedKeys"
   [nzTreeTemplate]="nzTreeTemplate"
@@ -27,7 +27,15 @@
     </div>
     <nz-dropdown-menu #menu="nzDropdownMenu">
       <ul nz-menu>
-        <li nz-menu-item class="action-item" (click)="deleteNodes()">
+        <li *ngIf="!node.locked" nz-menu-item class="action-item">
+          <i nz-icon nzType="lock"></i>
+          <span>锁定</span>
+        </li>
+        <li *ngIf="node.locked" nz-menu-item class="action-item">
+          <i nz-icon nzType="unlock"></i>
+          <span>解锁</span>
+        </li>
+        <li nz-menu-item class="action-item" (click)="actions.deleteNodes(selectedKeys)">
           <i nz-icon nzType="delete"></i>
           <span>删除</span>
         </li>
@@ -36,7 +44,7 @@
           <span>组合</span>
           <span class="shortcuts"> ctrl+shift+G </span>
         </li>
-        <li *ngIf="node.children && node.children.length" nz-menu-item (click)="breakNode(node.id)" class="action-item">
+        <li *ngIf="node.children && node.children.length" nz-menu-item (click)="actions.breakNode(node.id)" class="action-item">
           <i nz-icon nzIconfont="icon-break"></i>
           <span>打散</span>
           <span class="shortcuts"> ctrl+shift+B </span>
