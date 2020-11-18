@@ -21,6 +21,7 @@ export interface INode<T = any> {
   backgroundRepeat?: string;
   backgroundPosition?: string;
   backgroundSize?: string;
+  [key: string]: any;
 }
 
 export interface ICanvasBackground {
