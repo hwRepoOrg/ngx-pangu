@@ -75,10 +75,8 @@ function updateNodesSizeReducer(state: INode[], { nodesSizeMap }: { nodesSizeMap
   while (inSameLayer && ids.length) {
     const id = ids.pop();
     const node = CeUtilsService.shared.getNodeById(id, state);
-    if (!parent) {
-      parent = node.parentNode;
-    }
     inSameLayer = parent?.id === node.parentNode?.id;
+    parent = node.parentNode;
   }
 
   if (!inSameLayer) {
