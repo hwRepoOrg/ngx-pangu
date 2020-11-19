@@ -1,9 +1,10 @@
 import { Component, ElementRef, HostBinding, OnDestroy } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { Subscription } from 'rxjs';
-import { filter, map } from 'rxjs/operators';
+import { filter } from 'rxjs/operators';
 import { CeUtilsService, IAbsolutePosition, IDOMRect, IRectDirection } from 'src/app/services/utils.service';
 import { updateNodesSize } from 'src/app/store/actions';
+import { ResizeRefreshSelector } from 'src/app/store/selectors';
 import { ICanvasPosition, INode, IStore } from 'src/app/store/store';
 
 @Component({
@@ -39,29 +40,14 @@ export class ResizeHandleComponent implements OnDestroy {
 
   constructor(private store: Store<IStore>, private utils: CeUtilsService, public eleRef: ElementRef<HTMLElement>) {
     this.subscription.add(
-      this.store.select('canvasPosition').subscribe((state) => {
-        this.canvasPosition = state;
-        this.refreshResizeHandle();
-      })
-    );
-    this.subscription.add(
-      this.store.select('nodes').subscribe((nodes) => {
-        this.nodes = nodes;
-        this.refreshResizeHandle();
-      })
-    );
-    this.subscription.add(
       this.store
-        .select('selected')
-        .pipe(
-          map((selected) => {
-            this.display = selected.size ? 'block' : 'none';
-            return selected;
-          }),
-          filter((selected) => !!selected.size)
-        )
-        .subscribe((selected) => {
+        .select(ResizeRefreshSelector)
+        .pipe(filter(([selected]) => !!selected.size))
+        .subscribe(([selected, canvasPosition, nodes]) => {
+          this.display = selected.size ? 'block' : 'none';
           this.selected = selected;
+          this.canvasPosition = canvasPosition;
+          this.nodes = nodes;
           this.refreshResizeHandle();
         })
     );
@@ -75,27 +61,13 @@ export class ResizeHandleComponent implements OnDestroy {
     if (!this.selected || !this.nodes) {
       return;
     }
-    let rect: IDOMRect;
-    if (this.selected.size === 1) {
-      const [node, ...parents] = this.utils.getNodeAndParentListById([...this.selected][0], this.nodes);
-      rect = { ...this.utils.getChildPositionBaseOnMultipleParentCoordinataSystem(node, [...parents]) };
-      this.rotate = parents.reduce((sum, p) => sum + (p.rotate ?? 0), node.rotate ?? 0);
-    } else {
-      const parent = this.utils.getSameLayerParentByChildren([...this.selected], this.nodes);
-      if (parent !== false) {
-        const parents = this.utils.getNodeAndParentListById(parent?.id, this.nodes);
-        rect = this.utils.getChildrenBoundingBoxBaseOnParentCoordinateSystem(
-          [...this.selected].map((id) => this.utils.getNodeById(id, this.nodes)),
-          [...parents]
-        );
-        this.rotate = parents.reduce((sum, p) => sum + (p.rotate ?? 0), 0);
-      }
-    }
-    const { left, top, width, height } = rect;
+
+    const { left, top, width, height, rotate } = this.utils.getResizeBoundingBox([...this.selected], this.nodes);
     this.left = left * this.canvasPosition.scale;
     this.top = top * this.canvasPosition.scale;
     this.width = width * this.canvasPosition.scale;
     this.height = height * this.canvasPosition.scale;
+    this.rotate = rotate;
   }
 
   resizeStart(event: PointerEvent): void {
