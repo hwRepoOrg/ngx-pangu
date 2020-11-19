@@ -40,16 +40,15 @@ export class ResizeHandleComponent implements OnDestroy {
 
   constructor(private store: Store<IStore>, private utils: CeUtilsService, public eleRef: ElementRef<HTMLElement>) {
     this.subscription.add(
-      this.store
-        .select(ResizeRefreshSelector)
-        .pipe(filter(([selected]) => !!selected.size))
-        .subscribe(([selected, canvasPosition, nodes]) => {
-          this.display = selected.size ? 'block' : 'none';
-          this.selected = selected;
-          this.canvasPosition = canvasPosition;
-          this.nodes = nodes;
+      this.store.select(ResizeRefreshSelector).subscribe(([selected, canvasPosition, nodes]) => {
+        this.display = selected.size ? 'block' : 'none';
+        this.selected = selected;
+        this.canvasPosition = canvasPosition;
+        this.nodes = nodes;
+        if (this.selected.size) {
           this.refreshResizeHandle();
-        })
+        }
+      })
     );
   }
 
