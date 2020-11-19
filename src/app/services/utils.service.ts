@@ -61,7 +61,10 @@ export class CeUtilsService {
    * @param id 节点ID
    * @param nodes 节点树
    */
-  public getNodeAndParentListById<T = any>(id: string, nodes: INode<T>[]): INode[] {
+  public getNodeAndParentListById<T = any>(id: string | undefined, nodes: INode<T>[]): INode[] {
+    if (!id) {
+      return [];
+    }
     const rootIdSet = new Set(nodes.map((node) => node.id));
     let flag = false;
     let path: INode[] = [];
@@ -82,6 +85,26 @@ export class CeUtilsService {
       }
     }
     return path;
+  }
+
+  /**
+   * 通过子节点id集合和节点树，获取子节点的父节点，若子节点不在同一级则返回undefined
+   * @param childrenIds 子节点ID列表
+   * @param nodes 节点集合
+   */
+  public getSameLayerParentByChildren(childrenIds: string[], nodes: INode[]): INode | false {
+    let flag = true;
+    const parents = childrenIds.map((id) => this.getNodeAndParentListById(id, nodes)[1]);
+    let prevParent = parents.pop();
+    while (flag && parents.length) {
+      const parent = parents.pop();
+      if (prevParent?.id === parent?.id) {
+        prevParent = parent;
+      } else {
+        flag = false;
+      }
+    }
+    return flag && prevParent;
   }
 
   /**
@@ -190,7 +213,7 @@ export class CeUtilsService {
   }
 
   /**
-   * 通过盒子的聚堆坐标列表获取对应坐标的值的集合
+   * 通过盒子的绝对坐标列表获取对应坐标的值的集合
    * @param axis 要获取的坐标轴
    * @param positions 绝对坐标列表
    */
@@ -215,6 +238,10 @@ export class CeUtilsService {
     return { left: l, top: t, width: r - l, height: b - t };
   }
 
+  /**
+   * 依据zIndex对节点递归排序
+   * @param list 节点列表
+   */
   public sortNodeListByIndex(list?: INode[]): INode[] {
     return (
       list &&
@@ -369,5 +396,38 @@ export class CeUtilsService {
         parentCenter[1],
     ];
     return { left: newCenterX - childRect.width / 2, top: newCenterY - childRect.height / 2, width: childRect.width, height: childRect.height };
+  }
+
+  /**
+   * 获取单个子节点相对于多层父节点的坐标
+   * @param child 子节点size
+   * @param parents 父节点集合（排序为从左往右依次外扩）
+   */
+  public getChildPositionBaseOnMultipleParentCoordinataSystem(child: IDOMRect, parents: INode[]): IDOMRect {
+    let rect: IDOMRect = { ...child };
+    while (parents.length) {
+      const parent = parents.shift();
+      rect = this.getChildPositionBaseOnParentCoordinateSystem(parent, parent.rotate, child);
+    }
+    return rect;
+  }
+
+  /**
+   * 获取多个子节点相对与多层父节点的坐标
+   * @param children 子节点列表
+   * @param parents 父节点列表
+   */
+  public getChildrenBoundingBoxBaseOnParentCoordinateSystem(children: INode[], parents: INode[]): IDOMRect {
+    const outerBox = this.getOuterBoundingBox(
+      children.map((child) =>
+        this.getAbsolutePosition(child.left + child.width / 2, child.top + child.height / 2, child.width, child.height, child.rotate)
+      )
+    );
+    let domRect = { ...outerBox };
+    while (parents.length) {
+      const parent = parents.shift();
+      domRect = this.getChildPositionBaseOnParentCoordinateSystem(parent, parent.rotate, domRect);
+    }
+    return domRect;
   }
 }
