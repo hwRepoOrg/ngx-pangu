@@ -1,24 +1,23 @@
 import { Component, OnDestroy } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { Subscription } from 'rxjs';
-import { NodeMoveService } from 'src/app/services/node-move.service';
-import { addBorderedNodes, addSelectedNodes, clearBorderedNodes, clearSelectedNodes, removeBorderedNodes } from 'src/app/store/actions';
+import { addBorderedNodes, addSelectedNodes, clearBorderedNodes, clearSelectedNodes, removeBorderedNodes, updateNodes } from 'src/app/store/actions';
 import { ICanvasPosition, INode, IStore } from 'src/app/store/store';
 
 @Component({
   selector: 'ce-canvas',
   templateUrl: './canvas.component.html',
   styleUrls: ['./canvas.component.less'],
-  providers: [NodeMoveService],
 })
 export class CanvasComponent implements OnDestroy {
   public nodes: INode[];
   private selected: Set<string>;
   private canvasPosition: ICanvasPosition;
   private pointerSnapshot: [number, number] = null;
+  private nodesSnapshot: Map<string, INode> = new Map();
   private subscription = new Subscription();
 
-  constructor(private store: Store<IStore>, private moveSrv: NodeMoveService) {
+  constructor(private store: Store<IStore>) {
     this.subscription.add(this.store.select('nodes').subscribe((nodes) => (this.nodes = nodes)));
     this.subscription.add(this.store.select('selected').subscribe((state) => (this.selected = state)));
     this.subscription.add(this.store.select('canvasPosition').subscribe((state) => (this.canvasPosition = state)));
@@ -35,32 +34,45 @@ export class CanvasComponent implements OnDestroy {
   moveStart(ev: PointerEvent, node: INode): void {
     ev.preventDefault();
     ev.stopPropagation();
+    this.nodesSnapshot.clear();
     this.pointerSnapshot = [ev.clientX, ev.clientY];
+    let selected: string[] = [...this.selected];
     if (!this.selected.has(node.id)) {
       this.store.dispatch(clearBorderedNodes());
       this.store.dispatch(clearSelectedNodes());
       this.store.dispatch(addSelectedNodes({ ids: [node.id] }));
-      this.moveSrv.boxMoveStart(
-        node,
-        new Set<string>([node.id]),
-        this.nodes
-      );
-    } else {
-      this.moveSrv.boxMoveStart(node, this.selected, this.nodes);
+      selected = [node.id];
     }
+    selected.forEach((id) => {
+      const item = this.nodes.find((n) => n.id === id);
+      this.nodesSnapshot.set(item.id, { ...item });
+    });
   }
 
   moving(ev: PointerEvent): void {
     if (this.pointerSnapshot) {
       const { scale } = this.canvasPosition;
       const [x, y] = this.pointerSnapshot;
-      this.moveSrv.boxMoving((ev.clientX - x) / scale, (ev.clientY - y) / scale);
+      const [mx, my] = [(ev.clientX - x) / scale, (ev.clientY - y) / scale];
+      this.store.dispatch(
+        updateNodes({
+          nodes: [...this.nodesSnapshot.values()].map((node) => {
+            const newLeft = node.left + mx;
+            const newTop = node.top + my;
+            return {
+              ...node,
+              left: newLeft,
+              top: newTop,
+            };
+          }),
+        })
+      );
     }
   }
 
   moveEnd(): void {
     this.pointerSnapshot = null;
-    this.moveSrv.boxMoveEnd();
+    this.nodesSnapshot.clear();
   }
 
   showBorder(id: string): void {
