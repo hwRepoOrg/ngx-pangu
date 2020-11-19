@@ -430,4 +430,30 @@ export class CeUtilsService {
     }
     return domRect;
   }
+
+  /**
+   * 获取已选中节点的缩放框的尺寸
+   * @param selected 已选中节点
+   * @param nodes 节点树
+   */
+  public getResizeBoundingBox(selected: string[], nodes: INode[]): IDOMRect & { rotate: number } {
+    let rect: IDOMRect;
+    let rotate: number;
+    if (selected.length === 1) {
+      const [node, ...parents] = this.getNodeAndParentListById(selected[0], nodes);
+      rect = { ...this.getChildPositionBaseOnMultipleParentCoordinataSystem(node, [...parents]) };
+      rotate = parents.reduce((sum, p) => sum + (p.rotate ?? 0), node.rotate ?? 0);
+    } else {
+      const parent = this.getSameLayerParentByChildren(selected, nodes);
+      if (parent !== false) {
+        const parents = this.getNodeAndParentListById(parent?.id, nodes);
+        rect = this.getChildrenBoundingBoxBaseOnParentCoordinateSystem(
+          selected.map((id) => this.getNodeById(id, nodes)),
+          [...parents]
+        );
+        rotate = parents.reduce((sum, p) => sum + (p.rotate ?? 0), 0);
+      }
+    }
+    return { ...rect, rotate };
+  }
 }
