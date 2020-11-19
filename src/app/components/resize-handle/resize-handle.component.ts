@@ -116,14 +116,19 @@ export class ResizeHandleComponent implements OnDestroy {
 
   refreshSingleResizeHandle(): void {
     this.selected.forEach((id) => {
-      const node = this.utils.getNodeById(id, this.nodes);
+      const [node, ...parents] = this.utils.getNodeAndParentListById(id, this.nodes);
       if (node) {
-        const { left, top, width, height, rotate } = node;
-        this.left = left * this.canvasPosition.scale;
-        this.top = top * this.canvasPosition.scale;
-        this.width = width * this.canvasPosition.scale;
-        this.height = height * this.canvasPosition.scale;
-        this.rotate = rotate ?? 0;
+        let domRect: IDOMRect = { left: node.left, top: node.top, width: node.width, height: node.height };
+        const parentList = [...parents];
+        while (parentList.length) {
+          const parent = parentList.shift();
+          domRect = this.utils.getChildPositionBaseOnParentCoordinateSystem(parent, parent.rotate, domRect);
+        }
+        this.left = domRect.left * this.canvasPosition.scale;
+        this.top = domRect.top * this.canvasPosition.scale;
+        this.width = domRect.width * this.canvasPosition.scale;
+        this.height = domRect.height * this.canvasPosition.scale;
+        this.rotate = parents.reduce((sum, parent) => sum + (parent.rotate ?? 0), node.rotate ?? 0);
       }
     });
   }
