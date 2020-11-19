@@ -2,9 +2,9 @@
   *ngFor="let node of nodes; trackBy: nodeListTrackByFn"
   ceDraggable
   [ceDragDisabled]="node?.locked"
-  (ceOnStart)="moveSrv.boxMoveStart($event, node, moveState)"
-  (ceOnMove)="moveSrv.boxMoving($event)"
-  (ceOnStop)="moveSrv.boxMoveEnd()"
+  (ceOnStart)="moveStart($event, node)"
+  (ceOnMove)="moving($event)"
+  (ceOnStop)="moveEnd()"
   [node]="node"
   (pointerenter)="showBorder(node.id)"
   (pointerleave)="removeBorder(node.id)"
