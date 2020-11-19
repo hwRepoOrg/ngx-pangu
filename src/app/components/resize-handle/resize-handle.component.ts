@@ -41,13 +41,13 @@ export class ResizeHandleComponent implements OnDestroy {
     this.subscription.add(
       this.store.select('canvasPosition').subscribe((state) => {
         this.canvasPosition = state;
-        this.refreshResizeHandleBoundingBox();
+        this.refreshResizeHandle();
       })
     );
     this.subscription.add(
       this.store.select('nodes').subscribe((nodes) => {
         this.nodes = nodes;
-        this.refreshResizeHandleBoundingBox();
+        this.refreshResizeHandle();
       })
     );
     this.subscription.add(
@@ -62,7 +62,7 @@ export class ResizeHandleComponent implements OnDestroy {
         )
         .subscribe((selected) => {
           this.selected = selected;
-          this.refreshResizeHandleBoundingBox();
+          this.refreshResizeHandle();
         })
     );
   }
@@ -71,66 +71,31 @@ export class ResizeHandleComponent implements OnDestroy {
     this.subscription.unsubscribe();
   }
 
-  refreshResizeHandleBoundingBox(): void {
+  refreshResizeHandle(): any {
     if (!this.selected || !this.nodes) {
       return;
     }
-    if (this.selected.size > 1) {
-      this.refreshBatchResizeHandle();
+    let rect: IDOMRect;
+    if (this.selected.size === 1) {
+      const [node, ...parents] = this.utils.getNodeAndParentListById([...this.selected][0], this.nodes);
+      rect = { ...this.utils.getChildPositionBaseOnMultipleParentCoordinataSystem(node, [...parents]) };
+      this.rotate = parents.reduce((sum, p) => sum + (p.rotate ?? 0), node.rotate ?? 0);
     } else {
-      this.refreshSingleResizeHandle();
-    }
-  }
-
-  refreshBatchResizeHandle(): void {
-    const leftSet = new Set<number>();
-    const topSet = new Set<number>();
-    const rightSet = new Set<number>();
-    const bottomSet = new Set<number>();
-    this.selected.forEach((id) => {
-      const node = this.utils.getNodeById(id, this.nodes);
-      if (node) {
-        const { bl, br, tl, tr } = this.utils.getAbsolutePosition(
-          node.left + node.width / 2,
-          node.top + node.height / 2,
-          node.width,
-          node.height,
-          node.rotate
+      const parent = this.utils.getSameLayerParentByChildren([...this.selected], this.nodes);
+      if (parent !== false) {
+        const parents = this.utils.getNodeAndParentListById(parent?.id, this.nodes);
+        rect = this.utils.getChildrenBoundingBoxBaseOnParentCoordinateSystem(
+          [...this.selected].map((id) => this.utils.getNodeById(id, this.nodes)),
+          [...parents]
         );
-        leftSet.add(Math.min(tl[0], tr[0], bl[0], br[0]));
-        topSet.add(Math.min(tl[1], tr[1], bl[1], br[1]));
-        rightSet.add(Math.max(tl[0], tr[0], bl[0], br[0]));
-        bottomSet.add(Math.max(tl[1], tr[1], bl[1], br[1]));
+        this.rotate = parents.reduce((sum, p) => sum + (p.rotate ?? 0), 0);
       }
-    });
-    const left = Math.min(...leftSet);
-    const right = Math.max(...rightSet);
-    const top = Math.min(...topSet);
-    const bottom = Math.max(...bottomSet);
+    }
+    const { left, top, width, height } = rect;
     this.left = left * this.canvasPosition.scale;
     this.top = top * this.canvasPosition.scale;
-    this.width = (right - left) * this.canvasPosition.scale;
-    this.height = (bottom - top) * this.canvasPosition.scale;
-    this.rotate = null;
-  }
-
-  refreshSingleResizeHandle(): void {
-    this.selected.forEach((id) => {
-      const [node, ...parents] = this.utils.getNodeAndParentListById(id, this.nodes);
-      if (node) {
-        let domRect: IDOMRect = { left: node.left, top: node.top, width: node.width, height: node.height };
-        const parentList = [...parents];
-        while (parentList.length) {
-          const parent = parentList.shift();
-          domRect = this.utils.getChildPositionBaseOnParentCoordinateSystem(parent, parent.rotate, domRect);
-        }
-        this.left = domRect.left * this.canvasPosition.scale;
-        this.top = domRect.top * this.canvasPosition.scale;
-        this.width = domRect.width * this.canvasPosition.scale;
-        this.height = domRect.height * this.canvasPosition.scale;
-        this.rotate = parents.reduce((sum, parent) => sum + (parent.rotate ?? 0), node.rotate ?? 0);
-      }
-    });
+    this.width = width * this.canvasPosition.scale;
+    this.height = height * this.canvasPosition.scale;
   }
 
   resizeStart(event: PointerEvent): void {
