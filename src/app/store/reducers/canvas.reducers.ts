@@ -1,5 +1,5 @@
 import { createReducer, on } from '@ngrx/store';
-import { updateCanvasBackground, updateCanvasPosition, updateCanvasSize } from '../actions';
+import { updateCanvasBackground, updateCanvasPosition, updateCanvasSize, updateNodeMoveState } from '../actions';
 import { DEFAULT_STORE, ICanvasPosition, ICanvasSize } from '../store';
 
 export const canvasSizeReducer = createReducer<ICanvasSize>(
@@ -15,4 +15,9 @@ export const canvasPositionReducer = createReducer<ICanvasPosition>(
 export const canvasBackgroundReducer = createReducer(
   DEFAULT_STORE.canvasBackground,
   on(updateCanvasBackground, (state, newState) => ({ ...state, ...newState }))
+);
+
+export const nodeMoveStateReducer = createReducer(
+  false,
+  on(updateNodeMoveState, (...args) => args[1].state)
 );

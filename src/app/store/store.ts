@@ -40,6 +40,7 @@ export interface ICanvasPosition {
 }
 
 export interface IStore<T = any> {
+  nodeMoveState: boolean;
   nodes: INode<T>[];
   selected: Set<string>;
   bordered: Set<string>;
@@ -49,6 +50,7 @@ export interface IStore<T = any> {
 }
 
 export const DEFAULT_STORE: IStore<any> = {
+  nodeMoveState: false,
   nodes: new Array(20).fill(1).map((v, index) => ({
     id: genNodeId(),
     name: `test${index + 1}`,

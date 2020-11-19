@@ -6,3 +6,5 @@ export const updateCanvasSize = createAction('[editor] Update canvas size', prop
 export const updateCanvasPosition = createAction('[editor] Update canvas position', props<Partial<ICanvasPosition>>());
 
 export const updateCanvasBackground = createAction('[editor] Set canvas background color', props<Partial<ICanvasBackground>>());
+
+export const updateNodeMoveState = createAction('[editor] Update node move state', props<{ state: boolean }>());
