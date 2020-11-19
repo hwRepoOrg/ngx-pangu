@@ -39,5 +39,11 @@
       [style.width.px]="selectorRect.width"
       [style.height.px]="selectorRect.height"
     ></div>
+    <div [class.active]="refLineState?.t.state" [style.top.px]="refLineState?.t.position" class="ref-line x"></div>
+    <div [class.active]="refLineState?.b.state" [style.top.px]="refLineState?.t.position" class="ref-line x"></div>
+    <div [class.active]="refLineState?.xc.state" [style.top.px]="refLineState?.t.position" class="ref-line x"></div>
+    <div [class.active]="refLineState?.l.state" [style.left.px]="refLineState?.t.position" class="ref-line y"></div>
+    <div [class.active]="refLineState?.r.state" [style.left.px]="refLineState?.t.position" class="ref-line y"></div>
+    <div [class.active]="refLineState?.yc.state" [style.left.px]="refLineState?.t.position" class="ref-line y"></div>
   </div>
 </div>

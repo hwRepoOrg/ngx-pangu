@@ -4,7 +4,7 @@ import { fromEvent, Subscription } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { ISelectorRect } from './directives/selector.directive';
 import { clearBorderedNodes, clearSelectedNodes, setBorderedNodes, setSelectedNodes, updateCanvasPosition } from './store/actions';
-import { ICanvasPosition, INode, IStore } from './store/store';
+import { ICanvasPosition, INode, IRefLineDirection, IRefLineState, IStore } from './store/store';
 
 @Component({
   selector: 'ce-root',
@@ -20,6 +20,7 @@ export class AppComponent implements AfterViewInit, OnDestroy {
   public matrix: string;
   public selectorRect: ISelectorRect = null;
   public nodes: INode[];
+  public refLineState: { [P in IRefLineDirection]: IRefLineState };
   private nodesRectSnapshot: Map<string, Partial<DOMRect>> = null;
   private nodeIdList: string[] = null;
   constructor(private store: Store<IStore>) {
@@ -30,6 +31,7 @@ export class AppComponent implements AfterViewInit, OnDestroy {
       })
     );
     this.subscription.add(this.store.select('nodes').subscribe((nodes) => (this.nodes = nodes)));
+    this.subscription.add(this.store.select('refLineState').subscribe((refLineState) => (this.refLineState = refLineState)));
   }
 
   ngAfterViewInit(): void {
