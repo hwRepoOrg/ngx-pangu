@@ -33,6 +33,4 @@ export class ActionsService {
     this.store.dispatch(clearBorderedNodes());
     this.store.dispatch(removeNodes({ ids }));
   }
-
-  group;
 }
