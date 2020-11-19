@@ -39,6 +39,12 @@ export interface ICanvasPosition {
   top: number;
 }
 
+export type IRefLineDirection = 't' | 'b' | 'l' | 'r' | 'xc' | 'yc';
+export interface IRefLineState {
+  state: boolean;
+  position?: number;
+}
+
 export interface IStore<T = any> {
   nodeMoveState: boolean;
   nodes: INode<T>[];
@@ -47,6 +53,9 @@ export interface IStore<T = any> {
   canvasBackground: ICanvasBackground;
   canvasSize: ICanvasSize;
   canvasPosition: ICanvasPosition;
+  refLineState: {
+    [P in IRefLineDirection]: IRefLineState;
+  };
 }
 
 export const DEFAULT_STORE: IStore<any> = {
@@ -75,5 +84,13 @@ export const DEFAULT_STORE: IStore<any> = {
   canvasSize: {
     width: 1920,
     height: 1080,
+  },
+  refLineState: {
+    t: { state: false },
+    b: { state: false },
+    l: { state: false },
+    r: { state: false },
+    xc: { state: false },
+    yc: { state: false },
   },
 };
