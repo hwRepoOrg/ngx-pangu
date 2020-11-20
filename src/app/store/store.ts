@@ -39,7 +39,7 @@ export interface ICanvasPosition {
   top: number;
 }
 
-export type IRefLineDirection = 't' | 'b' | 'l' | 'r' | 'xc' | 'yc';
+export type IRefLineDirection = 'tx' | 'bx' | 'ly' | 'ry' | 'cx' | 'cy';
 export interface IRefLineState {
   state: boolean;
   position?: number;
@@ -86,11 +86,11 @@ export const DEFAULT_STORE: IStore<any> = {
     height: 1080,
   },
   refLineState: {
-    t: { state: false },
-    b: { state: false },
-    l: { state: false },
-    r: { state: false },
-    xc: { state: false },
-    yc: { state: false },
+    tx: { state: false },
+    bx: { state: false },
+    ly: { state: false },
+    ry: { state: false },
+    cx: { state: false },
+    cy: { state: false },
   },
 };
