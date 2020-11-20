@@ -393,13 +393,15 @@ export class CeUtilsService {
    * @param childRect 子元素尺寸
    */
   public getChildPositionBaseOnParentCoordinateSystem(parentRect: IDOMRect, parentRotate: number, childRect: IDOMRect): IDOMRect {
+    const parentCenter = [parentRect.left + parentRect.width / 2, parentRect.top + parentRect.height / 2];
+    const originalCenter = [childRect.left + childRect.width / 2 + parentRect.left, childRect.top + childRect.height / 2 + parentRect.top];
     const [newCenterX, newCenterY] = [
-      (childRect.cx - parentRect.cx) * Math.cos((parentRotate * Math.PI) / 180) -
-        (childRect.cy - parentRect.cy) * Math.sin((parentRotate * Math.PI) / 180) +
-        parentRect.cx,
-      (childRect.cy - parentRect.cy) * Math.cos((parentRotate * Math.PI) / 180) +
-        (childRect.cx - parentRect.cx) * Math.sin((parentRotate * Math.PI) / 180) +
-        parentRect.cy,
+      (originalCenter[0] - parentCenter[0]) * Math.cos((parentRotate * Math.PI) / 180) -
+        (originalCenter[1] - parentCenter[1]) * Math.sin((parentRotate * Math.PI) / 180) +
+        parentCenter[0],
+      (originalCenter[1] - parentCenter[1]) * Math.cos((parentRotate * Math.PI) / 180) +
+        (originalCenter[0] - parentCenter[0]) * Math.sin((parentRotate * Math.PI) / 180) +
+        parentCenter[1],
     ];
     return {
       left: newCenterX - childRect.width / 2,
