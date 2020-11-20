@@ -29,6 +29,12 @@
       <div ceNoZoomArea>
         <ce-bordered-area></ce-bordered-area>
         <ce-resize-handle></ce-resize-handle>
+        <div cx [class.active]="refLineState?.cx?.state" [style.top.px]="refLineState?.cx?.position * canvasPosition.scale" class="ref-line y"></div>
+        <div cy [class.active]="refLineState?.cy?.state" [style.left.px]="refLineState?.cy?.position * canvasPosition.scale" class="ref-line x"></div>
+        <div tx [class.active]="refLineState?.tx?.state" [style.top.px]="refLineState?.tx?.position * canvasPosition.scale" class="ref-line y"></div>
+        <div bx [class.active]="refLineState?.bx?.state" [style.top.px]="refLineState?.bx?.position * canvasPosition.scale" class="ref-line y"></div>
+        <div ly [class.active]="refLineState?.ly?.state" [style.left.px]="refLineState?.ly?.position * canvasPosition.scale" class="ref-line x"></div>
+        <div ry [class.active]="refLineState?.ry?.state" [style.left.px]="refLineState?.ry?.position * canvasPosition.scale" class="ref-line x"></div>
       </div>
     </div>
     <div
@@ -39,11 +45,5 @@
       [style.width.px]="selectorRect.width"
       [style.height.px]="selectorRect.height"
     ></div>
-    <div [class.active]="refLineState?.t.state" [style.top.px]="refLineState?.t.position" class="ref-line x"></div>
-    <div [class.active]="refLineState?.b.state" [style.top.px]="refLineState?.t.position" class="ref-line x"></div>
-    <div [class.active]="refLineState?.xc.state" [style.top.px]="refLineState?.t.position" class="ref-line x"></div>
-    <div [class.active]="refLineState?.l.state" [style.left.px]="refLineState?.t.position" class="ref-line y"></div>
-    <div [class.active]="refLineState?.r.state" [style.left.px]="refLineState?.t.position" class="ref-line y"></div>
-    <div [class.active]="refLineState?.yc.state" [style.left.px]="refLineState?.t.position" class="ref-line y"></div>
   </div>
 </div>

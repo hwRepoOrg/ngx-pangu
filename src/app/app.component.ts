@@ -15,7 +15,7 @@ export class AppComponent implements AfterViewInit, OnDestroy {
   @ViewChild('container', { read: ElementRef, static: true })
   private containerEleRef: ElementRef<HTMLDivElement>;
   private subscription = new Subscription();
-  private canvasPosition: ICanvasPosition;
+  public canvasPosition: ICanvasPosition;
   public startPoints: number[] = [];
   public matrix: string;
   public selectorRect: ISelectorRect = null;
