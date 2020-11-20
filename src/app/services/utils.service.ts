@@ -15,6 +15,10 @@ export interface IDOMRect {
   height: number;
   left: number;
   top: number;
+  cx?: number;
+  cy?: number;
+  bottom?: number;
+  right?: number;
 }
 
 export type IRectDirection = 'tl' | 't' | 'tr' | 'r' | 'br' | 'b' | 'bl' | 'l';
@@ -209,7 +213,7 @@ export class CeUtilsService {
     const r = Math.max(...this.getAxisListByPosition('x', [position]));
     const t = Math.min(...this.getAxisListByPosition('y', [position]));
     const b = Math.max(...this.getAxisListByPosition('y', [position]));
-    return { left: l, top: t, width: r - l, height: b - t };
+    return { left: l, top: t, width: r - l, height: b - t, bottom: b, right: r, cx: l + (r - l) / 2, cy: t + (b - t) / 2 };
   }
 
   /**
@@ -235,7 +239,7 @@ export class CeUtilsService {
     const r = Math.max(...this.getAxisListByPosition('x', positions));
     const t = Math.min(...this.getAxisListByPosition('y', positions));
     const b = Math.max(...this.getAxisListByPosition('y', positions));
-    return { left: l, top: t, width: r - l, height: b - t };
+    return { left: l, top: t, width: r - l, height: b - t, bottom: b, right: r, cx: l + (r - l) / 2, cy: t + (b - t) / 2 };
   }
 
   /**
@@ -305,10 +309,14 @@ export class CeUtilsService {
     const cy = (a2 * c1 - a1 * c2) / (a1 * b2 - a2 * b1);
 
     return {
-      width: width.precision(10),
-      height: height.precision(10),
-      left: (cx - width / 2).precision(10),
-      top: (cy - height / 2).precision(10),
+      cx,
+      cy,
+      width,
+      height,
+      left: cx - width / 2,
+      top: cy - height / 2,
+      bottom: cx + width / 2,
+      right: cy + height / 2,
     };
   }
 
@@ -385,17 +393,24 @@ export class CeUtilsService {
    * @param childRect 子元素尺寸
    */
   public getChildPositionBaseOnParentCoordinateSystem(parentRect: IDOMRect, parentRotate: number, childRect: IDOMRect): IDOMRect {
-    const parentCenter = [parentRect.left + parentRect.width / 2, parentRect.top + parentRect.height / 2];
-    const originalCenter = [childRect.left + childRect.width / 2 + parentRect.left, childRect.top + childRect.height / 2 + parentRect.top];
     const [newCenterX, newCenterY] = [
-      (originalCenter[0] - parentCenter[0]) * Math.cos((parentRotate * Math.PI) / 180) -
-        (originalCenter[1] - parentCenter[1]) * Math.sin((parentRotate * Math.PI) / 180) +
-        parentCenter[0],
-      (originalCenter[1] - parentCenter[1]) * Math.cos((parentRotate * Math.PI) / 180) +
-        (originalCenter[0] - parentCenter[0]) * Math.sin((parentRotate * Math.PI) / 180) +
-        parentCenter[1],
+      (childRect.cx - parentRect.cx) * Math.cos((parentRotate * Math.PI) / 180) -
+        (childRect.cy - parentRect.cy) * Math.sin((parentRotate * Math.PI) / 180) +
+        parentRect.cx,
+      (childRect.cy - parentRect.cy) * Math.cos((parentRotate * Math.PI) / 180) +
+        (childRect.cx - parentRect.cx) * Math.sin((parentRotate * Math.PI) / 180) +
+        parentRect.cy,
     ];
-    return { left: newCenterX - childRect.width / 2, top: newCenterY - childRect.height / 2, width: childRect.width, height: childRect.height };
+    return {
+      left: newCenterX - childRect.width / 2,
+      top: newCenterY - childRect.height / 2,
+      bottom: newCenterX + childRect.width / 2,
+      right: newCenterY + childRect.height / 2,
+      width: childRect.width,
+      height: childRect.height,
+      cx: newCenterX,
+      cy: newCenterY,
+    };
   }
 
   /**
