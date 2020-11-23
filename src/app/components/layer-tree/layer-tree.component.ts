@@ -22,7 +22,6 @@ export class LayerTreeComponent implements OnDestroy {
   public expandedKeys: string[];
   @ViewChild('layerTree', { read: NzTreeComponent })
   public layerTree: NzTreeComponent;
-  private nodes: INode[];
   private parentKey: string;
   private subscription = new Subscription();
   public get groupStatus(): boolean {
@@ -45,7 +44,6 @@ export class LayerTreeComponent implements OnDestroy {
         .select('nodes')
         .pipe(debounceTime(300))
         .subscribe((nodes) => {
-          this.nodes = nodes;
           this.treeNodes = this.transferNodesToNzNodes(this.utils.sortNodeListByIndex(nodes));
           this.selectedKeys = [...this.selected];
           this.expandedKeys = this.expandedKeys && [...this.expandedKeys];

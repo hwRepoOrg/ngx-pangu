@@ -1,4 +1,5 @@
 import { createReducer, on } from '@ngrx/store';
+import * as _ from 'lodash';
 import { CeUtilsService, genNodeId, IDOMRect } from '../../services/utils.service';
 import { addNodes, breakNode, groupNodes, removeNodes, updateNodes, updateNodesSize } from '../actions';
 import { DEFAULT_STORE, INode } from '../store';
@@ -98,6 +99,10 @@ function updateNodesSizeReducer(state: INode[], { nodesSizeMap }: { nodesSizeMap
 }
 
 function groupNodesReducer(state: INode[], { ids }: { ids: string[] }): INode[] {
+  const parent = CeUtilsService.shared.getSameLayerParentByChildren(ids, state);
+  if (parent === false) {
+    return state;
+  }
   const nodeMap = new Map<string, INode>();
   ids.forEach((id) => {
     const node = state.find((i) => i.id === id);
@@ -151,7 +156,7 @@ function groupNodesReducer(state: INode[], { ids }: { ids: string[] }): INode[] 
 }
 
 function breakNodeReducer(state: INode[], { id }: { id: string }): INode[] {
-  const [node, ...parents] = CeUtilsService.shared.getNodeAndParentListById(id, state);
+  const [node, ...parents] = CeUtilsService.shared.getNodeAndParentListById(id, _.cloneDeep(state));
   const newNodes = node.children.map((child) => {
     return {
       ...child,
@@ -173,10 +178,56 @@ function breakNodeReducer(state: INode[], { id }: { id: string }): INode[] {
   }
 }
 
+function removeNodesReducer(state: INode[], ids: string[]): INode[] {
+  let parent = CeUtilsService.shared.getSameLayerParentByChildren(ids, state);
+  if (parent === false) {
+    return state;
+  } else if (parent === undefined) {
+    return state.filter((node) => !ids.includes(node.id));
+  } else {
+    const originalParentId = parent.id;
+    let prevParent: INode;
+    let prevParentId: string;
+    const parents = CeUtilsService.shared.getNodeAndParentListById(parent.id, _.cloneDeep(state));
+    while (parents.length) {
+      parent = parents.shift();
+      let children: INode[];
+      if (parent.id === originalParentId) {
+        children = parent.children.filter((child) => !ids.includes(child.id));
+      } else {
+        children = parent.children.filter((child) => (child.id === prevParentId ? prevParent : child)).filter((child) => !!child);
+      }
+      prevParentId = parent.id;
+      if (children.length > 1) {
+        const rect = CeUtilsService.shared.getOuterBoundingBox(
+          children
+            .map((child) => ({
+              rotate: child.rotate,
+              ...CeUtilsService.shared.getChildPositionBaseOnParentCoordinateSystem(parent as INode, (parent as INode).rotate, child),
+            }))
+            .map((item) => CeUtilsService.shared.getAbsolutePosition(item.cx, item.cy, item.width, item.height, item.rotate))
+        );
+        parent.width = rect.width;
+        parent.height = rect.height;
+        parent.left = rect.left;
+        parent.top = rect.top;
+        parent.children = children;
+      } else if (children.length === 1) {
+        const rect = CeUtilsService.shared.getChildPositionBaseOnParentCoordinateSystem(parent, parent.rotate, children[0]);
+        parent = { ...children[0], ...rect };
+      } else if (children.length === 0) {
+        parent = null;
+      }
+      prevParent = parent as INode;
+    }
+    return state.map((node) => (node.id === prevParentId ? parent : node)).filter((node) => !!node) as INode[];
+  }
+}
+
 export const nodesReducer = createReducer<INode[]>(
   DEFAULT_STORE.nodes,
   on(addNodes, (state, { nodes }) => [...state, ...nodes]),
-  on(removeNodes, (state, { ids }) => [...state].filter((node) => !ids.find((i) => i === node.id))),
+  on(removeNodes, (state, { ids }) => removeNodesReducer(state, ids)),
   on(updateNodes, (state, { nodes }) => state.map((item) => nodes.find((i) => i.id === item.id) ?? item)),
   on(updateNodesSize, updateNodesSizeReducer),
   on(groupNodes, groupNodesReducer),

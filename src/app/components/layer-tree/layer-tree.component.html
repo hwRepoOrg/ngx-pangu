@@ -39,12 +39,17 @@
           <i nz-icon nzType="delete"></i>
           <span>删除</span>
         </li>
-        <li *ngIf="groupStatus" nz-menu-item class="action-item">
+        <li *ngIf="groupStatus" nz-menu-item class="action-item" (click)="actions.group(selectedKeys)">
           <i nz-icon nzIconfont="icon-group"></i>
           <span>组合</span>
           <span class="shortcuts"> ctrl+shift+G </span>
         </li>
-        <li *ngIf="node.children && node.children.length" nz-menu-item (click)="actions.breakNode(node.id)" class="action-item">
+        <li
+          *ngIf="selected.size === 1 && node.children && node.children.length"
+          nz-menu-item
+          (click)="actions.breakNode(node.id)"
+          class="action-item"
+        >
           <i nz-icon nzIconfont="icon-break"></i>
           <span>打散</span>
           <span class="shortcuts"> ctrl+shift+B </span>

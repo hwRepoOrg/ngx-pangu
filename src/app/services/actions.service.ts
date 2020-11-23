@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { breakNode, clearBorderedNodes, clearSelectedNodes, removeNodes, setBorderedNodes, setSelectedNodes } from '../store/actions';
+import { breakNode, clearBorderedNodes, clearSelectedNodes, groupNodes, removeNodes, setBorderedNodes, setSelectedNodes } from '../store/actions';
 import { IStore } from '../store/store';
 import { CeUtilsService } from './utils.service';
 
@@ -20,6 +20,10 @@ export class ActionsService {
   setSelectedNodes(ids: string[]): void {
     this.store.dispatch(setSelectedNodes({ ids }));
     this.store.dispatch(setBorderedNodes({ ids }));
+  }
+
+  group(ids: string[]): void {
+    this.store.dispatch(groupNodes({ ids }));
   }
 
   breakNode(id: string): void {
