@@ -1,7 +1,6 @@
 import { Component, ElementRef, HostBinding, OnDestroy } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { Subscription } from 'rxjs';
-import { filter } from 'rxjs/operators';
 import { CeUtilsService, IAbsolutePosition, IDOMRect, IRectDirection } from 'src/app/services/utils.service';
 import { updateNodesSize } from 'src/app/store/actions';
 import { ResizeRefreshSelector } from 'src/app/store/selectors';
@@ -160,6 +159,7 @@ export class ResizeHandleComponent implements OnDestroy {
 }
 
 function getGroupDiagonalByDirection(direction: IRectDirection, absolutePosition: IAbsolutePosition): [[number, number], [number, number]] {
+  const verticalAndHorizontalPosition = CeUtilsService.shared.getVerticalAndHorizontalPointByAbsolutePosition(absolutePosition);
   switch (direction) {
     case 'tl':
     case 'br':
@@ -167,6 +167,12 @@ function getGroupDiagonalByDirection(direction: IRectDirection, absolutePosition
     case 'tr':
     case 'bl':
       return [absolutePosition.tr, absolutePosition.bl];
+    case 't':
+    case 'b':
+      return [verticalAndHorizontalPosition.t, verticalAndHorizontalPosition.b];
+    case 'l':
+    case 'r':
+      return [verticalAndHorizontalPosition.l, verticalAndHorizontalPosition.r];
   }
 }
 
