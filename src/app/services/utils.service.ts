@@ -10,6 +10,13 @@ export interface IAbsolutePosition {
   br: IPosition;
 }
 
+export interface IVerticalAndHorizontalPosition {
+  t: IPosition;
+  r: IPosition;
+  b: IPosition;
+  l: IPosition;
+}
+
 export interface IDOMRect {
   width: number;
   height: number;
@@ -197,6 +204,20 @@ export class CeUtilsService {
           };
       }
     }
+  }
+
+  /**
+   * 通过元素顶点坐标获取上、右、下和左方向的坐标
+   * @param position
+   */
+  public getVerticalAndHorizontalPointByAbsolutePosition(position: IAbsolutePosition): IVerticalAndHorizontalPosition {
+    const { tl, bl, br, tr } = position;
+    return {
+      t: [(Math.max(tl[0], tr[0]) - Math.min(tl[0], tr[0])) / 2, (Math.max(tl[1], tr[1]) - Math.min(tl[1], tr[1])) / 2],
+      r: [(Math.max(br[0], tr[0]) - Math.min(br[0], tr[0])) / 2, (Math.max(br[1], tr[1]) - Math.min(br[1], tr[1])) / 2],
+      b: [(Math.max(bl[0], br[0]) - Math.min(bl[0], br[0])) / 2, (Math.max(bl[1], br[1]) - Math.min(bl[1], br[1])) / 2],
+      l: [(Math.max(tl[0], bl[0]) - Math.min(tl[0], bl[0])) / 2, (Math.max(tl[1], bl[1]) - Math.min(tl[1], bl[1])) / 2],
+    };
   }
 
   /**
