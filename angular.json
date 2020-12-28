@@ -166,6 +166,6 @@
   },
   "defaultProject": "configuration-editor",
   "cli": {
-    "packageManager": "yarn"
+    "packageManager": "npm"
   }
 }
