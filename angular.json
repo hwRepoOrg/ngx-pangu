@@ -9,7 +9,8 @@
         "@schematics/angular:component": {
           "style": "less",
           "skipTests": true,
-          "changeDetection": "OnPush"
+          "changeDetection": "OnPush",
+          "viewEncapsulation": "None"
         },
         "@schematics/angular:directive": {
           "skipTests": true
@@ -131,6 +132,41 @@
             "production": {
               "devServerTarget": "configuration-editor:serve:production"
             }
+          }
+        }
+      }
+    },
+    "angular-editor-lib": {
+      "projectType": "library",
+      "root": "projects/angular-editor-lib",
+      "sourceRoot": "projects/angular-editor-lib/src",
+      "prefix": "lib",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:ng-packagr",
+          "options": {
+            "tsConfig": "projects/angular-editor-lib/tsconfig.lib.json",
+            "project": "projects/angular-editor-lib/ng-package.json"
+          },
+          "configurations": {
+            "production": {
+              "tsConfig": "projects/angular-editor-lib/tsconfig.lib.prod.json"
+            }
+          }
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "main": "projects/angular-editor-lib/src/test.ts",
+            "tsConfig": "projects/angular-editor-lib/tsconfig.spec.json",
+            "karmaConfig": "projects/angular-editor-lib/karma.conf.js"
+          }
+        },
+        "lint": {
+          "builder": "@angular-devkit/build-angular:tslint",
+          "options": {
+            "tsConfig": ["projects/angular-editor-lib/tsconfig.lib.json", "projects/angular-editor-lib/tsconfig.spec.json"],
+            "exclude": ["**/node_modules/**"]
           }
         }
       }

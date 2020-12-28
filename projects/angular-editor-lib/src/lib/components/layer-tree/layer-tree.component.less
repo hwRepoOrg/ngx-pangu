@@ -1,0 +1,33 @@
+@import "../../styles/ng-zorro-antd/theme.less";
+
+ce-layer-tree {
+  position: relative;
+  display: block;
+  padding: 3px;
+  max-width: 100%;
+  max-height: 100%;
+  overflow: auto;
+  ::-webkit-scrollbar {
+    position: absolute;
+    right: 0;
+  }
+
+  .layer {
+    display: flex;
+    align-items: center;
+    &.locked {
+      color: @text-color-secondary;
+    }
+  }
+}
+
+.action-item {
+  display: flex;
+  min-width: 200px;
+  justify-content: flex-start;
+  align-items: center;
+  .shortcuts {
+    margin-left: auto;
+    color: @text-color-secondary;
+  }
+}

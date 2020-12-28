@@ -4,10 +4,6 @@ import { AppModule } from './app/app.module';
 import { environment } from './environments/environment';
 import { hmrBootstrap } from './hmr';
 
-Number.prototype.precision = function precision(decimal: number): number {
-  return +this.toFixed(decimal);
-};
-
 if (environment.production) {
   enableProdMode();
 }
