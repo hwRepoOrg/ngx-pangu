@@ -11,6 +11,7 @@ import { INode, IStore } from '../../store/store';
 
 @Component({
   selector: 'ce-layer-tree',
+  exportAs: 'ceLayerTree',
   templateUrl: 'layer-tree.component.html',
   styleUrls: ['layer-tree.component.less'],
   encapsulation: ViewEncapsulation.None,

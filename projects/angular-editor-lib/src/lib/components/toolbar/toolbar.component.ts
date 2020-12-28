@@ -8,6 +8,7 @@ import { INode, IStore } from '../../store/store';
 
 @Component({
   selector: 'ce-toolbar',
+  exportAs: 'ceToolbar',
   templateUrl: 'toolbar.component.html',
   styleUrls: ['toolbar.component.less'],
   encapsulation: ViewEncapsulation.None,

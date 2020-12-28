@@ -4,7 +4,7 @@ import { breakNode, clearBorderedNodes, clearSelectedNodes, groupNodes, removeNo
 import { IStore } from '../store/store';
 import { CeUtilsService } from './utils.service';
 
-@Injectable({ providedIn: 'root' })
+@Injectable()
 export class ActionsService {
   constructor(public store: Store<IStore>, public utils: CeUtilsService) {}
 

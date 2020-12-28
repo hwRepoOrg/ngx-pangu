@@ -6,6 +6,7 @@ import { IStore } from '../store/store';
 
 @Directive({
   selector: '[ceNoZoomArea]',
+  exportAs: 'ceNoZoomArea',
 })
 export class NoZoomAreaDirective {
   @HostBinding('style.width.px')

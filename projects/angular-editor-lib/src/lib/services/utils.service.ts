@@ -36,7 +36,7 @@ export function genNodeId(): string {
   return `${Date.now()}${Math.round(Math.random() * 1000000000000)}`;
 }
 
-@Injectable({ providedIn: 'root' })
+@Injectable()
 export class CeUtilsService {
   public static shared: CeUtilsService;
 

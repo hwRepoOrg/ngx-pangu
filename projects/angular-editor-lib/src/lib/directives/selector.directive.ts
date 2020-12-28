@@ -12,6 +12,7 @@ export interface ISelectorRect {
 
 @Directive({
   selector: '[ceSelector]',
+  exportAs: 'ceSelector',
 })
 export class SelectorDirective implements OnInit, OnDestroy {
   private subscription = new Subscription();

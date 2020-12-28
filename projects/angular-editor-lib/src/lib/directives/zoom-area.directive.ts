@@ -6,6 +6,7 @@ import { IStore } from '../store/store';
 
 @Directive({
   selector: '[ceZoomArea]',
+  exportAs: 'ceZoomArea',
 })
 export class ZoomAreaDirective {
   @HostBinding('style.transform-origin')

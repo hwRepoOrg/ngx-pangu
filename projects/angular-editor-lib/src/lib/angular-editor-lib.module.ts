@@ -26,6 +26,7 @@ import { DraggableDirective } from './directives/draggable.directive';
 import { NoZoomAreaDirective } from './directives/no-zoom-area.directive';
 import { SelectorDirective } from './directives/selector.directive';
 import { ZoomAreaDirective } from './directives/zoom-area.directive';
+import { ActionsService, CeUtilsService } from './services';
 import reducers from './store/reducers';
 import { IStore } from './store/store';
 
@@ -43,14 +44,17 @@ const COMPONENTS = [
   ResizeHandleComponent,
   RotateHandleComponent,
   BorderedAreaComponent,
+  AngularEditorLibComponent,
 ];
 
 const DIRECTIVES = [NoZoomAreaDirective, ZoomAreaDirective, DraggableDirective, SelectorDirective];
+const SERVICES = [ActionsService, CeUtilsService];
 
 @NgModule({
-  declarations: [AngularEditorLibComponent, ...COMPONENTS, ...DIRECTIVES],
+  declarations: [...COMPONENTS, ...DIRECTIVES],
   imports: [CommonModule, BrowserAnimationsModule, FormsModule, StoreModule.forRoot<IStore>(reducers), ...ANTD_MODULES],
-  exports: [AngularEditorLibComponent],
+  exports: [...COMPONENTS, ...DIRECTIVES],
+  providers: [...SERVICES],
 })
 export class AngularEditorLibModule {
   constructor(private injector: Injector) {
