@@ -1,4 +1,4 @@
-import { Component, Host, HostBinding, Input, ViewEncapsulation } from '@angular/core';
+import { Component, HostBinding, Input, ViewEncapsulation } from '@angular/core';
 import { SafeStyle } from '@angular/platform-browser';
 import { INode } from '../../store/store';
 
