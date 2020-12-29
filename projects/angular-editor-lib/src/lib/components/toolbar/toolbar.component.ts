@@ -1,7 +1,8 @@
-import { Component, OnDestroy, ViewEncapsulation } from '@angular/core';
+import { Component, ContentChild, OnDestroy, TemplateRef, ViewEncapsulation } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { Observable, Subscription } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { CeToolbarDirective } from '../../directives';
 import { CeUtilsService } from '../../services/utils.service';
 import { breakNode, clearBorderedNodes, clearSelectedNodes, groupNodes, updateCanvasPosition } from '../../store/actions';
 import { INode, IStore } from '../../store/store';
@@ -14,6 +15,8 @@ import { INode, IStore } from '../../store/store';
   encapsulation: ViewEncapsulation.None,
 })
 export class ToolbarComponent implements OnDestroy {
+  @ContentChild(CeToolbarDirective)
+  ceToolbar: CeToolbarDirective;
   public selected$: Observable<Set<string>>;
   public scale: number;
   public get copyStatus$(): Observable<boolean> {

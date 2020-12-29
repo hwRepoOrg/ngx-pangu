@@ -1,34 +1,40 @@
-<nz-card nzSize="small" class="tool-bar">
-  <div class="d-flex align-items-center col p-0">
-    <button nz-button nzType="link"><i nz-icon nzIconfont="icon-left-arrow"></i></button>
-    <span class="ml-2">Canvas Title</span>
-    <div class="d-flex ml-auto align-items-center">
-      <button [disabled]="copyStatus$ | async" nz-button nzType="link"><i nz-icon nzIconfont="icon-copy"></i></button>
-      <button nz-button nzType="link"><i nz-icon nzIconfont="icon-paste"></i></button>
-    </div>
-    <div class="d-flex ml-auto align-items-center">
-      <button [disabled]="groupStatus$ | async" (click)="groupNodes()" nz-button nzType="link"><i nz-icon nzIconfont="icon-group"></i></button>
-      <button [disabled]="!(breakStatus$ | async)" (click)="breakNode()" nz-button nzType="link"><i nz-icon nzIconfont="icon-break"></i></button>
-    </div>
-    <div class="d-flex ml-auto align-items-center">
-      <button [disabled]="groupStatus$ | async" nz-button nzType="link"><i nz-icon nzIconfont="icon-horizontal-between"></i></button>
-      <button [disabled]="groupStatus$ | async" nz-button nzType="link"><i nz-icon nzIconfont="icon-horizontal-align"></i></button>
-      <button [disabled]="groupStatus$ | async" nz-button nzType="link"><i nz-icon nzIconfont="icon-vertical-between"></i></button>
-      <button [disabled]="groupStatus$ | async" nz-button nzType="link"><i nz-icon nzIconfont="icon-vertical-align"></i></button>
-      <button [disabled]="groupStatus$ | async" nz-button nzType="link"><i nz-icon nzIconfont="icon-left-align"></i></button>
-      <button [disabled]="groupStatus$ | async" nz-button nzType="link"><i nz-icon nzIconfont="icon-right-align"></i></button>
-      <button [disabled]="groupStatus$ | async" nz-button nzType="link"><i nz-icon nzIconfont="icon-top-align"></i></button>
-      <button [disabled]="groupStatus$ | async" nz-button nzType="link"><i nz-icon nzIconfont="icon-bottom-align"></i></button>
-    </div>
+<ng-container *ngIf="ceToolbar; else elseBlock">
+  <ng-content select="[ceToolbar]"></ng-content>
+</ng-container>
 
-    <div class="d-flex ml-auto align-items-center">
-      <button nz-button nzType="link" (click)="setCanvasScale(scale * 100 - 10)"><i nz-icon nzIconfont="icon-subtract"></i></button>
-      <nz-input-number nzSize="small" [nzMin]="20" [ngModel]="(scale * 100).toFixed(2)" (ngModelChange)="setCanvasScale($event)"></nz-input-number>
-      <button nz-button nzType="link" (click)="setCanvasScale(scale * 100 + 10)" class="ml-0"><i nz-icon nzIconfont="icon-plus"></i></button>
+<ng-template #elseBlock>
+  <nz-card nzSize="small" class="tool-bar">
+    <div class="d-flex align-items-center col p-0">
+      <button nz-button nzType="link"><i nz-icon nzIconfont="icon-left-arrow"></i></button>
+      <span class="ml-2">Canvas Title</span>
+      <div class="d-flex ml-auto align-items-center">
+        <button [disabled]="copyStatus$ | async" nz-button nzType="link"><i nz-icon nzIconfont="icon-copy"></i></button>
+        <button nz-button nzType="link"><i nz-icon nzIconfont="icon-paste"></i></button>
+      </div>
+      <div class="d-flex ml-auto align-items-center">
+        <button [disabled]="groupStatus$ | async" (click)="groupNodes()" nz-button nzType="link"><i nz-icon nzIconfont="icon-group"></i></button>
+        <button [disabled]="!(breakStatus$ | async)" (click)="breakNode()" nz-button nzType="link"><i nz-icon nzIconfont="icon-break"></i></button>
+      </div>
+      <div class="d-flex ml-auto align-items-center">
+        <button [disabled]="groupStatus$ | async" nz-button nzType="link"><i nz-icon nzIconfont="icon-horizontal-between"></i></button>
+        <button [disabled]="groupStatus$ | async" nz-button nzType="link"><i nz-icon nzIconfont="icon-horizontal-align"></i></button>
+        <button [disabled]="groupStatus$ | async" nz-button nzType="link"><i nz-icon nzIconfont="icon-vertical-between"></i></button>
+        <button [disabled]="groupStatus$ | async" nz-button nzType="link"><i nz-icon nzIconfont="icon-vertical-align"></i></button>
+        <button [disabled]="groupStatus$ | async" nz-button nzType="link"><i nz-icon nzIconfont="icon-left-align"></i></button>
+        <button [disabled]="groupStatus$ | async" nz-button nzType="link"><i nz-icon nzIconfont="icon-right-align"></i></button>
+        <button [disabled]="groupStatus$ | async" nz-button nzType="link"><i nz-icon nzIconfont="icon-top-align"></i></button>
+        <button [disabled]="groupStatus$ | async" nz-button nzType="link"><i nz-icon nzIconfont="icon-bottom-align"></i></button>
+      </div>
+
+      <div class="d-flex ml-auto align-items-center">
+        <button nz-button nzType="link" (click)="setCanvasScale(scale * 100 - 10)"><i nz-icon nzIconfont="icon-subtract"></i></button>
+        <nz-input-number nzSize="small" [nzMin]="20" [ngModel]="(scale * 100).toFixed(2)" (ngModelChange)="setCanvasScale($event)"></nz-input-number>
+        <button nz-button nzType="link" (click)="setCanvasScale(scale * 100 + 10)" class="ml-0"><i nz-icon nzIconfont="icon-plus"></i></button>
+      </div>
+      <div class="d-flex ml-auto align-items-center">
+        <button nz-button nzType="link"><i nz-icon nzIconfont="icon-run"></i></button>
+        <button nz-button nzType="link"><i nz-icon nzIconfont="icon-save"></i></button>
+      </div>
     </div>
-    <div class="d-flex ml-auto align-items-center">
-      <button nz-button nzType="link"><i nz-icon nzIconfont="icon-run"></i></button>
-      <button nz-button nzType="link"><i nz-icon nzIconfont="icon-save"></i></button>
-    </div>
-  </div>
-</nz-card>
+  </nz-card>
+</ng-template>

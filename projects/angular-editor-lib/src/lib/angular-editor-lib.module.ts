@@ -1,7 +1,9 @@
 import { CommonModule } from '@angular/common';
+import { HttpClientModule } from '@angular/common/http';
 import { Injector, NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { DeleteOutline, LockOutline, UnlockOutline } from '@ant-design/icons-angular/icons';
 import { StoreModule } from '@ngrx/store';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzCardModule } from 'ng-zorro-antd/card';
@@ -22,6 +24,7 @@ import { ResizeHandleComponent } from './components/resize-handle/resize-handle.
 import { RotateHandleComponent } from './components/rotate-handle/rotate-handle.component';
 import { ToolbarComponent } from './components/toolbar/toolbar.component';
 import { WidgetListComponent } from './components/widget-list/widget-list.component';
+import { CeToolbarDirective } from './directives';
 import { DraggableDirective } from './directives/draggable.directive';
 import { NoZoomAreaDirective } from './directives/no-zoom-area.directive';
 import { SelectorDirective } from './directives/selector.directive';
@@ -30,7 +33,9 @@ import { ActionsService, CeUtilsService } from './services';
 import reducers from './store/reducers';
 import { IStore } from './store/store';
 
-const ANTD_MODULES = [NzCardModule, NzIconModule.forRoot([]), NzButtonModule, NzInputNumberModule, NzTabsModule, NzTreeModule, NzDropDownModule];
+const ICONS = [DeleteOutline, LockOutline, UnlockOutline];
+
+const ANTD_MODULES = [NzCardModule, NzIconModule.forRoot(ICONS), NzButtonModule, NzInputNumberModule, NzTabsModule, NzTreeModule, NzDropDownModule];
 
 const COMPONENTS = [
   ToolbarComponent,
@@ -47,12 +52,12 @@ const COMPONENTS = [
   AngularEditorLibComponent,
 ];
 
-const DIRECTIVES = [NoZoomAreaDirective, ZoomAreaDirective, DraggableDirective, SelectorDirective];
+const DIRECTIVES = [NoZoomAreaDirective, ZoomAreaDirective, DraggableDirective, SelectorDirective, CeToolbarDirective];
 const SERVICES = [ActionsService, CeUtilsService];
 
 @NgModule({
   declarations: [...COMPONENTS, ...DIRECTIVES],
-  imports: [CommonModule, BrowserAnimationsModule, FormsModule, StoreModule.forRoot<IStore>(reducers), ...ANTD_MODULES],
+  imports: [CommonModule, BrowserAnimationsModule, HttpClientModule, FormsModule, StoreModule.forRoot<IStore>(reducers), ...ANTD_MODULES],
   exports: [...COMPONENTS, ...DIRECTIVES],
   providers: [...SERVICES],
 })
