@@ -1,4 +1,4 @@
-import { genNodeId } from '../services/utils.service';
+import { genNodeId } from './services/utils.service';
 
 export interface INode<T = any> {
   id: string;
@@ -58,9 +58,11 @@ export interface IStore<T = any> {
   };
 }
 
+export type IActionType<T = any> = (state: IStore<T>) => IStore<T>;
+
 export const DEFAULT_STORE: IStore<any> = {
   nodeMoveState: false,
-  nodes: new Array(20).fill(1).map((v, index) => ({
+  nodes: new Array(100).fill(1).map((v, index) => ({
     id: genNodeId(),
     name: `test${index + 1}`,
     locked: !Math.round(Math.random() * 10),

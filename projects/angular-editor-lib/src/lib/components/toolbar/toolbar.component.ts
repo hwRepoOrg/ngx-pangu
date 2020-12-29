@@ -1,11 +1,11 @@
-import { Component, ContentChild, OnDestroy, TemplateRef, ViewEncapsulation } from '@angular/core';
-import { Store } from '@ngrx/store';
-import { Observable, Subscription } from 'rxjs';
+import { Component, ContentChild, ViewEncapsulation } from '@angular/core';
+import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { breakNode, clearBordered, clearSelected, groupNodes, updateCanvasPosition } from '../../actions';
 import { CeToolbarDirective } from '../../directives';
+import { EditorStore } from '../../services';
 import { CeUtilsService } from '../../services/utils.service';
-import { breakNode, clearBorderedNodes, clearSelectedNodes, groupNodes, updateCanvasPosition } from '../../store/actions';
-import { INode, IStore } from '../../store/store';
+import { INode, IStore } from '../../store';
 
 @Component({
   selector: 'ce-toolbar',
@@ -14,7 +14,7 @@ import { INode, IStore } from '../../store/store';
   styleUrls: ['toolbar.component.less'],
   encapsulation: ViewEncapsulation.None,
 })
-export class ToolbarComponent implements OnDestroy {
+export class ToolbarComponent {
   @ContentChild(CeToolbarDirective)
   ceToolbar: CeToolbarDirective;
   public selected$: Observable<Set<string>>;
@@ -33,17 +33,12 @@ export class ToolbarComponent implements OnDestroy {
   }
   private nodes: INode[] = [];
   private selected: Set<string>;
-  private subscription = new Subscription();
 
-  constructor(private store: Store<IStore>, private utils: CeUtilsService) {
-    this.selected$ = this.store.select('selected');
-    this.subscription.add(this.store.select('nodes').subscribe((nodes) => (this.nodes = nodes)));
-    this.subscription.add(this.store.select('canvasPosition').subscribe((state) => (this.scale = state.scale)));
-    this.subscription.add(this.selected$.subscribe((selected) => (this.selected = selected)));
-  }
-
-  ngOnDestroy(): void {
-    this.subscription.unsubscribe();
+  constructor(private store: EditorStore<IStore>, private utils: CeUtilsService) {
+    this.selected$ = this.store.select((state) => state.selected);
+    this.store.select((state) => state.nodes).subscribe((nodes) => (this.nodes = nodes));
+    this.store.select((state) => state.canvasPosition).subscribe((state) => (this.scale = state.scale));
+    this.selected$.subscribe((selected) => (this.selected = selected));
   }
 
   setCanvasScale(scale: number): void {
@@ -52,15 +47,15 @@ export class ToolbarComponent implements OnDestroy {
 
   groupNodes(): void {
     const ids = [...this.selected];
-    this.store.dispatch(clearSelectedNodes());
-    this.store.dispatch(clearBorderedNodes());
-    this.store.dispatch(groupNodes({ ids }));
+    this.store.dispatch(clearSelected());
+    this.store.dispatch(clearBordered());
+    this.store.dispatch(groupNodes(ids));
   }
 
   breakNode(): void {
     const node = this.utils.getNodeById([...this.selected][0], this.nodes);
-    this.store.dispatch(clearSelectedNodes());
-    this.store.dispatch(clearBorderedNodes());
-    this.store.dispatch(breakNode({ id: node.id }));
+    this.store.dispatch(clearSelected());
+    this.store.dispatch(clearBordered());
+    this.store.dispatch(breakNode(node.id));
   }
 }

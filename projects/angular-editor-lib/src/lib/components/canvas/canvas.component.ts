@@ -1,18 +1,17 @@
-import { Component, OnDestroy, ViewEncapsulation } from '@angular/core';
-import { Store } from '@ngrx/store';
-import { Subscription } from 'rxjs';
-import { CeUtilsService, IDOMRect } from '../../services/utils.service';
+import { Component, ViewEncapsulation } from '@angular/core';
 import {
   addBorderedNodes,
   addSelectedNodes,
-  clearBorderedNodes,
-  clearSelectedNodes,
+  clearBordered,
+  clearSelected,
   removeBorderedNodes,
   resetRefLineState,
   updateNodes,
   updateRefLinesState,
-} from '../../store/actions';
-import { ICanvasPosition, INode, IRefLineDirection, IRefLineState, IStore } from '../../store/store';
+} from '../../actions';
+import { EditorStore } from '../../services';
+import { CeUtilsService, IDOMRect } from '../../services/utils.service';
+import { ICanvasPosition, INode, IRefLineDirection, IRefLineState, IStore } from '../../store';
 
 const REF_LINE_DIRECTION_COMPARE_MAP: {
   [P in IRefLineDirection]: {
@@ -130,7 +129,7 @@ const REF_LINE_DIRECTION_COMPARE_MAP: {
   styleUrls: ['canvas.component.less'],
   encapsulation: ViewEncapsulation.None,
 })
-export class CanvasComponent implements OnDestroy {
+export class CanvasComponent {
   public nodes: INode[];
   private selected: Set<string>;
   private canvasPosition: ICanvasPosition;
@@ -139,16 +138,11 @@ export class CanvasComponent implements OnDestroy {
   private outerBoxSnapshot: IDOMRect;
   private unselectedNodes: INode[];
   private gap = 5;
-  private subscription = new Subscription();
 
-  constructor(private store: Store<IStore>, private utils: CeUtilsService) {
-    this.subscription.add(this.store.select('nodes').subscribe((nodes) => (this.nodes = nodes)));
-    this.subscription.add(this.store.select('selected').subscribe((state) => (this.selected = state)));
-    this.subscription.add(this.store.select('canvasPosition').subscribe((state) => (this.canvasPosition = state)));
-  }
-
-  ngOnDestroy(): void {
-    this.subscription.unsubscribe();
+  constructor(private store: EditorStore<IStore>, private utils: CeUtilsService) {
+    this.store.select((state) => state.nodes).subscribe((nodes) => (this.nodes = nodes));
+    this.store.select((state) => state.selected).subscribe((state) => (this.selected = state));
+    this.store.select((state) => state.canvasPosition).subscribe((state) => (this.canvasPosition = state));
   }
 
   nodeListTrackByFn(i: number, node: INode): string {
@@ -162,9 +156,9 @@ export class CanvasComponent implements OnDestroy {
     this.pointerSnapshot = [ev.clientX, ev.clientY];
     let selected: string[] = [...this.selected];
     if (!this.selected.has(node.id)) {
-      this.store.dispatch(clearBorderedNodes());
-      this.store.dispatch(clearSelectedNodes());
-      this.store.dispatch(addSelectedNodes({ ids: [node.id] }));
+      this.store.dispatch(clearBordered());
+      this.store.dispatch(clearSelected());
+      this.store.dispatch(addSelectedNodes([node.id]));
       selected = [node.id];
     }
 
@@ -187,7 +181,7 @@ export class CanvasComponent implements OnDestroy {
 
   moving(ev: PointerEvent): void {
     if (this.pointerSnapshot) {
-      this.store.dispatch(resetRefLineState({}));
+      this.store.dispatch(resetRefLineState());
       const { scale } = this.canvasPosition;
       const [x, y] = this.pointerSnapshot;
       const [mx, my] = [(ev.clientX - x) / scale, (ev.clientY - y) / scale];
@@ -233,24 +227,24 @@ export class CanvasComponent implements OnDestroy {
         });
       });
 
-      this.store.dispatch(updateRefLinesState({ state: refLinesState }));
-      this.store.dispatch(updateNodes({ nodes: newNodes }));
+      this.store.dispatch(updateRefLinesState(refLinesState));
+      this.store.dispatch(updateNodes(newNodes));
     }
   }
 
   moveEnd(): void {
     this.pointerSnapshot = null;
-    this.store.dispatch(resetRefLineState({}));
+    this.store.dispatch(resetRefLineState());
     this.nodesSnapshot.clear();
   }
 
   showBorder(id: string): void {
-    this.store.dispatch(addBorderedNodes({ ids: [id] }));
+    this.store.dispatch(addBorderedNodes([id]));
   }
 
   removeBorder(id: string): void {
     if (!this.selected.has(id)) {
-      this.store.dispatch(removeBorderedNodes({ ids: [id] }));
+      this.store.dispatch(removeBorderedNodes([id]));
     }
   }
 }

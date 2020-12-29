@@ -3,8 +3,15 @@ import { HttpClientModule } from '@angular/common/http';
 import { Injector, NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { DeleteOutline, LockOutline, UnlockOutline } from '@ant-design/icons-angular/icons';
-import { StoreModule } from '@ngrx/store';
+import {
+  DeleteOutline,
+  FolderFill,
+  FolderOpenFill,
+  FolderOpenOutline,
+  FolderOutline,
+  LockOutline,
+  UnlockOutline,
+} from '@ant-design/icons-angular/icons';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzCardModule } from 'ng-zorro-antd/card';
 import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
@@ -29,11 +36,10 @@ import { DraggableDirective } from './directives/draggable.directive';
 import { NoZoomAreaDirective } from './directives/no-zoom-area.directive';
 import { SelectorDirective } from './directives/selector.directive';
 import { ZoomAreaDirective } from './directives/zoom-area.directive';
-import { ActionsService, CeUtilsService } from './services';
-import reducers from './store/reducers';
-import { IStore } from './store/store';
+import { ActionsService } from './services';
+import { EditorStore } from './services/store.service';
 
-const ICONS = [DeleteOutline, LockOutline, UnlockOutline];
+const ICONS = [DeleteOutline, LockOutline, UnlockOutline, FolderOutline, FolderFill, FolderOpenFill, FolderOpenOutline];
 
 const ANTD_MODULES = [NzCardModule, NzIconModule.forRoot(ICONS), NzButtonModule, NzInputNumberModule, NzTabsModule, NzTreeModule, NzDropDownModule];
 
@@ -53,11 +59,11 @@ const COMPONENTS = [
 ];
 
 const DIRECTIVES = [NoZoomAreaDirective, ZoomAreaDirective, DraggableDirective, SelectorDirective, CeToolbarDirective];
-const SERVICES = [ActionsService, CeUtilsService];
+const SERVICES = [ActionsService, EditorStore];
 
 @NgModule({
   declarations: [...COMPONENTS, ...DIRECTIVES],
-  imports: [CommonModule, BrowserAnimationsModule, HttpClientModule, FormsModule, StoreModule.forRoot<IStore>(reducers), ...ANTD_MODULES],
+  imports: [CommonModule, BrowserAnimationsModule, HttpClientModule, FormsModule, ...ANTD_MODULES],
   exports: [...COMPONENTS, ...DIRECTIVES],
   providers: [...SERVICES],
 })

@@ -1,8 +1,6 @@
 import { Directive, HostBinding } from '@angular/core';
-import { select, Store } from '@ngrx/store';
-import { Subscription } from 'rxjs';
-import { SizeScaleSelector } from '../store/selectors';
-import { IStore } from '../store/store';
+import { EditorStore } from '../services';
+import { IStore } from '../store';
 
 @Directive({
   selector: '[ceZoomArea]',
@@ -17,14 +15,13 @@ export class ZoomAreaDirective {
   width: number;
   @HostBinding('style.height.px')
   height: number;
-  private subscription = new Subscription();
-  constructor(private store: Store<IStore>) {
-    this.subscription.add(
-      this.store.pipe(select(SizeScaleSelector)).subscribe((state) => {
+  constructor(private store: EditorStore<IStore>) {
+    this.store
+      .select((state) => ({ ...state.canvasSize, scale: state.canvasPosition.scale }))
+      .subscribe((state) => {
         this.scale = `perspective(1px) scale(${state.scale})`;
         this.width = state.width;
         this.height = state.height;
-      })
-    );
+      });
   }
 }

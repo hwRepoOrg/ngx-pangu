@@ -1,10 +1,8 @@
-import { Component, ElementRef, HostBinding, OnDestroy, ViewEncapsulation } from '@angular/core';
-import { Store } from '@ngrx/store';
-import { Subscription } from 'rxjs';
+import { Component, ElementRef, HostBinding, ViewEncapsulation } from '@angular/core';
+import { updateNodesSize } from '../../actions';
+import { EditorStore } from '../../services';
 import { CeUtilsService, IAbsolutePosition, IDOMRect, IRectDirection } from '../../services/utils.service';
-import { updateNodesSize } from '../../store/actions';
-import { ResizeRefreshSelector } from '../../store/selectors';
-import { ICanvasPosition, INode, IStore } from '../../store/store';
+import { ICanvasPosition, INode, IStore } from '../../store';
 
 @Component({
   selector: 'ce-resize-handle',
@@ -12,7 +10,7 @@ import { ICanvasPosition, INode, IStore } from '../../store/store';
   styleUrls: ['resize-handle.component.less'],
   encapsulation: ViewEncapsulation.None,
 })
-export class ResizeHandleComponent implements OnDestroy {
+export class ResizeHandleComponent {
   @HostBinding('style.display')
   public display = 'none';
   @HostBinding('style.width.px')
@@ -36,11 +34,11 @@ export class ResizeHandleComponent implements OnDestroy {
   private groupAbsolutePositionSnapshot: IAbsolutePosition;
   private resizePointSnapshot: { absolute: [number, number]; relative: [number, number] };
   private nodePositionSnapshotList = new Map<string, IAbsolutePosition>();
-  private subscription = new Subscription();
 
-  constructor(private store: Store<IStore>, private utils: CeUtilsService, public eleRef: ElementRef<HTMLElement>) {
-    this.subscription.add(
-      this.store.select(ResizeRefreshSelector).subscribe(([selected, canvasPosition, nodes]) => {
+  constructor(private store: EditorStore<IStore>, private utils: CeUtilsService, public eleRef: ElementRef<HTMLElement>) {
+    this.store
+      .select((state) => [state.selected, state.canvasPosition, state.nodes] as any)
+      .subscribe(([selected, canvasPosition, nodes]) => {
         this.display = selected.size ? 'block' : 'none';
         this.selected = selected;
         this.canvasPosition = canvasPosition;
@@ -48,12 +46,7 @@ export class ResizeHandleComponent implements OnDestroy {
         if (this.selected.size) {
           this.refreshResizeHandle();
         }
-      })
-    );
-  }
-
-  ngOnDestroy(): void {
-    this.subscription.unsubscribe();
+      });
   }
 
   refreshResizeHandle(): any {
@@ -144,7 +137,7 @@ export class ResizeHandleComponent implements OnDestroy {
         })
       );
     });
-    this.store.dispatch(updateNodesSize({ nodesSizeMap }));
+    this.store.dispatch(updateNodesSize(nodesSizeMap));
   }
 
   resizingNode(direction: IRectDirection, mx: number, my: number): void {
@@ -153,7 +146,9 @@ export class ResizeHandleComponent implements OnDestroy {
     const endPointer: [number, number] = [relative[0] + mx / scale, relative[1] + my / scale];
     this.nodePositionSnapshotList.forEach((position, id) => {
       this.store.dispatch(
-        updateNodesSize({ nodesSizeMap: new Map<string, IDOMRect>([[id, getDOMRectByDirectionAndPosition(direction, position, endPointer)]]) })
+        updateNodesSize(
+          new Map<string, IDOMRect>([[id, getDOMRectByDirectionAndPosition(direction, position, endPointer)]])
+        )
       );
     });
   }

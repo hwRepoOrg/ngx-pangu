@@ -1,9 +1,8 @@
-import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
-import { Store } from '@ngrx/store';
-import { Subscription } from 'rxjs';
+import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { filter, map } from 'rxjs/operators';
+import { EditorStore } from '../../services';
 import { CeUtilsService } from '../../services/utils.service';
-import { ICanvasSize, INode, IStore } from '../../store/store';
+import { ICanvasSize, INode } from '../../store';
 
 @Component({
   selector: 'ce-bordered-area',
@@ -11,58 +10,49 @@ import { ICanvasSize, INode, IStore } from '../../store/store';
   styleUrls: ['bordered-area.component.less'],
   encapsulation: ViewEncapsulation.None,
 })
-export class BorderedAreaComponent implements OnInit, OnDestroy {
+export class BorderedAreaComponent implements OnInit {
   private nodes: INode<any>[];
   public borderedNodeMap = new Map<string, Partial<DOMRect & { rotate: number }>>();
-  private subscription = new Subscription();
   private bordered: Set<string>;
   private canvasSize: ICanvasSize;
   public get nodeList(): ({ id: string } & Partial<DOMRect & { rotate: number }>)[] {
     return [...this.borderedNodeMap].map(([id, { width, height, left, top, rotate }]) => ({ id, width, height, left, top, rotate }));
   }
 
-  constructor(private store: Store<IStore>, private utils: CeUtilsService) {}
+  constructor(private store: EditorStore, private utils: CeUtilsService) {}
 
   ngOnInit(): void {
-    this.subscription.add(
-      this.store.select('nodes').subscribe((nodes) => {
+    this.store
+      .select((state) => state.nodes)
+      .subscribe((nodes) => {
         this.nodes = nodes;
         this.refreshBorderedList();
-      })
-    );
-    this.subscription.add(
-      this.store
-        .select('canvasSize')
-        .pipe(
-          map((canvasSize) => (this.canvasSize = canvasSize)),
-          filter(() => !!this.bordered)
-        )
-        .subscribe(() => this.refreshBorderedList())
-    );
-    this.subscription.add(
-      this.store
-        .select('bordered')
-        .pipe(
-          filter(() => !!this.nodes && !!this.canvasSize),
-          map((bordered) => {
-            this.bordered = bordered;
-            if (bordered.size) {
-              this.borderedNodeMap.forEach((...args) => {
-                if (!bordered.has(args[1])) {
-                  this.borderedNodeMap.delete(args[1]);
-                }
-              });
-            } else {
-              this.borderedNodeMap.clear();
-            }
-          })
-        )
-        .subscribe(() => this.refreshBorderedList(true))
-    );
-  }
-
-  ngOnDestroy(): void {
-    this.subscription.unsubscribe();
+      });
+    this.store
+      .select((state) => state.canvasSize)
+      .pipe(
+        map((canvasSize) => (this.canvasSize = canvasSize)),
+        filter(() => !!this.bordered)
+      )
+      .subscribe(() => this.refreshBorderedList());
+    this.store
+      .select((state) => state.bordered)
+      .pipe(
+        filter(() => !!this.nodes && !!this.canvasSize),
+        map((bordered) => {
+          this.bordered = bordered;
+          if (bordered.size) {
+            this.borderedNodeMap.forEach((...args) => {
+              if (!bordered.has(args[1])) {
+                this.borderedNodeMap.delete(args[1]);
+              }
+            });
+          } else {
+            this.borderedNodeMap.clear();
+          }
+        })
+      )
+      .subscribe(() => this.refreshBorderedList(true));
   }
 
   getRotate(rotate: number): string {

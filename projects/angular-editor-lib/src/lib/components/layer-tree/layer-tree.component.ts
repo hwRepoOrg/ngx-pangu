@@ -1,13 +1,12 @@
-import { Component, OnDestroy, ViewChild, ViewEncapsulation } from '@angular/core';
-import { Store } from '@ngrx/store';
+import { Component, ViewChild, ViewEncapsulation } from '@angular/core';
 import { NzContextMenuService, NzDropdownMenuComponent } from 'ng-zorro-antd/dropdown';
 import { NzFormatEmitEvent, NzTreeComponent, NzTreeNode, NzTreeNodeOptions } from 'ng-zorro-antd/tree';
-import { Subscription } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
+import { addBorderedNodes, removeBorderedNodes, setSelectedNodes } from '../../actions';
+import { EditorStore } from '../../services';
 import { ActionsService } from '../../services/actions.service';
 import { CeUtilsService } from '../../services/utils.service';
-import { addBorderedNodes, removeBorderedNodes, setSelectedNodes } from '../../store/actions';
-import { INode, IStore } from '../../store/store';
+import { INode, IStore } from '../../store';
 
 @Component({
   selector: 'ce-layer-tree',
@@ -16,7 +15,7 @@ import { INode, IStore } from '../../store/store';
   styleUrls: ['layer-tree.component.less'],
   encapsulation: ViewEncapsulation.None,
 })
-export class LayerTreeComponent implements OnDestroy {
+export class LayerTreeComponent {
   public openedKeys = new Set<string>();
   public treeNodes: NzTreeNodeOptions[];
   public selected: Set<string>;
@@ -25,7 +24,6 @@ export class LayerTreeComponent implements OnDestroy {
   @ViewChild('layerTree', { read: NzTreeComponent })
   public layerTree: NzTreeComponent;
   private parentKey: string;
-  private subscription = new Subscription();
   public get groupStatus(): boolean {
     return this.selectedKeys.length > 1
       ? !this.selectedKeys.find((id) => {
@@ -36,41 +34,35 @@ export class LayerTreeComponent implements OnDestroy {
   }
 
   constructor(
-    private store: Store<IStore>,
+    private store: EditorStore<IStore>,
     private utils: CeUtilsService,
     private contextMenuSrv: NzContextMenuService,
     public actions: ActionsService
   ) {
-    this.subscription.add(
-      this.store
-        .select('nodes')
-        .pipe(debounceTime(300))
-        .subscribe((nodes) => {
-          this.treeNodes = this.transferNodesToNzNodes(this.utils.sortNodeListByIndex(nodes));
-          this.selectedKeys = [...this.selected];
-          this.expandedKeys = this.expandedKeys && [...this.expandedKeys];
-        })
-    );
-    this.subscription.add(
-      this.store.select('selected').subscribe((selected) => {
+    this.store
+      .select((state) => state.nodes)
+      .pipe(debounceTime(300))
+      .subscribe((nodes) => {
+        this.treeNodes = this.transferNodesToNzNodes(this.utils.sortNodeListByIndex(nodes));
+        this.selectedKeys = [...this.selected];
+        this.expandedKeys = this.expandedKeys && [...this.expandedKeys];
+      });
+    this.store
+      .select((state) => state.selected)
+      .subscribe((selected) => {
         this.selected = selected;
         this.selectedKeys = [...selected];
-      })
-    );
-  }
-
-  ngOnDestroy(): void {
-    this.subscription.unsubscribe();
+      });
   }
 
   clearBordered(id: string): void {
     if (!this.selected.has(id)) {
-      this.store.dispatch(removeBorderedNodes({ ids: [id] }));
+      this.store.dispatch(removeBorderedNodes([id]));
     }
   }
 
   showBordered(id: string): void {
-    this.store.dispatch(addBorderedNodes({ ids: [id] }));
+    this.store.dispatch(addBorderedNodes([id]));
   }
 
   layerTrackByFn(index: number, node: INode): string {
@@ -91,7 +83,7 @@ export class LayerTreeComponent implements OnDestroy {
 
   contextMenu(event: MouseEvent, menu: NzDropdownMenuComponent, node: NzTreeNode): void {
     if (!this.selected.has(node.key)) {
-      this.store.dispatch(setSelectedNodes({ ids: [node.key] }));
+      this.store.dispatch(setSelectedNodes([node.key]));
     }
     this.contextMenuSrv.create(event, menu);
   }

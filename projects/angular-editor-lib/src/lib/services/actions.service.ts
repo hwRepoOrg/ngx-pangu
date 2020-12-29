@@ -1,16 +1,18 @@
 import { Injectable } from '@angular/core';
-import { Store } from '@ngrx/store';
-import { breakNode, clearBorderedNodes, clearSelectedNodes, groupNodes, removeNodes, setBorderedNodes, setSelectedNodes } from '../store/actions';
-import { IStore } from '../store/store';
+import { breakNode, clearBordered, clearSelected, groupNodes, removeNodes, setBorderedNodes, setSelectedNodes } from '../actions';
+import { IStore } from '../store';
+import { EditorStore } from './store.service';
 import { CeUtilsService } from './utils.service';
 
 @Injectable()
 export class ActionsService {
-  constructor(public store: Store<IStore>, public utils: CeUtilsService) {}
+  constructor(public store: EditorStore<IStore>, public utils: CeUtilsService) {}
+
+  clearSelected(): void {}
 
   setSelected(ids: string[]): void {
-    this.store.dispatch(setSelectedNodes({ ids }));
-    this.store.dispatch(setBorderedNodes({ ids }));
+    this.store.dispatch(setSelectedNodes(ids));
+    this.store.dispatch(setBorderedNodes(ids));
   }
 
   setSelectedNode(id: string): void {
@@ -18,23 +20,23 @@ export class ActionsService {
   }
 
   setSelectedNodes(ids: string[]): void {
-    this.store.dispatch(setSelectedNodes({ ids }));
-    this.store.dispatch(setBorderedNodes({ ids }));
+    this.store.dispatch(setSelectedNodes(ids));
+    this.store.dispatch(setBorderedNodes(ids));
   }
 
   group(ids: string[]): void {
-    this.store.dispatch(groupNodes({ ids }));
+    this.store.dispatch(groupNodes(ids));
   }
 
   breakNode(id: string): void {
-    this.store.dispatch(clearSelectedNodes());
-    this.store.dispatch(clearBorderedNodes());
-    this.store.dispatch(breakNode({ id }));
+    this.store.dispatch(clearSelected());
+    this.store.dispatch(clearBordered());
+    this.store.dispatch(breakNode(id));
   }
 
   deleteNodes(ids: string[]): void {
-    this.store.dispatch(clearSelectedNodes());
-    this.store.dispatch(clearBorderedNodes());
-    this.store.dispatch(removeNodes({ ids }));
+    this.store.dispatch(clearSelected());
+    this.store.dispatch(clearBordered());
+    this.store.dispatch(removeNodes(ids));
   }
 }

@@ -1,9 +1,8 @@
-import { Component, OnDestroy, OnInit, Optional, SkipSelf, ViewEncapsulation } from '@angular/core';
-import { Store } from '@ngrx/store';
-import { Subscription } from 'rxjs';
+import { Component, OnInit, Optional, SkipSelf, ViewEncapsulation } from '@angular/core';
+import { updateNodes } from '../../actions';
+import { EditorStore } from '../../services';
 import { CeUtilsService } from '../../services/utils.service';
-import { updateNodes } from '../../store/actions';
-import { INode, IStore } from '../../store/store';
+import { INode, IStore } from '../../store';
 import { ResizeHandleComponent } from '../resize-handle/resize-handle.component';
 
 @Component({
@@ -12,21 +11,16 @@ import { ResizeHandleComponent } from '../resize-handle/resize-handle.component'
   styleUrls: ['rotate-handle.component.less'],
   encapsulation: ViewEncapsulation.None,
 })
-export class RotateHandleComponent implements OnInit, OnDestroy {
+export class RotateHandleComponent implements OnInit {
   private selected: Set<string>;
   private nodes: INode[];
   public rotateSnapshot: [number, number, number, number, INode] = null;
-  private subscription = new Subscription();
 
-  constructor(@Optional() @SkipSelf() private parent: ResizeHandleComponent, private store: Store<IStore>, private utils: CeUtilsService) {}
+  constructor(@Optional() @SkipSelf() private parent: ResizeHandleComponent, private store: EditorStore<IStore>, private utils: CeUtilsService) {}
 
   ngOnInit(): void {
-    this.subscription.add(this.store.select('selected').subscribe((selected) => (this.selected = selected)));
-    this.subscription.add(this.store.select('nodes').subscribe((nodes) => (this.nodes = nodes)));
-  }
-
-  ngOnDestroy(): void {
-    this.subscription.unsubscribe();
+    this.store.select((state) => state.selected).subscribe((selected) => (this.selected = selected));
+    this.store.select((state) => state.nodes).subscribe((nodes) => (this.nodes = nodes));
   }
 
   rotateStart(event: PointerEvent): void {
@@ -48,11 +42,7 @@ export class RotateHandleComponent implements OnInit, OnDestroy {
       const ex = event.clientX;
       const ey = event.clientY;
       const rotate = Math.round(this.utils.getRotate(cx, cy, sx, sy, ex, ey));
-      this.store.dispatch(
-        updateNodes({
-          nodes: [{ ...node, rotate: rotate === 360 ? 0 : rotate }],
-        })
-      );
+      this.store.dispatch(updateNodes([{ ...node, rotate: rotate === 360 ? 0 : rotate }]));
     }
   }
 

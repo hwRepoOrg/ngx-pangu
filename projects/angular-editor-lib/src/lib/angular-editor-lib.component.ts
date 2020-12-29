@@ -1,10 +1,10 @@
-import { Component, ElementRef, ViewChild, ViewEncapsulation } from '@angular/core';
-import { Store } from '@ngrx/store';
+import { Component, ElementRef, Input, ViewChild, ViewEncapsulation } from '@angular/core';
 import { fromEvent, Subscription } from 'rxjs';
 import { filter } from 'rxjs/operators';
+import { clearBordered, clearSelected, setBorderedNodes, setSelectedNodes, updateCanvasPosition } from './actions';
 import { ISelectorRect } from './directives/selector.directive';
-import { clearBorderedNodes, clearSelectedNodes, setBorderedNodes, setSelectedNodes, updateCanvasPosition } from './store/actions';
-import { ICanvasPosition, INode, IRefLineDirection, IRefLineState, IStore } from './store/store';
+import { EditorStore } from './services/store.service';
+import { ICanvasPosition, INode, IRefLineDirection, IRefLineState, IStore } from './store';
 
 @Component({
   selector: 'ce-editor',
@@ -12,7 +12,11 @@ import { ICanvasPosition, INode, IRefLineDirection, IRefLineState, IStore } from
   styleUrls: ['angular-editor-lib.less'],
   encapsulation: ViewEncapsulation.None,
 })
-export class AngularEditorLibComponent {
+export class AngularEditorLibComponent<T = any> {
+  @Input()
+  set state(state: IStore<T>) {
+    this.editorStore?.initialize(state);
+  }
   @ViewChild('container', { read: ElementRef, static: true })
   private containerEleRef: ElementRef<HTMLDivElement>;
   private subscription = new Subscription();
@@ -24,15 +28,16 @@ export class AngularEditorLibComponent {
   public refLineState: { [P in IRefLineDirection]: IRefLineState };
   private nodesRectSnapshot: Map<string, Partial<DOMRect>> = null;
   private nodeIdList: string[] = null;
-  constructor(private store: Store<IStore>) {
-    this.subscription.add(
-      this.store.select('canvasPosition').subscribe((canvasPosition) => {
+  constructor(private editorStore: EditorStore) {
+    this.editorStore
+      .select((state) => state.canvasPosition)
+      .subscribe((canvasPosition) => {
         this.canvasPosition = canvasPosition;
         this.matrix = `translate3d(${this.canvasPosition.left}px,${this.canvasPosition.top}px,0)`;
-      })
-    );
-    this.subscription.add(this.store.select('nodes').subscribe((nodes) => (this.nodes = nodes)));
-    this.subscription.add(this.store.select('refLineState').subscribe((refLineState) => (this.refLineState = refLineState)));
+      });
+
+    this.editorStore.select((state) => state.nodes).subscribe((nodes) => (this.nodes = nodes));
+    this.editorStore.select((state) => state.refLineState).subscribe((refLineState) => (this.refLineState = refLineState));
   }
 
   ngAfterViewInit(): void {
@@ -51,7 +56,7 @@ export class AngularEditorLibComponent {
     if (this.startPoints) {
       const [sx, sy, left, top] = this.startPoints;
       const [mx, my] = [ev.clientX - sx, ev.clientY - sy];
-      this.store.dispatch(updateCanvasPosition({ left: left + mx, top: top + my }));
+      this.editorStore.dispatch(updateCanvasPosition({ left: left + mx, top: top + my }));
     }
   }
 
@@ -71,7 +76,7 @@ export class AngularEditorLibComponent {
           const wheelDelta = (e.wheelDelta / 120 || -e.deltaY / 3) * 0.05;
           const [x, y] = [e.clientX - containerBox.left, e.clientY - containerBox.top];
           if (this.canvasPosition.scale + wheelDelta >= 0.2) {
-            this.store.dispatch(
+            this.editorStore.dispatch(
               updateCanvasPosition({
                 scale: this.canvasPosition.scale + wheelDelta,
                 left: (this.canvasPosition.left - x) * (wheelDelta / this.canvasPosition.scale) + this.canvasPosition.left,
@@ -106,8 +111,8 @@ export class AngularEditorLibComponent {
         this.nodeIdList.push(id);
       }
     });
-    this.store.dispatch(setBorderedNodes({ ids: [...this.nodeIdList] }));
-    this.store.dispatch(setSelectedNodes({ ids: [...this.nodeIdList] }));
+    this.editorStore.dispatch(setBorderedNodes<T>(this.nodeIdList));
+    this.editorStore.dispatch(setSelectedNodes(this.nodeIdList));
   }
 
   selectorEnd(): void {
@@ -117,8 +122,8 @@ export class AngularEditorLibComponent {
   }
 
   private clearSelectAndBorder(): void {
-    this.store.dispatch(clearBorderedNodes());
-    this.store.dispatch(clearSelectedNodes());
+    this.editorStore.dispatch(clearBordered<T>());
+    this.editorStore.dispatch(clearSelected<T>());
   }
 }
 

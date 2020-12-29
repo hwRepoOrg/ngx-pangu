@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import * as _ from 'lodash';
-import { INode } from '../store/store';
+import { INode } from '../store';
 
 export type IPosition = [number, number];
 export interface IAbsolutePosition {
@@ -36,7 +36,7 @@ export function genNodeId(): string {
   return `${Date.now()}${Math.round(Math.random() * 1000000000000)}`;
 }
 
-@Injectable()
+@Injectable({ providedIn: 'root' })
 export class CeUtilsService {
   public static shared: CeUtilsService;
 

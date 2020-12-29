@@ -1,8 +1,6 @@
 import { Directive, HostBinding } from '@angular/core';
-import { select, Store } from '@ngrx/store';
-import { Subscription } from 'rxjs';
-import { SizeScaleSelector } from '../store/selectors';
-import { IStore } from '../store/store';
+import { EditorStore } from '../services';
+import { IStore } from '../store';
 
 @Directive({
   selector: '[ceNoZoomArea]',
@@ -13,13 +11,12 @@ export class NoZoomAreaDirective {
   public width: number;
   @HostBinding('style.height.px')
   public height: number;
-  private subscription = new Subscription();
-  constructor(private store: Store<IStore>) {
-    this.subscription.add(
-      this.store.pipe(select(SizeScaleSelector)).subscribe((state) => {
+  constructor(private store: EditorStore<IStore>) {
+    this.store
+      .select((state) => ({ ...state.canvasSize, scale: state.canvasPosition.scale }))
+      .subscribe((state) => {
         this.width = state.width * state.scale;
         this.height = state.height * state.scale;
-      })
-    );
+      });
   }
 }
