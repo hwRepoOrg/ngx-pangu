@@ -62,30 +62,18 @@ export type IActionType<T = any> = (state: IStore<T>) => IStore<T>;
 
 export const DEFAULT_STORE: IStore<any> = {
   nodeMoveState: false,
-  nodes: new Array(100).fill(1).map((v, index) => ({
-    id: genNodeId(),
-    name: `test${index + 1}`,
-    locked: !Math.round(Math.random() * 10),
-    width: Math.round(Math.random() * 500 + 10),
-    height: Math.round(Math.random() * 400 + 10),
-    left: Math.round(Math.random() * 1000) + 100,
-    top: Math.round(Math.random() * 1000) + 100,
-    zIndex: index + 1,
-    borderWidth: 1,
-    borderStyle: 'solid',
-    rotate: [0, 30, 90, 100, 180, 200, 270][Math.round(Math.random() * 7)],
-  })),
+  nodes: [],
   selected: new Set(),
   bordered: new Set(),
   canvasBackground: {},
   canvasPosition: {
-    left: 200,
-    top: 200,
+    left: 100,
+    top: 100,
     scale: 1,
   },
   canvasSize: {
-    width: 1920,
-    height: 1080,
+    width: 1366,
+    height: 768,
   },
   refLineState: {
     tx: { state: false },
