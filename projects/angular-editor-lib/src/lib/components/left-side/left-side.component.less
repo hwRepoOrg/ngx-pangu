@@ -1,8 +1,14 @@
 @import "../../styles/ng-zorro-antd/theme.less";
 
 ce-left-side {
+  position: absolute;
   display: flex;
   width: 300px;
+  top: 10px;
+  left: 10px;
+  z-index: 2;
+  background-color: white;
+  height: ~"calc(100vh - 60px)";
   max-width: 300px;
   border-style: solid;
   border-color: @border-color-split;

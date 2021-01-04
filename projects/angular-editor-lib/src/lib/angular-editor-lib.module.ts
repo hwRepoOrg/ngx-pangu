@@ -17,6 +17,7 @@ import { NzCardModule } from 'ng-zorro-antd/card';
 import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
 import { NzIconModule, NzIconService } from 'ng-zorro-antd/icon';
 import { NzInputNumberModule } from 'ng-zorro-antd/input-number';
+import { NzPipesModule } from 'ng-zorro-antd/pipes';
 import { NzTabsModule } from 'ng-zorro-antd/tabs';
 import { NzTreeModule } from 'ng-zorro-antd/tree';
 import { AngularEditorLibComponent } from './angular-editor-lib.component';
@@ -41,7 +42,16 @@ import { EditorStore } from './services/store.service';
 
 const ICONS = [DeleteOutline, LockOutline, UnlockOutline, FolderOutline, FolderFill, FolderOpenFill, FolderOpenOutline];
 
-const ANTD_MODULES = [NzCardModule, NzIconModule.forRoot(ICONS), NzButtonModule, NzInputNumberModule, NzTabsModule, NzTreeModule, NzDropDownModule];
+const ANTD_MODULES = [
+  NzCardModule,
+  NzIconModule.forRoot(ICONS),
+  NzButtonModule,
+  NzInputNumberModule,
+  NzTabsModule,
+  NzTreeModule,
+  NzDropDownModule,
+  NzPipesModule,
+];
 
 const COMPONENTS = [
   ToolbarComponent,
@@ -62,8 +72,8 @@ const DIRECTIVES = [NoZoomAreaDirective, ZoomAreaDirective, DraggableDirective, 
 const SERVICES = [ActionsService, EditorStore];
 
 @NgModule({
-  declarations: [...COMPONENTS, ...DIRECTIVES],
   imports: [CommonModule, BrowserAnimationsModule, HttpClientModule, FormsModule, ...ANTD_MODULES],
+  declarations: [...COMPONENTS, ...DIRECTIVES],
   exports: [...COMPONENTS, ...DIRECTIVES],
   providers: [...SERVICES],
 })

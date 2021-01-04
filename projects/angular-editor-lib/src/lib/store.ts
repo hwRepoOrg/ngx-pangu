@@ -1,5 +1,3 @@
-import { genNodeId } from './services/utils.service';
-
 export interface INode<T = any> {
   id: string;
   name: string;
@@ -84,3 +82,16 @@ export const DEFAULT_STORE: IStore<any> = {
     cy: { state: false },
   },
 };
+
+export interface IWidget<T = any> {
+  type: string;
+  name: string;
+  thumbnail: string;
+  component: T;
+}
+
+export interface ITabConfig<T = any> {
+  title: string;
+  icon: string;
+  content: T;
+}

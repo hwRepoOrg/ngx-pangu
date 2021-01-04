@@ -1,4 +1,5 @@
-import { Component, HostBinding, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, HostBinding, Input, OnInit, ViewEncapsulation } from '@angular/core';
+import { ITabConfig, IWidget } from '../../store';
 
 @Component({
   selector: 'ce-left-side',
@@ -8,6 +9,10 @@ import { Component, HostBinding, OnInit, ViewEncapsulation } from '@angular/core
   encapsulation: ViewEncapsulation.None,
 })
 export class LeftSideComponent implements OnInit {
+  @Input()
+  tabs: ITabConfig[];
+  @Input()
+  widgets: IWidget[] = [];
   public activeIndex = 0;
   @HostBinding('class.collapsed')
   public collapsed = false;
