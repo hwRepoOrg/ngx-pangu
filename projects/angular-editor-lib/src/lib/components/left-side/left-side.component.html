@@ -30,7 +30,12 @@
   <ng-container *ngIf="tabs?.length">
     <ng-container *ngFor="let tab of tabs; index as tabIndex">
       <ng-container *ngIf="activeIndex === tabIndex">
-        <ng-container [ngComponentOutlet]="tab.content"></ng-container>
+        <ng-container *ngIf="isTemplateType(tab.content)">
+          <ng-container [ngTemplateOutlet]="tab.content"></ng-container>
+        </ng-container>
+        <ng-container *ngIf="!isTemplateType(tab.content)">
+          <ng-container [ngComponentOutlet]="tab.content"></ng-container>
+        </ng-container>
       </ng-container>
     </ng-container>
   </ng-container>

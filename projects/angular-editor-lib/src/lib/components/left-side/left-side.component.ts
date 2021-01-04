@@ -1,4 +1,4 @@
-import { Component, HostBinding, Input, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, HostBinding, Input, OnInit, TemplateRef, ViewEncapsulation } from '@angular/core';
 import { ITabConfig, IWidget } from '../../store';
 
 @Component({
@@ -20,4 +20,8 @@ export class LeftSideComponent implements OnInit {
   constructor() {}
 
   ngOnInit(): void {}
+
+  isTemplateType(content: any) {
+    return content instanceof TemplateRef;
+  }
 }
