@@ -1,6 +1,7 @@
 @import "../../styles/ng-zorro-antd/theme.less";
 
-ce-left-side {
+ce-left-side,
+[ceLeftSide] {
   position: absolute;
   display: flex;
   width: 300px;
@@ -8,7 +9,7 @@ ce-left-side {
   left: 10px;
   z-index: 2;
   background-color: white;
-  height: ~"calc(100vh - 60px)";
+  height: @side-height;
   max-width: 300px;
   border-style: solid;
   border-color: @border-color-split;

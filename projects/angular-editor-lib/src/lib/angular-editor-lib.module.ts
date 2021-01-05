@@ -10,6 +10,11 @@ import {
   FolderOpenOutline,
   FolderOutline,
   LockOutline,
+  PlusCircleFill,
+  PlusCircleOutline,
+  PlusOutline,
+  PlusSquareFill,
+  PlusSquareOutline,
   UnlockOutline,
 } from '@ant-design/icons-angular/icons';
 import { NzButtonModule } from 'ng-zorro-antd/button';
@@ -29,6 +34,7 @@ import { CanvasComponent } from './components/canvas/canvas.component';
 import { LayerTreeComponent } from './components/layer-tree/layer-tree.component';
 import { LeftSideComponent } from './components/left-side/left-side.component';
 import { ResizeHandleComponent } from './components/resize-handle/resize-handle.component';
+import { RightSideComponent } from './components/right-side/right-side.component';
 import { RotateHandleComponent } from './components/rotate-handle/rotate-handle.component';
 import { ToolbarComponent } from './components/toolbar/toolbar.component';
 import { WidgetListComponent } from './components/widget-list/widget-list.component';
@@ -39,8 +45,22 @@ import { SelectorDirective } from './directives/selector.directive';
 import { ZoomAreaDirective } from './directives/zoom-area.directive';
 import { ActionsService } from './services';
 import { EditorStore } from './services/store.service';
+import { DragDropModule } from '@angular/cdk/drag-drop';
 
-const ICONS = [DeleteOutline, LockOutline, UnlockOutline, FolderOutline, FolderFill, FolderOpenFill, FolderOpenOutline];
+const ICONS = [
+  DeleteOutline,
+  LockOutline,
+  UnlockOutline,
+  FolderOutline,
+  FolderFill,
+  FolderOpenFill,
+  FolderOpenOutline,
+  PlusOutline,
+  PlusCircleFill,
+  PlusCircleOutline,
+  PlusSquareOutline,
+  PlusSquareFill,
+];
 
 const ANTD_MODULES = [
   NzCardModule,
@@ -52,6 +72,8 @@ const ANTD_MODULES = [
   NzDropDownModule,
   NzPipesModule,
 ];
+
+const CDK_MODULES = [DragDropModule];
 
 const COMPONENTS = [
   ToolbarComponent,
@@ -66,13 +88,14 @@ const COMPONENTS = [
   RotateHandleComponent,
   BorderedAreaComponent,
   AngularEditorLibComponent,
+  RightSideComponent,
 ];
 
 const DIRECTIVES = [NoZoomAreaDirective, ZoomAreaDirective, DraggableDirective, SelectorDirective, CeToolbarDirective];
 const SERVICES = [ActionsService, EditorStore];
 
 @NgModule({
-  imports: [CommonModule, BrowserAnimationsModule, HttpClientModule, FormsModule, ...ANTD_MODULES],
+  imports: [CommonModule, BrowserAnimationsModule, HttpClientModule, FormsModule, ...ANTD_MODULES, ...CDK_MODULES],
   declarations: [...COMPONENTS, ...DIRECTIVES],
   exports: [...COMPONENTS, ...DIRECTIVES],
   providers: [...SERVICES],

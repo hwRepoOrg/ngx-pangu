@@ -2,7 +2,7 @@ import { Component, HostBinding, Input, OnInit, TemplateRef, ViewEncapsulation }
 import { ITabConfig, IWidget } from '../../store';
 
 @Component({
-  selector: 'ce-left-side',
+  selector: 'ce-left-side,[ceLeftSide]',
   exportAs: 'ceLeftSide',
   templateUrl: 'left-side.component.html',
   styleUrls: ['left-side.component.less'],

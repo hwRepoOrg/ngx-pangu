@@ -9,3 +9,4 @@ export * from './resize-handle/resize-handle.component';
 export * from './rotate-handle/rotate-handle.component';
 export * from './toolbar/toolbar.component';
 export * from './widget-list/widget-list.component';
+export * from './right-side/right-side.component';
