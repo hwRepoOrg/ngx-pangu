@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, TemplateRef } from '@angular/core';
 import * as _ from 'lodash';
 import { INode } from '../store';
 
@@ -42,6 +42,10 @@ export class CeUtilsService {
 
   constructor() {
     CeUtilsService.shared = this;
+  }
+
+  public isTemplateType(content: any) {
+    return content instanceof TemplateRef;
   }
 
   /**

@@ -91,6 +91,7 @@ export interface IWidget<T = any> {
 }
 
 export interface ITabConfig<T = any> {
+  key: string;
   title: string;
   icon: string;
   content: T;

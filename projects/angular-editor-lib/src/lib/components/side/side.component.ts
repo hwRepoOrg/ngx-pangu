@@ -1,26 +1,38 @@
-import { ChangeDetectionStrategy, Component, HostBinding, ViewEncapsulation } from '@angular/core';
+import { ChangeDetectionStrategy, Component, HostBinding, Input, ViewEncapsulation } from '@angular/core';
+import { CeUtilsService } from '../../services';
+import { ITabConfig } from '../../store';
 
+export type DEFAULT_TABS = 'LAYERS' | 'WIDGETS' | 'CANVAS_SETTINGS' | 'BASE_WIDGETS_SETTINGS';
 @Component({
-  selector: 'ce-right-side,[ceRightSide]',
+  selector: 'ce-side,[ceSide]',
   exportAs: 'ceRightSide',
-  templateUrl: './right-side.component.html',
-  styleUrls: ['./right-side.component.less'],
+  templateUrl: './side.component.html',
+  styleUrls: ['./side.component.less'],
   encapsulation: ViewEncapsulation.None,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class RightSideComponent {
+export class SideComponent {
   @HostBinding('style.left.px')
   public left = window.innerWidth - 430;
   @HostBinding('style.top.px')
   public top = 30;
+  @Input()
+  public tabs: ITabConfig[];
+  @Input()
+  disabledTabs: DEFAULT_TABS[];
   public isOpen = false;
+  public activeIndex: string = 'WIDGETS';
   private prevPosition: [number, number];
-  constructor() {
+  constructor(public utilSrv: CeUtilsService) {
     this.prevPosition = [this.left, this.top];
   }
 
   toggleOpen() {
     this.isOpen = !this.isOpen;
+  }
+
+  switchPane(index: string) {
+    this.activeIndex = index;
   }
 
   onStart() {

@@ -1,3 +1,4 @@
+import { DragDropModule } from '@angular/cdk/drag-drop';
 import { CommonModule } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
 import { Injector, NgModule } from '@angular/core';
@@ -24,6 +25,7 @@ import { NzIconModule, NzIconService } from 'ng-zorro-antd/icon';
 import { NzInputNumberModule } from 'ng-zorro-antd/input-number';
 import { NzPipesModule } from 'ng-zorro-antd/pipes';
 import { NzTabsModule } from 'ng-zorro-antd/tabs';
+import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
 import { NzTreeModule } from 'ng-zorro-antd/tree';
 import { AngularEditorLibComponent } from './angular-editor-lib.component';
 import { BorderedAreaComponent } from './components/bordered-area/bordered-area.component';
@@ -32,9 +34,8 @@ import { CanvasBackgroundComponent } from './components/canvas-background/canvas
 import { CanvasGridComponent } from './components/canvas-grid/canvas-grid.component';
 import { CanvasComponent } from './components/canvas/canvas.component';
 import { LayerTreeComponent } from './components/layer-tree/layer-tree.component';
-import { LeftSideComponent } from './components/left-side/left-side.component';
 import { ResizeHandleComponent } from './components/resize-handle/resize-handle.component';
-import { RightSideComponent } from './components/right-side/right-side.component';
+import { SideComponent } from './components/side/side.component';
 import { RotateHandleComponent } from './components/rotate-handle/rotate-handle.component';
 import { ToolbarComponent } from './components/toolbar/toolbar.component';
 import { WidgetListComponent } from './components/widget-list/widget-list.component';
@@ -45,7 +46,6 @@ import { SelectorDirective } from './directives/selector.directive';
 import { ZoomAreaDirective } from './directives/zoom-area.directive';
 import { ActionsService } from './services';
 import { EditorStore } from './services/store.service';
-import { DragDropModule } from '@angular/cdk/drag-drop';
 
 const ICONS = [
   DeleteOutline,
@@ -71,13 +71,13 @@ const ANTD_MODULES = [
   NzTreeModule,
   NzDropDownModule,
   NzPipesModule,
+  NzToolTipModule,
 ];
 
 const CDK_MODULES = [DragDropModule];
 
 const COMPONENTS = [
   ToolbarComponent,
-  LeftSideComponent,
   LayerTreeComponent,
   WidgetListComponent,
   CanvasComponent,
@@ -88,7 +88,7 @@ const COMPONENTS = [
   RotateHandleComponent,
   BorderedAreaComponent,
   AngularEditorLibComponent,
-  RightSideComponent,
+  SideComponent,
 ];
 
 const DIRECTIVES = [NoZoomAreaDirective, ZoomAreaDirective, DraggableDirective, SelectorDirective, CeToolbarDirective];

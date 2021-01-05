@@ -1,7 +1,7 @@
 @import "../../styles/ng-zorro-antd/theme.less";
 
-ce-right-side,
-[ceRightSide] {
+ce-side,
+[ceSide] {
   display: block;
   position: absolute;
   .panel-btn {
@@ -27,6 +27,7 @@ ce-right-side,
     }
   }
   .panel-content {
+    display: flex;
     width: 300px;
     height: @side-height;
     background-color: white;
@@ -38,6 +39,26 @@ ce-right-side,
     }
     &.close {
       transform: scale(0);
+    }
+    .aside {
+      ul {
+        width: 40px;
+        min-width: 40px;
+        max-width: 40px;
+        li {
+          writing-mode: vertical-lr;
+          cursor: pointer;
+          [nz-icon] {
+            font-size: 20px;
+            color: gray;
+          }
+          &.active {
+            [nz-icon] {
+              color: @primary-color;
+            }
+          }
+        }
+      }
     }
   }
 }

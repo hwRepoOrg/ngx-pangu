@@ -1,6 +1,5 @@
 <ng-content select="[toolbar]"></ng-content>
 <div class="col p-0 d-flex">
-  <ng-content select="[leftSide]"></ng-content>
   <div
     #ceDrag="ceDraggable"
     #container
@@ -46,5 +45,5 @@
       [style.height.px]="selectorRect.height"
     ></div>
   </div>
-  <ng-content select="[rightSide]"></ng-content>
+  <ng-content select="[side]"></ng-content>
 </div>
