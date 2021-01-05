@@ -24,4 +24,9 @@ export class LeftSideComponent implements OnInit {
   isTemplateType(content: any) {
     return content instanceof TemplateRef;
   }
+
+  switchPane(index: number) {
+    this.activeIndex = index;
+    this.collapsed = false;
+  }
 }

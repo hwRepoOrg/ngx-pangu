@@ -2,7 +2,7 @@
   <div class="d-flex flex-column align-items-center p-0">
     <ul>
       <ng-container *ngIf="tabs?.length">
-        <li *ngFor="let tab of tabs; index as tabIndex" [class.active]="activeIndex === tabIndex">
+        <li *ngFor="let tab of tabs; index as tabIndex" [class.active]="switchPane(tabIndex)">
           <button nz-button nzType="link" (click)="activeIndex = tabIndex">
             <i nz-icon [innerHTML]="tab.icon | nzSanitizer: 'html'"> </i>
           </button>
@@ -10,12 +10,12 @@
       </ng-container>
       <ng-container *ngIf="!tabs?.length">
         <li [class.active]="activeIndex === 0">
-          <button nz-button nzType="link" (click)="activeIndex = 0">
+          <button nz-button nzType="link" (click)="switchPane(0)">
             <i nz-icon nzIconfont="icon-tuceng"></i>
           </button>
         </li>
         <li [class.active]="activeIndex === 1">
-          <button nz-button nzType="link" (click)="activeIndex = 1">
+          <button nz-button nzType="link" (click)="switchPane(1)">
             <i nz-icon nzIconfont="icon-widgets"></i>
           </button>
         </li>
