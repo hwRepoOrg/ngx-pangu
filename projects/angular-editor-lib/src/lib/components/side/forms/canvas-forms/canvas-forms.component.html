@@ -1,0 +1,101 @@
+<div class="p-2">
+  <div>
+    <h4>画布尺寸</h4>
+    <form nz-form nzLayout="inline" [formGroup]="canvasSizeFormGroup">
+      <nz-row nzGutter="8">
+        <nz-col nzSpan="12">
+          <nz-form-item>
+            <nz-form-label>
+              <i nz-icon nzIconfont="icon-kuandu"></i>
+            </nz-form-label>
+            <nz-form-control>
+              <nz-input-number nzSize="small" formControlName="width"></nz-input-number>
+            </nz-form-control>
+          </nz-form-item>
+        </nz-col>
+        <nz-col nzSpan="12">
+          <nz-form-item>
+            <nz-form-label>
+              <i nz-icon nzIconfont="icon-gaodu"></i>
+            </nz-form-label>
+            <nz-form-control>
+              <nz-input-number nzSize="small" formControlName="height"></nz-input-number>
+            </nz-form-control>
+          </nz-form-item>
+        </nz-col>
+      </nz-row>
+    </form>
+  </div>
+  <div class="mt-2">
+    <h4>画布位置</h4>
+    <form nz-form nzLayout="inline" [formGroup]="canvasPositionFormGroup">
+      <nz-row nzGutter="8">
+        <nz-col nzSpan="12">
+          <nz-form-item>
+            <nz-form-label>
+              <i nz-icon nzIconfont="icon-left"></i>
+            </nz-form-label>
+            <nz-form-control>
+              <nz-input-number nzSize="small" formControlName="left"></nz-input-number>
+            </nz-form-control>
+          </nz-form-item>
+        </nz-col>
+        <nz-col nzSpan="12">
+          <nz-form-item>
+            <nz-form-label>
+              <i nz-icon nzIconfont="icon-top"></i>
+            </nz-form-label>
+            <nz-form-control>
+              <nz-input-number nzSize="small" formControlName="top"></nz-input-number>
+            </nz-form-control>
+          </nz-form-item>
+        </nz-col>
+        <nz-col nzSpan="12">
+          <nz-form-item>
+            <nz-form-label>
+              <i nz-icon nzIconfont="icon-scale"></i>
+            </nz-form-label>
+            <nz-form-control>
+              <nz-input-number nzSize="small" formControlName="scale"></nz-input-number>
+            </nz-form-control>
+          </nz-form-item>
+        </nz-col>
+      </nz-row>
+    </form>
+  </div>
+  <div class="mt-2">
+    <h4>画布背景</h4>
+    <form nz-form nzLayout="inline" [formGroup]="canvasBackgroundFormGroup">
+      <nz-row nzGutter="8">
+        <nz-col nzSpan="12">
+          <nz-form-item>
+            <nz-form-label>
+              <i nz-icon nzIconfont="icon-color"></i>
+            </nz-form-label>
+            <nz-form-control>
+              <input type="color" nz-input nzSize="small" formControlName="backgroundColor" />
+            </nz-form-control>
+          </nz-form-item>
+        </nz-col>
+        <nz-col nzSpan="12">
+          <nz-form-item>
+            <nz-form-label>
+              <i nz-icon nzIconfont="icon-image"></i>
+            </nz-form-label>
+            <nz-form-control>
+              <input type="text" nz-input nzSize="small" formControlName="backgroundImage" />
+            </nz-form-control>
+          </nz-form-item>
+        </nz-col>
+      </nz-row>
+      <h5 class="mt-1">背景预览</h5>
+      <div>
+        <img
+          [style.max-width.%]="100"
+          *ngIf="canvasBackgroundFormGroup.controls['backgroundImage'].value"
+          [src]="canvasBackgroundFormGroup.controls['backgroundImage'].value | nzSanitizer: 'url'"
+        />
+      </div>
+    </form>
+  </div>
+</div>

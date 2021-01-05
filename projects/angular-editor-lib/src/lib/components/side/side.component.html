@@ -23,7 +23,7 @@
           [class.active]="activeIndex === 'WIDGETS'"
           nz-tooltip
           nzTooltipTitle="组件列表"
-          [nzTooltipMouseEnterDelay]="1.5"
+          [nzTooltipMouseEnterDelay]="0.8"
         >
           <button nz-button nzType="link" (click)="switchPane('WIDGETS')">
             <i nz-icon nzIconfont="icon-widgets"></i>
@@ -31,13 +31,24 @@
         </li>
         <li
           *ngIf="!disabledTabs?.includes('LAYERS')"
-          [class.active]="activeIndex === 'LAYER'"
+          [class.active]="activeIndex === 'LAYERS'"
           nz-tooltip
           nzTooltipTitle="图层列表"
-          [nzTooltipMouseEnterDelay]="1.5"
+          [nzTooltipMouseEnterDelay]="0.8"
         >
           <button nz-button nzType="link" (click)="switchPane('LAYERS')">
             <i nz-icon nzIconfont="icon-tuceng"></i>
+          </button>
+        </li>
+        <li
+          *ngIf="!disabledTabs?.includes('CANVAS_SETTINGS')"
+          [class.active]="activeIndex === 'CANVAS_SETTINGS'"
+          nz-tooltip
+          nzTooltipTitle="画布设置"
+          [nzTooltipMouseEnterDelay]="0.8"
+        >
+          <button nz-button nzType="link" (click)="switchPane('CANVAS_SETTINGS')">
+            <i nz-icon nzIconfont="icon-canvas"></i>
           </button>
         </li>
         <ng-container *ngIf="tabs?.length">
@@ -47,9 +58,9 @@
             (click)="switchPane(tab.key)"
             nz-tooltip
             nzTooltipTitle="tab.title"
-            [nzTooltipMouseEnterDelay]="1.5"
+            [nzTooltipMouseEnterDelay]="0.8"
           >
-            <span>{{ tab.icon }}</span>
+            <i nz-icon [innerHTML]="tab.icon | nzSanitizer: 'html'"></i>
           </li>
         </ng-container>
       </ul>
@@ -74,6 +85,9 @@
       </ng-container>
       <ng-container *ngIf="activeIndex === 'LAYER'">
         <ce-layer-tree></ce-layer-tree>
+      </ng-container>
+      <ng-container *ngIf="activeIndex === 'CANVAS_SETTINGS'">
+        <ce-canvas-forms></ce-canvas-forms>
       </ng-container>
     </ng-container>
   </div>

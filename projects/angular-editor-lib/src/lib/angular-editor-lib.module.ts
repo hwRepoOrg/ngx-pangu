@@ -2,7 +2,7 @@ import { DragDropModule } from '@angular/cdk/drag-drop';
 import { CommonModule } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
 import { Injector, NgModule } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import {
   DeleteOutline,
@@ -21,7 +21,9 @@ import {
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzCardModule } from 'ng-zorro-antd/card';
 import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
+import { NzFormModule } from 'ng-zorro-antd/form';
 import { NzIconModule, NzIconService } from 'ng-zorro-antd/icon';
+import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzInputNumberModule } from 'ng-zorro-antd/input-number';
 import { NzPipesModule } from 'ng-zorro-antd/pipes';
 import { NzTabsModule } from 'ng-zorro-antd/tabs';
@@ -35,8 +37,9 @@ import { CanvasGridComponent } from './components/canvas-grid/canvas-grid.compon
 import { CanvasComponent } from './components/canvas/canvas.component';
 import { LayerTreeComponent } from './components/layer-tree/layer-tree.component';
 import { ResizeHandleComponent } from './components/resize-handle/resize-handle.component';
-import { SideComponent } from './components/side/side.component';
 import { RotateHandleComponent } from './components/rotate-handle/rotate-handle.component';
+import { CanvasFormsComponent } from './components/side/forms/canvas-forms/canvas-forms.component';
+import { SideComponent } from './components/side/side.component';
 import { ToolbarComponent } from './components/toolbar/toolbar.component';
 import { WidgetListComponent } from './components/widget-list/widget-list.component';
 import { CeToolbarDirective } from './directives';
@@ -72,9 +75,13 @@ const ANTD_MODULES = [
   NzDropDownModule,
   NzPipesModule,
   NzToolTipModule,
+  NzFormModule,
+  NzInputModule,
 ];
 
 const CDK_MODULES = [DragDropModule];
+
+const FORMS_COMPONENT = [CanvasFormsComponent];
 
 const COMPONENTS = [
   ToolbarComponent,
@@ -95,13 +102,13 @@ const DIRECTIVES = [NoZoomAreaDirective, ZoomAreaDirective, DraggableDirective, 
 const SERVICES = [ActionsService, EditorStore];
 
 @NgModule({
-  imports: [CommonModule, BrowserAnimationsModule, HttpClientModule, FormsModule, ...ANTD_MODULES, ...CDK_MODULES],
-  declarations: [...COMPONENTS, ...DIRECTIVES],
+  imports: [CommonModule, BrowserAnimationsModule, HttpClientModule, FormsModule, ReactiveFormsModule, ...ANTD_MODULES, ...CDK_MODULES],
+  declarations: [...COMPONENTS, ...DIRECTIVES, ...FORMS_COMPONENT],
   exports: [...COMPONENTS, ...DIRECTIVES],
   providers: [...SERVICES],
 })
 export class AngularEditorLibModule {
   constructor(private injector: Injector) {
-    this.injector.get(NzIconService).fetchFromIconfont({ scriptUrl: 'https://at.alicdn.com/t/font_1310204_o45rx1m46mn.js' });
+    this.injector.get(NzIconService).fetchFromIconfont({ scriptUrl: 'https://at.alicdn.com/t/font_1310204_lmnttxhl5lk.js' });
   }
 }
