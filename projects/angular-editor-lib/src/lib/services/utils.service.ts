@@ -48,6 +48,50 @@ export class CeUtilsService {
     return content instanceof TemplateRef;
   }
 
+  public isDeepEqual(v1: any, v2: any) {
+    if (typeof v1 !== typeof v2) {
+      return false;
+    } else {
+      switch (typeof v1) {
+        case 'number':
+        case 'string':
+        case 'bigint':
+        case 'boolean':
+        case 'symbol':
+        case 'undefined':
+        case 'function':
+          return v1 === v2;
+        case 'object':
+          if (v1 === null || v2 === null) {
+            return v1 === v2;
+          } else if (Array.isArray(v1)) {
+            if (v1.length !== v2.length) {
+              return false;
+            }
+            let flag = true;
+            v1.forEach((v, i) => {
+              if (flag) {
+                flag = this.isDeepEqual(v, v2[i]);
+              }
+            });
+            return flag;
+          } else {
+            let flag = true;
+            Object.keys(v1).forEach((v1k) => {
+              if (flag) {
+                if (v2.hasOwnProperty(v1k)) {
+                  flag = this.isDeepEqual(v1[v1k], v2[v1k]);
+                } else {
+                  flag = false;
+                }
+              }
+            });
+            return flag;
+          }
+      }
+    }
+  }
+
   /**
    * 通过节点ID在树中查找节点
    * @param id 节点ID

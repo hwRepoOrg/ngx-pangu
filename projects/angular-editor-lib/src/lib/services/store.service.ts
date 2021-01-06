@@ -1,10 +1,12 @@
 import { Injectable } from '@angular/core';
 import { ComponentStore } from '@ngrx/component-store';
+import { filter, map, pairwise, startWith } from 'rxjs/operators';
 import { DEFAULT_STORE, IStore } from '../store';
+import { CeUtilsService } from './utils.service';
 
 @Injectable()
 export class EditorStore<T = any> extends ComponentStore<IStore<T>> {
-  constructor() {
+  constructor(private utils: CeUtilsService) {
     super(DEFAULT_STORE);
   }
 
@@ -14,5 +16,14 @@ export class EditorStore<T = any> extends ComponentStore<IStore<T>> {
 
   dispatch(action: (state: IStore<T>) => IStore<T>) {
     this.setState(action);
+  }
+
+  selectDifferent<R>(cb: (state: IStore<T>) => R) {
+    return this.select(cb).pipe(
+      startWith(0, 0),
+      pairwise<R>(),
+      filter(([prev, present]) => !this.utils.isDeepEqual(prev, present)),
+      map(([, present]) => present)
+    );
   }
 }
