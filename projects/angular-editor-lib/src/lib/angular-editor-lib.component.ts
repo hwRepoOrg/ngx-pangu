@@ -15,7 +15,7 @@ import { ICanvasPosition, INode, IRefLineDirection, IRefLineState, IStore } from
 export class AngularEditorLibComponent<T = any> {
   @Input()
   set state(state: IStore<T>) {
-    this.editorStore?.initialize(state);
+    this.editorStore?.setState(state);
   }
   @ViewChild('container', { read: ElementRef, static: true })
   private containerEleRef: ElementRef<HTMLDivElement>;
