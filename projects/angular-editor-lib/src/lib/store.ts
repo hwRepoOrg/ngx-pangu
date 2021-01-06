@@ -44,7 +44,6 @@ export interface IRefLineState {
 }
 
 export interface IStore<T = any> {
-  nodeMoveState: boolean;
   nodes: INode<T>[];
   selected: Set<string>;
   bordered: Set<string>;
@@ -59,7 +58,6 @@ export interface IStore<T = any> {
 export type IActionType<T = any> = (state: IStore<T>) => IStore<T>;
 
 export const DEFAULT_STORE: IStore<any> = {
-  nodeMoveState: false,
   nodes: [],
   selected: new Set(),
   bordered: new Set(),
