@@ -26,4 +26,8 @@ export class EditorStore<T = any> extends ComponentStore<IStore<T>> {
       map(([, present]) => present)
     );
   }
+
+  toJSON() {
+    return JSON.stringify(this.get());
+  }
 }
