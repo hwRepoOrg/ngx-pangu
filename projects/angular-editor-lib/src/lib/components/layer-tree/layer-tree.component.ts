@@ -2,7 +2,17 @@ import { Component, ViewChild, ViewEncapsulation } from '@angular/core';
 import { NzContextMenuService, NzDropdownMenuComponent } from 'ng-zorro-antd/dropdown';
 import { NzFormatEmitEvent, NzTreeComponent, NzTreeNode, NzTreeNodeOptions } from 'ng-zorro-antd/tree';
 import { debounceTime } from 'rxjs/operators';
-import { addBorderedNodes, removeBorderedNodes, setSelectedNodes } from '../../actions';
+import {
+  addBorderedNodes,
+  breakNode,
+  clearBordered,
+  clearSelected,
+  groupNodes,
+  removeBorderedNodes,
+  removeNodes,
+  setBorderedNodes,
+  setSelectedNodes,
+} from '../../actions';
 import { EditorStore } from '../../services';
 import { ActionsService } from '../../services/actions.service';
 import { CeUtilsService } from '../../services/utils.service';
@@ -96,7 +106,9 @@ export class LayerTreeComponent {
     if (!this.parentKey) {
       this.parentKey = this.getParentKey(event.node.parentNode);
     }
-    this.actions.setSelectedNodes(event.selectedKeys.filter((node) => this.getParentKey(node.parentNode) === this.parentKey).map((node) => node.key));
+    const ids = event.selectedKeys.filter((node) => this.getParentKey(node.parentNode) === this.parentKey).map((node) => node.key);
+    this.store.dispatch(setSelectedNodes(ids));
+    this.store.dispatch(setBorderedNodes(ids));
   }
 
   clickNode(event: NzFormatEmitEvent): void {
@@ -106,7 +118,8 @@ export class LayerTreeComponent {
           this.multipleSelected(event);
         } else {
           this.parentKey = this.getParentKey(event.node.parentNode);
-          this.actions.setSelectedNode(event.node.key);
+          this.store.dispatch(setSelectedNodes([event.node.key]));
+          this.store.dispatch(setBorderedNodes([event.node.key]));
         }
       }
       if (/Mac/.test(navigator.platform)) {
@@ -114,7 +127,8 @@ export class LayerTreeComponent {
           this.multipleSelected(event);
         } else {
           this.parentKey = this.getParentKey(event.node.parentNode);
-          this.actions.setSelectedNode(event.node.key);
+          this.store.dispatch(setSelectedNodes([event.node.key]));
+          this.store.dispatch(setBorderedNodes([event.node.key]));
         }
       }
     }
@@ -126,5 +140,21 @@ export class LayerTreeComponent {
 
   drop(event: NzFormatEmitEvent): void {
     console.log(event);
+  }
+
+  group(ids: string[]): void {
+    this.store.dispatch(groupNodes(ids));
+  }
+
+  breakNode(id: string): void {
+    this.store.dispatch(clearSelected());
+    this.store.dispatch(clearBordered());
+    this.store.dispatch(breakNode(id));
+  }
+
+  deleteNodes(ids: string[]): void {
+    this.store.dispatch(clearSelected());
+    this.store.dispatch(clearBordered());
+    this.store.dispatch(removeNodes(ids));
   }
 }
