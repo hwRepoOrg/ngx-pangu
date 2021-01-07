@@ -4,21 +4,8 @@ import { HttpClientModule } from '@angular/common/http';
 import { Injector, NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import {
-  DeleteOutline,
-  FolderFill,
-  FolderOpenFill,
-  FolderOpenOutline,
-  FolderOutline,
-  LockOutline,
-  PlusCircleFill,
-  PlusCircleOutline,
-  PlusOutline,
-  PlusSquareFill,
-  PlusSquareOutline,
-  UnlockOutline,
-  DatabaseFill,
-} from '@ant-design/icons-angular/icons';
+import { IconDefinition } from '@ant-design/icons-angular';
+import * as AllIcons from '@ant-design/icons-angular/icons';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzCardModule } from 'ng-zorro-antd/card';
 import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
@@ -38,6 +25,7 @@ import { CanvasBackgroundComponent } from './components/canvas-background/canvas
 import { CanvasGridComponent } from './components/canvas-grid/canvas-grid.component';
 import { CanvasComponent } from './components/canvas/canvas.component';
 import { LayerTreeComponent } from './components/layer-tree/layer-tree.component';
+import { PanelComponent } from './components/panel/panel.component';
 import { ResizeHandleComponent } from './components/resize-handle/resize-handle.component';
 import { RotateHandleComponent } from './components/rotate-handle/rotate-handle.component';
 import { CanvasFormsComponent } from './components/side/forms/canvas-forms/canvas-forms.component';
@@ -49,24 +37,11 @@ import { DraggableDirective } from './directives/draggable.directive';
 import { NoZoomAreaDirective } from './directives/no-zoom-area.directive';
 import { SelectorDirective } from './directives/selector.directive';
 import { ZoomAreaDirective } from './directives/zoom-area.directive';
-import { ActionsService } from './services';
-import { EditorStore } from './services/store.service';
 
-const ICONS = [
-  DeleteOutline,
-  LockOutline,
-  UnlockOutline,
-  FolderOutline,
-  FolderFill,
-  FolderOpenFill,
-  FolderOpenOutline,
-  PlusOutline,
-  PlusCircleFill,
-  PlusCircleOutline,
-  PlusSquareOutline,
-  PlusSquareFill,
-  DatabaseFill,
-];
+const antDesignIcons = AllIcons as {
+  [key: string]: IconDefinition;
+};
+const ICONS: IconDefinition[] = Object.keys(antDesignIcons).map((key) => antDesignIcons[key]);
 
 const ANTD_MODULES = [
   NzCardModule,
@@ -100,16 +75,15 @@ const COMPONENTS = [
   BorderedAreaComponent,
   AngularEditorLibComponent,
   SideComponent,
+  PanelComponent,
 ];
 
 const DIRECTIVES = [NoZoomAreaDirective, ZoomAreaDirective, DraggableDirective, SelectorDirective, CeToolbarDirective];
-const SERVICES = [ActionsService, EditorStore];
 
 @NgModule({
   imports: [CommonModule, BrowserAnimationsModule, HttpClientModule, FormsModule, ReactiveFormsModule, ...ANTD_MODULES, ...CDK_MODULES],
   declarations: [...COMPONENTS, ...DIRECTIVES, ...FORMS_COMPONENT],
   exports: [...COMPONENTS, ...DIRECTIVES],
-  providers: [...SERVICES],
 })
 export class AngularEditorLibModule {
   constructor(private injector: Injector) {

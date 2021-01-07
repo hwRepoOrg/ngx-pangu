@@ -1,0 +1,26 @@
+<nz-card
+  nzSize="small"
+  [nzTitle]="panel?.title"
+  [nzExtra]="cardExtra"
+  cdkDrag
+  [cdkDragFreeDragPosition]="panel"
+  (cdkDragEnded)="updatePosition($event)"
+  class="d-flex flex-column h-100"
+  [nzBodyStyle]="{ flex: 1 }"
+>
+  <ng-container *ngIf="utils.isTemplateType(panel.content)">
+    <ng-container *ngTemplateOutlet="panel.content"></ng-container>
+  </ng-container>
+  <ng-container *ngIf="!utils.isTemplateType(panel.content)">
+    <ng-container *ngComponentOutlet="panel.content"></ng-container>
+  </ng-container>
+</nz-card>
+
+<ng-template #cardExtra>
+  <button nz-button nzSize="small" nzType="link">
+    <i nz-icon nzType="caret-down"></i>
+  </button>
+  <button nz-button nzSize="small" nzType="link" (click)="close()">
+    <i nz-icon nzType="close"></i>
+  </button>
+</ng-template>

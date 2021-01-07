@@ -1,3 +1,5 @@
+import { TemplateRef, Type } from '@angular/core';
+
 export interface INode<T = any> {
   id: string;
   name: string;
@@ -58,7 +60,19 @@ export interface IStore<T = any> {
 export type IActionType<T = any> = (state: IStore<T>) => IStore<T>;
 
 export const DEFAULT_STORE: IStore<any> = {
-  nodes: [],
+  nodes: new Array(10).fill(1).map<INode<any>>((_v, i) => ({
+    id: `${Math.round(Math.random() * Math.pow(10, 8))}`,
+    height: 100,
+    width: 200,
+    left: Math.round(Math.random() * 900),
+    top: Math.round(Math.random() * 500),
+    name: 'test',
+    rotate: 0,
+    zIndex: i + 1,
+    borderWidth: 1,
+    borderColor: '#333',
+    borderStyle: 'dashed',
+  })),
   selected: new Set(),
   bordered: new Set(),
   canvasBackground: {},
@@ -93,4 +107,13 @@ export interface ITabConfig<T = any> {
   title: string;
   icon: string;
   content: T;
+}
+
+export interface IPanel<T = any> {
+  title: string;
+  key: string;
+  content: Type<any> | TemplateRef<any>;
+  show: boolean;
+  x: number;
+  y: number;
 }

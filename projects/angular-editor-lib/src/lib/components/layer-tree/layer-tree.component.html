@@ -1,6 +1,5 @@
 <nz-tree
   #layerTree
-  nzDraggable
   nzBlockNode
   nzMultiple
   [nzData]="treeNodes"
@@ -8,7 +7,6 @@
   [nzExpandedKeys]="expandedKeys"
   [nzTreeTemplate]="nzTreeTemplate"
   [nzExpandedIcon]="multiExpandedIconTpl"
-  (nzOnDrop)="drop($event)"
   (nzClick)="clickNode($event)"
   (nzExpandChange)="expandGroup($event)"
 >
@@ -27,11 +25,11 @@
     </div>
     <nz-dropdown-menu #menu="nzDropdownMenu">
       <ul nz-menu>
-        <li *ngIf="!node.locked" nz-menu-item class="action-item">
+        <li *ngIf="!node.locked" nz-menu-item class="action-item" (click)="toggleNodesLockState(selectedKeys, true)">
           <i nz-icon nzType="lock"></i>
           <span>锁定</span>
         </li>
-        <li *ngIf="node.locked" nz-menu-item class="action-item">
+        <li *ngIf="node.locked" nz-menu-item class="action-item" (click)="toggleNodesLockState(selectedKeys, false)">
           <i nz-icon nzType="unlock"></i>
           <span>解锁</span>
         </li>

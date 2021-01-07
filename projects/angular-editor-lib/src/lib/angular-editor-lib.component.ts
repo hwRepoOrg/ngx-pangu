@@ -4,18 +4,19 @@ import { filter } from 'rxjs/operators';
 import { clearBordered, clearSelected, setBorderedNodes, setSelectedNodes, updateCanvasPosition } from './actions';
 import { ISelectorRect } from './directives/selector.directive';
 import { EditorStore } from './services/store.service';
-import { ICanvasPosition, INode, IRefLineDirection, IRefLineState, IStore } from './store';
+import { ICanvasPosition, INode, IPanel, IRefLineDirection, IRefLineState, IStore } from './store';
 
 @Component({
   selector: 'ce-editor',
   templateUrl: 'angular-editor-lib.component.html',
   styleUrls: ['angular-editor-lib.less'],
   encapsulation: ViewEncapsulation.None,
+  providers: [EditorStore],
 })
 export class AngularEditorLibComponent<T = any> {
   @Input()
-  set state(state: IStore<T>) {
-    this.editorStore?.setState(state);
+  set state(state: Partial<IStore<T>>) {
+    this.editorStore?.setState((oldState) => ({ ...oldState, ...state }));
   }
   @ViewChild('container', { read: ElementRef, static: true })
   private containerEleRef: ElementRef<HTMLDivElement>;
@@ -28,7 +29,7 @@ export class AngularEditorLibComponent<T = any> {
   public refLineState: { [P in IRefLineDirection]: IRefLineState };
   private nodesRectSnapshot: Map<string, Partial<DOMRect>> = null;
   private nodeIdList: string[] = null;
-  constructor(private editorStore: EditorStore) {
+  constructor(public editorStore: EditorStore) {
     this.editorStore
       .select((state) => state.canvasPosition)
       .subscribe((canvasPosition) => {
@@ -46,6 +47,10 @@ export class AngularEditorLibComponent<T = any> {
 
   ngOnDestroy(): void {
     this.subscription.unsubscribe();
+  }
+
+  panelsTrackByFn(_i: number, panel: IPanel<any>) {
+    return `${panel.key}_${panel.show.toString()}`;
   }
 
   dragStart(ev: PointerEvent): void {
@@ -124,6 +129,10 @@ export class AngularEditorLibComponent<T = any> {
   private clearSelectAndBorder(): void {
     this.editorStore.dispatch(clearBordered<T>());
     this.editorStore.dispatch(clearSelected<T>());
+  }
+
+  updatePanel(panel: IPanel<T>) {
+    this.editorStore.panels = this.editorStore.panels.map((p) => (p.key === panel.key ? panel : p));
   }
 }
 

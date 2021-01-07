@@ -45,5 +45,8 @@
       [style.height.px]="selectorRect.height"
     ></div>
   </div>
-  <ng-content select="[side]"></ng-content>
 </div>
+
+<ng-container *ngFor="let panel of editorStore.panels; trackBy: panelsTrackByFn">
+  <ce-panel *ngIf="panel.show" [panel]="panel" (panelChange)="updatePanel($event)"></ce-panel>
+</ng-container>

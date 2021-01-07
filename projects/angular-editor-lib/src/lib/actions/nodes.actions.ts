@@ -2,6 +2,14 @@ import * as _ from 'lodash';
 import { CeUtilsService, genNodeId, IDOMRect } from '../services';
 import { IActionType, INode } from '../store';
 
+export function lockNodes<T = any>(ids: string[]): IActionType<T> {
+  return (state) => ({ ...state, nodes: state.nodes.map((node) => (ids.includes(node.id) ? { ...node, locked: true } : node)) });
+}
+
+export function unlockNodes<T = any>(ids: string[]): IActionType<T> {
+  return (state) => ({ ...state, nodes: state.nodes.map((node) => (ids.includes(node.id) ? { ...node, locked: false } : node)) });
+}
+
 export function addNodes<T = any>(nodes: INode<T>[]): IActionType<T> {
   return (state) => ({ ...state, nodes: [...state.nodes, ...nodes] });
 }

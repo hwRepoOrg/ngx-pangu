@@ -1,11 +1,14 @@
 import { Injectable } from '@angular/core';
 import { ComponentStore } from '@ngrx/component-store';
 import { filter, map, pairwise, startWith } from 'rxjs/operators';
-import { DEFAULT_STORE, IStore } from '../store';
+import { LayerTreeComponent } from '../components/layer-tree/layer-tree.component';
+import { DEFAULT_STORE, IPanel, IStore } from '../store';
 import { CeUtilsService } from './utils.service';
 
 @Injectable()
 export class EditorStore<T = any> extends ComponentStore<IStore<T>> {
+  panels: IPanel<any>[] = [{ key: 'LAYERS', title: '图层', content: LayerTreeComponent, show: true, x: 10, y: 60 }];
+
   constructor(private utils: CeUtilsService) {
     super(DEFAULT_STORE);
   }
@@ -28,6 +31,14 @@ export class EditorStore<T = any> extends ComponentStore<IStore<T>> {
   }
 
   toJSON() {
-    return JSON.stringify(this.get());
+    const state = this.get();
+    return JSON.stringify({
+      canvasPosition: state.canvasPosition,
+      canvasSize: state.canvasSize,
+      canvasBackground: state.canvasBackground,
+      nodes: state.nodes,
+      selected: state.selected,
+      bordered: state.bordered,
+    });
   }
 }

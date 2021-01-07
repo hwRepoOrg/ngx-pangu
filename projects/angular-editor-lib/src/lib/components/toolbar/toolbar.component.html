@@ -25,12 +25,9 @@
         <button [disabled]="groupStatus$ | async" nz-button nzType="link"><i nz-icon nzIconfont="icon-bottom-align"></i></button>
       </div>
       <div class="d-flex ml-auto align-items-center">
-        <nz-tag nzMode="checkable">
-          <i nz-icon nzType="database" nzTheme="fill"></i>
-          <span>属性</span>
-        </nz-tag>
-        <nz-tag nzMode="checkable">
-          <i nz-icon nzType="database" nzTheme="fill"></i>
+        <nz-tag nzMode="checkable" [nzChecked]="layerPanel?.show" (nzCheckedChange)="toggleLayerPanel()">
+          <i nz-icon nzIconfont="icon-tuceng"></i>
+          <span>图层</span>
         </nz-tag>
       </div>
       <div class="d-flex ml-auto align-items-center">

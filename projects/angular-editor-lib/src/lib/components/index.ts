@@ -9,3 +9,4 @@ export * from './rotate-handle/rotate-handle.component';
 export * from './toolbar/toolbar.component';
 export * from './widget-list/widget-list.component';
 export * from './side/side.component';
+export * from './panel/panel.component';

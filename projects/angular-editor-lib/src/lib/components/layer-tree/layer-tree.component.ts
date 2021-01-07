@@ -1,20 +1,20 @@
 import { Component, ViewChild, ViewEncapsulation } from '@angular/core';
 import { NzContextMenuService, NzDropdownMenuComponent } from 'ng-zorro-antd/dropdown';
 import { NzFormatEmitEvent, NzTreeComponent, NzTreeNode, NzTreeNodeOptions } from 'ng-zorro-antd/tree';
-import { debounceTime } from 'rxjs/operators';
 import {
   addBorderedNodes,
   breakNode,
   clearBordered,
   clearSelected,
   groupNodes,
+  lockNodes,
   removeBorderedNodes,
   removeNodes,
   setBorderedNodes,
   setSelectedNodes,
+  unlockNodes,
 } from '../../actions';
 import { EditorStore } from '../../services';
-import { ActionsService } from '../../services/actions.service';
 import { CeUtilsService } from '../../services/utils.service';
 import { INode, IStore } from '../../store';
 
@@ -37,31 +37,25 @@ export class LayerTreeComponent {
   public get groupStatus(): boolean {
     return this.selectedKeys.length > 1
       ? !this.selectedKeys.find((id) => {
-          const node = this.layerTree.getSelectedNodeList().find((item) => item.key === id);
+          const node = this.layerTree?.getSelectedNodeList().find((item) => item.key === id);
           return node && node.parentNode;
         })
       : false;
   }
 
-  constructor(
-    private store: EditorStore<IStore>,
-    private utils: CeUtilsService,
-    private contextMenuSrv: NzContextMenuService,
-    public actions: ActionsService
-  ) {
-    this.store
-      .select((state) => state.nodes)
-      .pipe(debounceTime(300))
-      .subscribe((nodes) => {
-        this.treeNodes = this.transferNodesToNzNodes(this.utils.sortNodeListByIndex(nodes));
-        this.selectedKeys = [...this.selected];
-        this.expandedKeys = this.expandedKeys && [...this.expandedKeys];
-      });
+  constructor(private store: EditorStore<IStore>, private utils: CeUtilsService, private contextMenuSrv: NzContextMenuService) {
     this.store
       .select((state) => state.selected)
       .subscribe((selected) => {
         this.selected = selected;
         this.selectedKeys = [...selected];
+      });
+    this.store
+      .select((state) => state.nodes)
+      .subscribe((nodes) => {
+        this.treeNodes = this.transferNodesToNzNodes(this.utils.sortNodeListByIndex(nodes));
+        this.selectedKeys = [...this.selected];
+        this.expandedKeys = this.expandedKeys && [...this.expandedKeys];
       });
   }
 
@@ -138,10 +132,6 @@ export class LayerTreeComponent {
     this.expandedKeys = [...event.keys];
   }
 
-  drop(event: NzFormatEmitEvent): void {
-    console.log(event);
-  }
-
   group(ids: string[]): void {
     this.store.dispatch(groupNodes(ids));
   }
@@ -156,5 +146,13 @@ export class LayerTreeComponent {
     this.store.dispatch(clearSelected());
     this.store.dispatch(clearBordered());
     this.store.dispatch(removeNodes(ids));
+  }
+
+  toggleNodesLockState(ids: string[], state: boolean) {
+    if (state) {
+      this.store.dispatch(lockNodes(ids));
+    } else {
+      this.store.dispatch(unlockNodes(ids));
+    }
   }
 }
