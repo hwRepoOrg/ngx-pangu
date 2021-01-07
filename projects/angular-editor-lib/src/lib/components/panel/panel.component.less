@@ -4,8 +4,30 @@ ce-panel,
   display: block;
   position: absolute;
   width: 300px;
-  height: ~"calc(100vh - 110px)";
   * {
     pointer-events: auto;
+  }
+  > nz-card {
+    &.collapsed {
+      .ant-card-body {
+        overflow: hidden;
+        height: 0;
+        padding: 0;
+      }
+      .collapse-icon {
+        transform: rotate(-180deg);
+      }
+    }
+    .collapse-icon {
+      transition: transform 0.3s ease-in-out;
+      transform: rotate(0deg);
+    }
+    .ant-card-head-title {
+      cursor: move;
+    }
+    .ant-card-body {
+      transition: height 0.3s ease-in-out, padding 0.3s ease-in-out;
+      height: ~"calc(100vh - 110px)";
+    }
   }
 }

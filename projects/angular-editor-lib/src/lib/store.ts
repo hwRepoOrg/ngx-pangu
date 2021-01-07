@@ -116,4 +116,5 @@ export interface IPanel<T = any> {
   show: boolean;
   x: number;
   y: number;
+  collapsed?: boolean;
 }

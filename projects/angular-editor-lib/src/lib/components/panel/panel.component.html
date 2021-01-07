@@ -1,13 +1,15 @@
 <nz-card
   nzSize="small"
-  [nzTitle]="panel?.title"
+  [nzTitle]="cardTitle"
   [nzExtra]="cardExtra"
   cdkDrag
   [cdkDragFreeDragPosition]="panel"
   (cdkDragEnded)="updatePosition($event)"
-  class="d-flex flex-column h-100"
-  [nzBodyStyle]="{ flex: 1 }"
+  [class.collapsed]="panel?.collapsed"
 >
+  <ng-template #cardTitle>
+    <div cdkDragHandle class="d-flex align-items-center">{{ panel?.title }}</div>
+  </ng-template>
   <ng-container *ngIf="utils.isTemplateType(panel.content)">
     <ng-container *ngTemplateOutlet="panel.content"></ng-container>
   </ng-container>
@@ -17,7 +19,7 @@
 </nz-card>
 
 <ng-template #cardExtra>
-  <button nz-button nzSize="small" nzType="link">
+  <button nz-button nzSize="small" nzType="link" (click)="toggleCollapsed()" class="collapse-icon">
     <i nz-icon nzType="caret-down"></i>
   </button>
   <button nz-button nzSize="small" nzType="link" (click)="close()">

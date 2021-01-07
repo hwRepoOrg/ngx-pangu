@@ -36,6 +36,9 @@ export class ToolbarComponent {
   get layerPanel(): IPanel<any> {
     return this.store?.panels.find((p) => p.key === 'LAYERS');
   }
+  get widgetListPanel(): IPanel<any> {
+    return this.store?.panels.find((p) => p.key === 'WIDGET_LIST');
+  }
 
   constructor(public store: EditorStore<IStore>, private utils: CeUtilsService) {
     this.selected$ = this.store.select((state) => state.selected);
@@ -62,10 +65,10 @@ export class ToolbarComponent {
     this.store.dispatch(breakNode(node.id));
   }
 
-  toggleLayerPanel() {
-    if (this.store.panels.find((p) => p.key === 'LAYERS')) {
+  togglePanel(type: string) {
+    if (this.store.panels.find((p) => p.key === type)) {
       this.store.panels = this.store.panels.map((p) => {
-        if (p.key === 'LAYERS') {
+        if (p.key === type) {
           return { ...p, show: !p.show };
         }
         return p;

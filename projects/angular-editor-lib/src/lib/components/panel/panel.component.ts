@@ -27,6 +27,10 @@ export class PanelComponent<T> {
     this.panel = { ...this.panel, x: this.panel.x + event.distance.x, y: this.panel.y + event.distance.y };
   }
 
+  toggleCollapsed() {
+    this.panel = { ...this.panel, collapsed: !this.panel?.collapsed };
+  }
+
   close() {
     this.panel = { ...this.panel, show: false };
   }
