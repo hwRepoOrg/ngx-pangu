@@ -17,6 +17,7 @@ import {
   PlusSquareFill,
   PlusSquareOutline,
   UnlockOutline,
+  DatabaseFill,
 } from '@ant-design/icons-angular/icons';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzCardModule } from 'ng-zorro-antd/card';
@@ -27,6 +28,7 @@ import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzInputNumberModule } from 'ng-zorro-antd/input-number';
 import { NzPipesModule } from 'ng-zorro-antd/pipes';
 import { NzTabsModule } from 'ng-zorro-antd/tabs';
+import { NzTagModule } from 'ng-zorro-antd/tag';
 import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
 import { NzTreeModule } from 'ng-zorro-antd/tree';
 import { AngularEditorLibComponent } from './angular-editor-lib.component';
@@ -63,6 +65,7 @@ const ICONS = [
   PlusCircleOutline,
   PlusSquareOutline,
   PlusSquareFill,
+  DatabaseFill,
 ];
 
 const ANTD_MODULES = [
@@ -77,6 +80,7 @@ const ANTD_MODULES = [
   NzToolTipModule,
   NzFormModule,
   NzInputModule,
+  NzTagModule,
 ];
 
 const CDK_MODULES = [DragDropModule];
