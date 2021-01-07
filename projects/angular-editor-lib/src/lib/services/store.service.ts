@@ -7,7 +7,7 @@ import { CeUtilsService } from './utils.service';
 
 @Injectable()
 export class EditorStore<T = any> extends ComponentStore<IStore<T>> {
-  panels: IPanel<any>[] = [{ key: 'LAYERS', title: '图层', content: LayerTreeComponent, show: true, x: 10, y: 60 }];
+  panels: IPanel<any>[] = [{ key: 'LAYERS', title: '图层', content: LayerTreeComponent, show: true, x: window.innerWidth - 350, y: 60 }];
 
   constructor(private utils: CeUtilsService) {
     super(DEFAULT_STORE);
