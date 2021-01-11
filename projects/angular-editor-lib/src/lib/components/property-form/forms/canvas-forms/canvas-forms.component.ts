@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Subscription } from 'rxjs';
-import { updateCanvasPosition, updateCanvasSize } from '../../../../actions';
+import { updateCanvasBackground, updateCanvasPosition, updateCanvasSize } from '../../../../actions';
 import { EditorStore } from '../../../../services/store.service';
 
 @Component({
@@ -32,14 +32,14 @@ export class CanvasFormsComponent implements OnInit, OnDestroy {
     });
     this.subscription.add(
       this.store
-        .select((state) => state.canvasSize)
+        .selectDifferent((state) => state.canvasSize)
         .subscribe((state) => {
           this.canvasSizeFormGroup.patchValue(state, { emitEvent: false });
         })
     );
     this.subscription.add(
       this.store
-        .select((state) => state.canvasPosition)
+        .selectDifferent((state) => state.canvasPosition)
         .subscribe((state) => {
           this.canvasPositionFormGroup.patchValue(
             { left: Math.round(state.left), top: Math.round(state.top), scale: state.scale },
@@ -49,7 +49,7 @@ export class CanvasFormsComponent implements OnInit, OnDestroy {
     );
     this.subscription.add(
       this.store
-        .select((state) => state.canvasBackground)
+        .selectDifferent((state) => state.canvasBackground)
         .subscribe((state) => {
           this.canvasBackgroundFormGroup.patchValue(state, { emitEvent: false });
         })
@@ -62,6 +62,10 @@ export class CanvasFormsComponent implements OnInit, OnDestroy {
     });
     this.canvasPositionFormGroup.valueChanges.subscribe((value) => {
       this.store.dispatch(updateCanvasPosition(value));
+    });
+    this.canvasBackgroundFormGroup.valueChanges.subscribe((value) => {
+      console.log(value);
+      this.store.dispatch(updateCanvasBackground(value));
     });
   }
 

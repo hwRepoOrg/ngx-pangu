@@ -33,6 +33,10 @@
           <i nz-icon nzIconfont="icon-widgets"></i>
           <span>组件</span>
         </nz-tag>
+        <nz-tag nzMode="checkable" [nzChecked]="propertyFormPanel?.show" (nzCheckedChange)="togglePanel('PROPERTIES')">
+          <i nz-icon nzIconfont="icon-widget"></i>
+          <span>属性</span>
+        </nz-tag>
       </div>
       <div class="d-flex ml-auto align-items-center">
         <button nz-button nzType="link"><i nz-icon nzIconfont="icon-run"></i></button>

@@ -3,14 +3,16 @@ import { ComponentStore } from '@ngrx/component-store';
 import { filter, map, pairwise, startWith } from 'rxjs/operators';
 import { WidgetListComponent } from '../components';
 import { LayerTreeComponent } from '../components/layer-tree/layer-tree.component';
+import { PropertyFormComponent } from '../components/property-form/property-form.component';
 import { DEFAULT_STORE, IPanel, IStore } from '../store';
 import { CeUtilsService } from './utils.service';
 
 @Injectable()
 export class EditorStore<T = any> extends ComponentStore<IStore<T>> {
   panels: IPanel<any>[] = [
-    { key: 'LAYERS', title: '图层', content: LayerTreeComponent, show: true, x: window.innerWidth - 350, y: 60 },
-    { key: 'WIDGET_LIST', title: '组件', content: WidgetListComponent, show: true, x: window.innerWidth - 750, y: 60 },
+    { key: 'LAYERS', title: '图层', content: LayerTreeComponent, show: true, x: 10, y: 60 },
+    { key: 'WIDGET_LIST', title: '组件', content: WidgetListComponent, show: false, x: 50, y: 60 },
+    { key: 'PROPERTIES', title: '属性', content: PropertyFormComponent, show: true, x: window.innerWidth - 350, y: 60 },
   ];
 
   constructor(private utils: CeUtilsService) {

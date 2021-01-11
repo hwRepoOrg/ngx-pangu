@@ -6,6 +6,9 @@ import { CeToolbarDirective } from '../../directives';
 import { EditorStore } from '../../services';
 import { CeUtilsService } from '../../services/utils.service';
 import { INode, IPanel, IStore } from '../../store';
+import { LayerTreeComponent } from '../layer-tree/layer-tree.component';
+import { PropertyFormComponent } from '../property-form/property-form.component';
+import { WidgetListComponent } from '../widget-list/widget-list.component';
 
 @Component({
   selector: 'ce-toolbar',
@@ -33,11 +36,14 @@ export class ToolbarComponent {
   }
   private nodes: INode[] = [];
   private selected: Set<string>;
-  get layerPanel(): IPanel<any> {
+  get layerPanel(): IPanel<LayerTreeComponent> {
     return this.store?.panels.find((p) => p.key === 'LAYERS');
   }
-  get widgetListPanel(): IPanel<any> {
+  get widgetListPanel(): IPanel<WidgetListComponent> {
     return this.store?.panels.find((p) => p.key === 'WIDGET_LIST');
+  }
+  get propertyFormPanel(): IPanel<PropertyFormComponent> {
+    return this.store?.panels.find((p) => p.key === 'PROPERTIES');
   }
 
   constructor(public store: EditorStore<IStore>, private utils: CeUtilsService) {

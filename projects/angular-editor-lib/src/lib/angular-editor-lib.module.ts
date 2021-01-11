@@ -26,10 +26,10 @@ import { CanvasGridComponent } from './components/canvas-grid/canvas-grid.compon
 import { CanvasComponent } from './components/canvas/canvas.component';
 import { LayerTreeComponent } from './components/layer-tree/layer-tree.component';
 import { PanelComponent } from './components/panel/panel.component';
+import { PropertyFormComponent } from './components/property-form/property-form.component';
 import { ResizeHandleComponent } from './components/resize-handle/resize-handle.component';
 import { RotateHandleComponent } from './components/rotate-handle/rotate-handle.component';
-import { CanvasFormsComponent } from './components/side/forms/canvas-forms/canvas-forms.component';
-import { SideComponent } from './components/side/side.component';
+import { CanvasFormsComponent } from './components/property-form/forms/canvas-forms/canvas-forms.component';
 import { ToolbarComponent } from './components/toolbar/toolbar.component';
 import { WidgetListComponent } from './components/widget-list/widget-list.component';
 import { CeToolbarDirective } from './directives';
@@ -74,8 +74,8 @@ const COMPONENTS = [
   RotateHandleComponent,
   BorderedAreaComponent,
   AngularEditorLibComponent,
-  SideComponent,
   PanelComponent,
+  PropertyFormComponent,
 ];
 
 const DIRECTIVES = [NoZoomAreaDirective, ZoomAreaDirective, DraggableDirective, SelectorDirective, CeToolbarDirective];

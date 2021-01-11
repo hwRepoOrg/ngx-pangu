@@ -75,7 +75,7 @@ export const DEFAULT_STORE: IStore<any> = {
   })),
   selected: new Set(),
   bordered: new Set(),
-  canvasBackground: {},
+  canvasBackground: { backgroundColor: '#ffffff' },
   canvasPosition: {
     left: 100,
     top: 100,
