@@ -88,14 +88,14 @@
           </nz-form-item>
         </nz-col>
       </nz-row>
-      <h5 class="mt-1">背景预览</h5>
-      <div>
-        <img
-          [style.max-width.%]="100"
-          *ngIf="canvasBackgroundFormGroup.controls['backgroundImage'].value"
-          [src]="canvasBackgroundFormGroup.controls['backgroundImage'].value | nzSanitizer: 'url'"
-        />
-      </div>
     </form>
+  </div>
+  <h5 class="mt-1">背景预览</h5>
+  <div>
+    <img
+      [style.max-width.%]="100"
+      *ngIf="canvasBackgroundFormGroup.controls['backgroundImage'].value"
+      [src]="canvasBackgroundFormGroup.controls['backgroundImage'].value | nzSanitizer: 'url'"
+    />
   </div>
 </div>
