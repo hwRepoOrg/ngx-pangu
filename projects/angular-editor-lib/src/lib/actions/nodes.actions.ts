@@ -65,7 +65,7 @@ export function removeNodes<T = any>(ids: string[]): IActionType<T> {
 }
 
 export function updateNodes<T = any>(nodes: INode<T>[]): IActionType<T> {
-  return (state) => ({ ...state, nodes: state.nodes.map((item) => nodes.find((i) => i.id === item.id) ?? item) });
+  return (state) => ({ ...state, nodes: state.nodes.map((item) => ({ ...item, ...nodes.find((i) => i.id === item.id) })) });
 }
 
 export function updateNodesSize<T = any>(nodesSizeMap: Map<string, IDOMRect>): IActionType<T> {

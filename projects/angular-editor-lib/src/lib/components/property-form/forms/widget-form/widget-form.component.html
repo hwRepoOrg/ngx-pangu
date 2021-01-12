@@ -1,6 +1,69 @@
-<div>
-  <h4>外包围盒属性</h4>
-</div>
-<nz-divider></nz-divider>
-
-<ng-template #container></ng-template>
+<nz-collapse [nzBordered]="false" nzGhost nzAccordion nzSize="small">
+  <nz-collapse-panel nzHeader="外包围盒属性" nzActive>
+    <div>
+      <h5>尺寸</h5>
+      <form nz-form nzLayout="inline" [formGroup]="boundingFormGroup">
+        <nz-row nzGutter="8">
+          <nz-col nzSpan="12">
+            <nz-form-item>
+              <nz-form-label>
+                <i nz-icon nzIconfont="icon-kuandu"></i>
+              </nz-form-label>
+              <nz-form-control>
+                <nz-input-number nzSize="small" formControlName="width"></nz-input-number>
+              </nz-form-control>
+            </nz-form-item>
+          </nz-col>
+          <nz-col nzSpan="12">
+            <nz-form-item>
+              <nz-form-label>
+                <i nz-icon nzIconfont="icon-gaodu"></i>
+              </nz-form-label>
+              <nz-form-control>
+                <nz-input-number nzSize="small" formControlName="height"></nz-input-number>
+              </nz-form-control>
+            </nz-form-item>
+          </nz-col>
+        </nz-row>
+      </form>
+      <h5>位置</h5>
+      <form nz-form nzLayout="inline" [formGroup]="boundingFormGroup">
+        <nz-row nzGutter="8">
+          <nz-col nzSpan="12">
+            <nz-form-item>
+              <nz-form-label>
+                <i nz-icon nzIconfont="icon-left"></i>
+              </nz-form-label>
+              <nz-form-control>
+                <nz-input-number nzSize="small" formControlName="left"></nz-input-number>
+              </nz-form-control>
+            </nz-form-item>
+          </nz-col>
+          <nz-col nzSpan="12">
+            <nz-form-item>
+              <nz-form-label>
+                <i nz-icon nzIconfont="icon-top"></i>
+              </nz-form-label>
+              <nz-form-control>
+                <nz-input-number nzSize="small" formControlName="top"></nz-input-number>
+              </nz-form-control>
+            </nz-form-item>
+          </nz-col>
+          <nz-col nzSpan="12">
+            <nz-form-item>
+              <nz-form-label>
+                <i nz-icon nzType="rotate-right"> </i>
+              </nz-form-label>
+              <nz-form-control>
+                <nz-input-number nzSize="small" formControlName="rotate"></nz-input-number>
+              </nz-form-control>
+            </nz-form-item>
+          </nz-col>
+        </nz-row>
+      </form>
+    </div>
+  </nz-collapse-panel>
+  <nz-collapse-panel nzHeader="组件属性">
+    <ng-template #container></ng-template>
+  </nz-collapse-panel>
+</nz-collapse>

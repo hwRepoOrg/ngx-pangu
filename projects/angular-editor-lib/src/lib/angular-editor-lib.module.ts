@@ -8,6 +8,7 @@ import { IconDefinition } from '@ant-design/icons-angular';
 import * as AllIcons from '@ant-design/icons-angular/icons';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzCardModule } from 'ng-zorro-antd/card';
+import { NzCollapseModule } from 'ng-zorro-antd/collapse';
 import { NzDividerModule } from 'ng-zorro-antd/divider';
 import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
 import { NzFormModule } from 'ng-zorro-antd/form';
@@ -59,6 +60,7 @@ const ANTD_MODULES = [
   NzInputModule,
   NzTagModule,
   NzDividerModule,
+  NzCollapseModule,
 ];
 
 const CDK_MODULES = [DragDropModule];

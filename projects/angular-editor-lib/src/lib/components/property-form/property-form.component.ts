@@ -6,7 +6,7 @@ import { CanvasFormsComponent } from './forms/canvas-forms/canvas-forms.componen
 import { WidgetFormComponent } from './forms/widget-form/widget-form.component';
 
 @Component({
-  selector: 'property-form',
+  selector: 'ce-property-form,[cePropertyForm]',
   templateUrl: './property-form.component.html',
   styleUrls: ['./property-form.component.less'],
   encapsulation: ViewEncapsulation.None,
@@ -19,7 +19,7 @@ export class PropertyFormComponent implements OnInit {
 
   ngOnInit(): void {
     this.formComponent$ = this.store
-      .selectDifferent((state) => !!state.selected.size)
-      .pipe(map((hasSelected) => (hasSelected ? WidgetFormComponent : CanvasFormsComponent)));
+      .selectDifferent((state) => state.selected.size)
+      .pipe(map((size) => (size === 1 ? WidgetFormComponent : CanvasFormsComponent)));
   }
 }

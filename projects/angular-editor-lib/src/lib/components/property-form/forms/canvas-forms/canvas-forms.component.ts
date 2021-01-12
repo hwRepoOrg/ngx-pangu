@@ -5,7 +5,7 @@ import { updateCanvasBackground, updateCanvasPosition, updateCanvasSize } from '
 import { EditorStore } from '../../../../services/store.service';
 
 @Component({
-  selector: 'ce-canvas-forms',
+  selector: 'ce-canvas-forms,[ceCanvasForms]',
   templateUrl: './canvas-forms.component.html',
   styleUrls: ['./canvas-forms.component.less'],
   encapsulation: ViewEncapsulation.None,
