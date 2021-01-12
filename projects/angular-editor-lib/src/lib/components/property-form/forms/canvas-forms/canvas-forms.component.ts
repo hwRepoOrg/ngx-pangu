@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { updateCanvasBackground, updateCanvasPosition, updateCanvasSize } from '../../../../actions';
@@ -9,7 +9,6 @@ import { EditorStore } from '../../../../services/store.service';
   templateUrl: './canvas-forms.component.html',
   styleUrls: ['./canvas-forms.component.less'],
   encapsulation: ViewEncapsulation.None,
-  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CanvasFormsComponent implements OnInit, OnDestroy {
   public canvasSizeFormGroup: FormGroup;
@@ -42,7 +41,7 @@ export class CanvasFormsComponent implements OnInit, OnDestroy {
         .selectDifferent((state) => state.canvasPosition)
         .subscribe((state) => {
           this.canvasPositionFormGroup.patchValue(
-            { left: Math.round(state.left), top: Math.round(state.top), scale: state.scale },
+            { left: Math.round(state.left), top: Math.round(state.top), scale: state.scale?.toFixed(2) },
             { emitEvent: false }
           );
         })

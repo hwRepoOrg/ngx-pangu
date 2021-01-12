@@ -8,6 +8,7 @@ import { IconDefinition } from '@ant-design/icons-angular';
 import * as AllIcons from '@ant-design/icons-angular/icons';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzCardModule } from 'ng-zorro-antd/card';
+import { NzDividerModule } from 'ng-zorro-antd/divider';
 import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
 import { NzFormModule } from 'ng-zorro-antd/form';
 import { NzIconModule, NzIconService } from 'ng-zorro-antd/icon';
@@ -26,10 +27,11 @@ import { CanvasGridComponent } from './components/canvas-grid/canvas-grid.compon
 import { CanvasComponent } from './components/canvas/canvas.component';
 import { LayerTreeComponent } from './components/layer-tree/layer-tree.component';
 import { PanelComponent } from './components/panel/panel.component';
+import { CanvasFormsComponent } from './components/property-form/forms/canvas-forms/canvas-forms.component';
+import { WidgetFormComponent } from './components/property-form/forms/widget-form/widget-form.component';
 import { PropertyFormComponent } from './components/property-form/property-form.component';
 import { ResizeHandleComponent } from './components/resize-handle/resize-handle.component';
 import { RotateHandleComponent } from './components/rotate-handle/rotate-handle.component';
-import { CanvasFormsComponent } from './components/property-form/forms/canvas-forms/canvas-forms.component';
 import { ToolbarComponent } from './components/toolbar/toolbar.component';
 import { WidgetListComponent } from './components/widget-list/widget-list.component';
 import { CeToolbarDirective } from './directives';
@@ -56,11 +58,12 @@ const ANTD_MODULES = [
   NzFormModule,
   NzInputModule,
   NzTagModule,
+  NzDividerModule,
 ];
 
 const CDK_MODULES = [DragDropModule];
 
-const FORMS_COMPONENT = [CanvasFormsComponent];
+const FORMS_COMPONENT = [CanvasFormsComponent, WidgetFormComponent];
 
 const COMPONENTS = [
   ToolbarComponent,

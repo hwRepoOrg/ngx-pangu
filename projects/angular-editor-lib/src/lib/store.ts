@@ -99,7 +99,7 @@ export interface IWidget<T = any> {
   type: string;
   name: string;
   thumbnail: string;
-  component: T;
+  propsComponent: T;
 }
 
 export interface ITabConfig<T = any> {
@@ -112,7 +112,7 @@ export interface ITabConfig<T = any> {
 export interface IPanel<T = any> {
   title: string;
   key: string;
-  content: Type<any> | TemplateRef<any>;
+  content: Type<T> | TemplateRef<T>;
   show: boolean;
   x: number;
   y: number;

@@ -1,8 +1,9 @@
-import { Component, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { EditorStore } from '../../services';
 import { CanvasFormsComponent } from './forms/canvas-forms/canvas-forms.component';
+import { WidgetFormComponent } from './forms/widget-form/widget-form.component';
 
 @Component({
   selector: 'property-form',
@@ -12,18 +13,13 @@ import { CanvasFormsComponent } from './forms/canvas-forms/canvas-forms.componen
 })
 export class PropertyFormComponent implements OnInit {
   formComponent$: Observable<any>;
+  @ViewChild('instance')
+  instance: any;
   constructor(public store: EditorStore) {}
 
   ngOnInit(): void {
     this.formComponent$ = this.store
       .selectDifferent((state) => !!state.selected.size)
-      .pipe(
-        map((hasSelected) => {
-          if (hasSelected) {
-          } else {
-            return CanvasFormsComponent;
-          }
-        })
-      );
+      .pipe(map((hasSelected) => (hasSelected ? WidgetFormComponent : CanvasFormsComponent)));
   }
 }
