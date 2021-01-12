@@ -19,7 +19,7 @@ export class PropertyFormComponent implements OnInit {
 
   ngOnInit(): void {
     this.formComponent$ = this.store
-      .selectDifferent((state) => state.selected.size)
+      .select((state) => state.selected.size)
       .pipe(map((size) => (size === 1 ? WidgetFormComponent : CanvasFormsComponent)));
   }
 }

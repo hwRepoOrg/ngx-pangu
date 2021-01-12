@@ -1,6 +1,6 @@
 import { CdkDragEnd } from '@angular/cdk/drag-drop';
-import { Component, EventEmitter, Input, Output, ViewEncapsulation } from '@angular/core';
-import { CeUtilsService } from '../../services';
+import { Component, Input, ViewEncapsulation } from '@angular/core';
+import { CeUtilsService, EditorStore } from '../../services';
 import { IPanel } from '../../store';
 
 @Component({
@@ -15,23 +15,21 @@ export class PanelComponent<T> {
   @Input()
   set panel(val: IPanel<T>) {
     this._panel = val;
-    this.panelChange.emit(val);
   }
   get panel(): IPanel<T> {
     return this._panel;
   }
-  @Output() panelChange = new EventEmitter<IPanel<T>>();
-  constructor(public utils: CeUtilsService) {}
+  constructor(public utils: CeUtilsService, public store: EditorStore) {}
 
   updatePosition(event: CdkDragEnd) {
     this.panel = { ...this.panel, x: this.panel.x + event.distance.x, y: this.panel.y + event.distance.y };
   }
 
   toggleCollapsed() {
-    this.panel = { ...this.panel, collapsed: !this.panel?.collapsed };
+    this.store.togglePanelCollapsed(this.panel.key);
   }
 
   close() {
-    this.panel = { ...this.panel, show: false };
+    this.store.togglePanelVisible(this.panel.key);
   }
 }

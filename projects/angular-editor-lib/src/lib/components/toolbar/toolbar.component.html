@@ -25,15 +25,15 @@
         <button [disabled]="groupStatus$ | async" nz-button nzType="link"><i nz-icon nzIconfont="icon-bottom-align"></i></button>
       </div>
       <div class="d-flex ml-auto align-items-center">
-        <nz-tag nzMode="checkable" [nzChecked]="layerPanel?.show" (nzCheckedChange)="togglePanel('LAYERS')">
+        <nz-tag nzMode="checkable" [nzChecked]="store.getPanel('LAYERS')?.show" (nzCheckedChange)="store.togglePanelVisible('LAYERS')">
           <i nz-icon nzIconfont="icon-tuceng"></i>
           <span>图层</span>
         </nz-tag>
-        <nz-tag nzMode="checkable" [nzChecked]="widgetListPanel?.show" (nzCheckedChange)="togglePanel('WIDGET_LIST')">
+        <nz-tag nzMode="checkable" [nzChecked]="store.getPanel('WIDGET_LIST')?.show" (nzCheckedChange)="store.togglePanelVisible('WIDGET_LIST')">
           <i nz-icon nzIconfont="icon-widgets"></i>
           <span>组件</span>
         </nz-tag>
-        <nz-tag nzMode="checkable" [nzChecked]="propertyFormPanel?.show" (nzCheckedChange)="togglePanel('PROPERTIES')">
+        <nz-tag nzMode="checkable" [nzChecked]="store.getPanel('PROPERTIES')?.show" (nzCheckedChange)="store.togglePanelVisible('PROPERTIES')">
           <i nz-icon nzIconfont="icon-widget"></i>
           <span>属性</span>
         </nz-tag>

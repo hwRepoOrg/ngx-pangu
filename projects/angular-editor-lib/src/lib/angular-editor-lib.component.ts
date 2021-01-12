@@ -130,10 +130,6 @@ export class AngularEditorLibComponent<T = any> {
     this.editorStore.dispatch(clearBordered<T>());
     this.editorStore.dispatch(clearSelected<T>());
   }
-
-  updatePanel(panel: IPanel<T>) {
-    this.editorStore.panels = this.editorStore.panels.map((p) => (p.key === panel.key ? panel : p));
-  }
 }
 
 function isInBound(rect: Partial<DOMRect>, bound: ISelectorRect): boolean {

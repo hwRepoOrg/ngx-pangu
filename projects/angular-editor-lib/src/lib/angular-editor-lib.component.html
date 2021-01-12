@@ -47,6 +47,6 @@
   </div>
 </div>
 
-<ng-container *ngFor="let panel of editorStore.panels; trackBy: panelsTrackByFn">
-  <ce-panel *ngIf="panel.show" [panel]="panel" (panelChange)="updatePanel($event)"></ce-panel>
+<ng-container *ngFor="let panel of editorStore.panels$ | async; trackBy: panelsTrackByFn">
+  <ce-panel *ngIf="panel.show" [panel]="panel"></ce-panel>
 </ng-container>

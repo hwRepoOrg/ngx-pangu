@@ -5,10 +5,7 @@ import { breakNode, clearBordered, clearSelected, groupNodes, updateCanvasPositi
 import { CeToolbarDirective } from '../../directives';
 import { EditorStore } from '../../services';
 import { CeUtilsService } from '../../services/utils.service';
-import { INode, IPanel, IStore } from '../../store';
-import { LayerTreeComponent } from '../layer-tree/layer-tree.component';
-import { PropertyFormComponent } from '../property-form/property-form.component';
-import { WidgetListComponent } from '../widget-list/widget-list.component';
+import { INode, IStore } from '../../store';
 
 @Component({
   selector: 'ce-toolbar',
@@ -36,15 +33,6 @@ export class ToolbarComponent {
   }
   private nodes: INode[] = [];
   private selected: Set<string>;
-  get layerPanel(): IPanel<LayerTreeComponent> {
-    return this.store?.panels.find((p) => p.key === 'LAYERS');
-  }
-  get widgetListPanel(): IPanel<WidgetListComponent> {
-    return this.store?.panels.find((p) => p.key === 'WIDGET_LIST');
-  }
-  get propertyFormPanel(): IPanel<PropertyFormComponent> {
-    return this.store?.panels.find((p) => p.key === 'PROPERTIES');
-  }
 
   constructor(public store: EditorStore<IStore>, private utils: CeUtilsService) {
     this.selected$ = this.store.select((state) => state.selected);
@@ -69,16 +57,5 @@ export class ToolbarComponent {
     this.store.dispatch(clearSelected());
     this.store.dispatch(clearBordered());
     this.store.dispatch(breakNode(node.id));
-  }
-
-  togglePanel(type: string) {
-    if (this.store.panels.find((p) => p.key === type)) {
-      this.store.panels = this.store.panels.map((p) => {
-        if (p.key === type) {
-          return { ...p, show: !p.show };
-        }
-        return p;
-      });
-    }
   }
 }

@@ -1,19 +1,20 @@
 import { Injectable } from '@angular/core';
 import { ComponentStore } from '@ngrx/component-store';
+import { BehaviorSubject } from 'rxjs';
 import { filter, map, pairwise, startWith } from 'rxjs/operators';
-import { WidgetListComponent } from '../components';
-import { LayerTreeComponent } from '../components/layer-tree/layer-tree.component';
-import { PropertyFormComponent } from '../components/property-form/property-form.component';
+import { LayerTreeComponent, PropertyFormComponent, WidgetListComponent } from '../components';
 import { DEFAULT_STORE, IPanel, IStore } from '../store';
 import { CeUtilsService } from './utils.service';
 
 @Injectable()
 export class EditorStore<T = any> extends ComponentStore<IStore<T>> {
-  panels: IPanel<any>[] = [
+  private _defaultPanels: IPanel<any>[] = [
     { key: 'LAYERS', title: '图层', content: LayerTreeComponent, show: true, x: 10, y: 60 },
     { key: 'WIDGET_LIST', title: '组件', content: WidgetListComponent, show: false, x: 50, y: 60 },
     { key: 'PROPERTIES', title: '属性', content: PropertyFormComponent, show: true, x: window.innerWidth - 350, y: 60 },
   ];
+  private panels: IPanel[] = [];
+  panels$ = new BehaviorSubject<IPanel[]>([...this._defaultPanels, ...this.panels]);
 
   constructor(private utils: CeUtilsService) {
     super(DEFAULT_STORE);
@@ -46,5 +47,32 @@ export class EditorStore<T = any> extends ComponentStore<IStore<T>> {
       selected: state.selected,
       bordered: state.bordered,
     });
+  }
+
+  addPanels(panels: IPanel[]) {
+    this.panels = [...this.panels, ...panels];
+    this.panels$.next([...this._defaultPanels, ...this.panels]);
+  }
+
+  getPanel(key: string) {
+    return [...this._defaultPanels, ...this.panels].find((panel) => panel.key === key);
+  }
+
+  togglePanelVisible(key: string) {
+    [...this._defaultPanels, ...this.panels].forEach((panel) => {
+      if (panel.key === key) {
+        panel.show = !panel.show;
+      }
+    });
+    this.panels$.next([...this._defaultPanels, ...this.panels]);
+  }
+
+  togglePanelCollapsed(key: string) {
+    [...this._defaultPanels, ...this.panels].forEach((panel) => {
+      if (panel.key === key) {
+        panel.collapsed = !panel.collapsed;
+      }
+    });
+    this.panels$.next([...this._defaultPanels, ...this.panels]);
   }
 }
