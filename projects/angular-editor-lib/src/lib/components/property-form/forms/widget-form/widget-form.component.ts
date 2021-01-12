@@ -39,7 +39,7 @@ export class WidgetFormComponent implements OnInit {
 
   ngOnInit(): void {
     this.store
-      .selectDifferent((state) => state.selected)
+      .select((state) => state.selected)
       .pipe(
         filter((selected) => selected.size === 1),
         map((selected) => [...selected][0]),
@@ -47,8 +47,14 @@ export class WidgetFormComponent implements OnInit {
       )
       .subscribe((node) => {
         this.boundingFormGroup.patchValue(
-          { ...node, width: Math.round(node.width), height: Math.round(node.height), left: Math.round(node.left), top: Math.round(node.top) },
-          { emitEvent: false, onlySelf: true }
+          {
+            ...node,
+            width: Math.round(node.width),
+            height: Math.round(node.height),
+            left: Math.round(node.left),
+            top: Math.round(node.top),
+          },
+          { emitEvent: false }
         );
       });
     this.boundingFormGroup.valueChanges.subscribe((values) => {

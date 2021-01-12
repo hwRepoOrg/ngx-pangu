@@ -59,6 +59,72 @@
               </nz-form-control>
             </nz-form-item>
           </nz-col>
+          <nz-col nzSpan="12">
+            <nz-form-item>
+              <nz-form-label>
+                <i nz-icon nzType="lock"> </i>
+              </nz-form-label>
+              <nz-form-control>
+                <nz-switch formControlName="locked"></nz-switch>
+              </nz-form-control>
+            </nz-form-item>
+          </nz-col>
+        </nz-row>
+      </form>
+      <h5>边框</h5>
+      <form nz-form nzLayout="inline" [formGroup]="boundingFormGroup">
+        <nz-row nzGutter="8">
+          <nz-col nzSpan="24">
+            <nz-form-item>
+              <nz-form-label>
+                <i nz-icon nzType="border-outer"></i>
+              </nz-form-label>
+              <nz-form-control>
+                <ng-template #borderStyleTpl let-selected>
+                  <div class="d-flex align-items-center h-100" [style.width.px]="40">
+                    <ng-container [ngSwitch]="selected.nzValue">
+                      <ng-container *ngSwitchCase="'none'">
+                        <span>none</span>
+                      </ng-container>
+                      <ng-container *ngSwitchCase="'dashed'">
+                        <svg class="svg-icon" viewBox="0 0 40 1">
+                          <path
+                            d="M0 1h5V0H0v1zm9 0h5V0H9v1zm10 0h5V0h-5v1zm9 0h5V0h-5v1zm10 0h5V0h-5v1zm9 0h5V0h-5v1zm9 0h5V0h-5v1zm10 0h5V0h-5v1zm9 0h5V0h-5v1z"
+                          ></path>
+                        </svg>
+                      </ng-container>
+                      <ng-container *ngSwitchCase="'solid'">
+                        <svg class="svg-icon" viewBox="0 0 40 1">
+                          <path d="M0 0h80v1H0z"></path>
+                        </svg>
+                      </ng-container>
+                      <ng-container *ngSwitchCase="'dotted'">
+                        <svg class="svg-icon" viewBox="0 0 40 1">
+                          <path
+                            d="M0 1h1V0H0v1zm4 0h1V0H4v1zm4 0h1V0H8v1zm4 0h1V0h-1v1zm4 0h1V0h-1v1zm4 0h1V0h-1v1zm4 0h1V0h-1v1zm4 0h1V0h-1v1zm4 0h1V0h-1v1zm4 0h1V0h-1v1zm4 0h1V0h-1v1zm4 0h1V0h-1v1zm4 0h1V0h-1v1zm4 0h1V0h-1v1zm4 0h1V0h-1v1zm4 0h1V0h-1v1zm4 0h1V0h-1v1zm4 0h1V0h-1v1zm4 0h1V0h-1v1zm4 0h1V0h-1v1zm4 0h1V0h-1v1z"
+                          ></path>
+                        </svg>
+                      </ng-container>
+                    </ng-container>
+                  </div>
+                </ng-template>
+                <nz-select nzSize="small" formControlName="borderStyle" [nzCustomTemplate]="borderStyleTpl">
+                  <nz-option nzValue="none" nzLabel="none">
+                    <ng-container *ngTemplateOutlet="borderStyleTpl; context: { $implicit: { nzValue: 'none' } }"></ng-container>
+                  </nz-option>
+                  <nz-option nzValue="dashed" nzLabel="dashed" nzCustomContent>
+                    <ng-container *ngTemplateOutlet="borderStyleTpl; context: { $implicit: { nzValue: 'dashed' } }"></ng-container>
+                  </nz-option>
+                  <nz-option nzValue="solid" nzLabel="solid" nzCustomContent>
+                    <ng-container *ngTemplateOutlet="borderStyleTpl; context: { $implicit: { nzValue: 'solid' } }"></ng-container>
+                  </nz-option>
+                  <nz-option nzValue="dotted" nzLabel="dotted" nzCustomContent>
+                    <ng-container *ngTemplateOutlet="borderStyleTpl; context: { $implicit: { nzValue: 'dotted' } }"></ng-container>
+                  </nz-option>
+                </nz-select>
+              </nz-form-control>
+            </nz-form-item>
+          </nz-col>
         </nz-row>
       </form>
     </div>

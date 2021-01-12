@@ -16,6 +16,8 @@ import { NzIconModule, NzIconService } from 'ng-zorro-antd/icon';
 import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzInputNumberModule } from 'ng-zorro-antd/input-number';
 import { NzPipesModule } from 'ng-zorro-antd/pipes';
+import { NzSelectModule } from 'ng-zorro-antd/select';
+import { NzSwitchModule } from 'ng-zorro-antd/switch';
 import { NzTabsModule } from 'ng-zorro-antd/tabs';
 import { NzTagModule } from 'ng-zorro-antd/tag';
 import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
@@ -61,6 +63,8 @@ const ANTD_MODULES = [
   NzTagModule,
   NzDividerModule,
   NzCollapseModule,
+  NzSwitchModule,
+  NzSelectModule,
 ];
 
 const CDK_MODULES = [DragDropModule];
