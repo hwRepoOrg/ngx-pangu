@@ -1,5 +1,4 @@
-import { Component, HostBinding, Input, ViewEncapsulation } from '@angular/core';
-import { SafeStyle } from '@angular/platform-browser';
+import { AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, Input, Renderer2, ViewEncapsulation } from '@angular/core';
 import { INode } from '../../store';
 
 @Component({
@@ -7,63 +6,44 @@ import { INode } from '../../store';
   templateUrl: 'box-item.component.html',
   styleUrls: ['box-item.component.less'],
   encapsulation: ViewEncapsulation.None,
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class BoxItemComponent {
+export class BoxItemComponent<T = any> implements AfterViewInit {
+  private _node: INode<T>;
   @Input()
-  public node: INode;
-
-  @HostBinding('id')
-  get id(): string {
-    return this.node?.id && `box-item-${this.node?.id}`;
+  get node(): INode<T> {
+    return this._node;
+  }
+  set node(val: INode<T>) {
+    this._node = val;
+    this.generatorStyles();
   }
 
-  @HostBinding('style.left.px')
-  get nodeLeft() {
-    return this.node.left;
+  constructor(private renderer: Renderer2, private eleRef: ElementRef<HTMLElement>) {}
+
+  ngAfterViewInit() {
+    this.generatorStyles();
   }
 
-  @HostBinding('style.top.px')
-  get nodeTop() {
-    return this.node.top;
-  }
-
-  @HostBinding('style.transform')
-  get transform(): string {
-    return `rotate(${+this.node?.rotate ?? 0}deg)`;
-  }
-
-  @HostBinding('style.width.px')
-  get width(): number {
-    return +this.node.width.toFixed(10);
-  }
-  @HostBinding('style.height.px')
-  get height(): number {
-    return +this.node.height.toFixed(10);
-  }
-  @HostBinding('style.border-style')
-  get borderStyle(): string {
-    return this.node.borderStyle;
-  }
-  @HostBinding('style.border-color')
-  get borderColor(): string {
-    return this.node.borderColor;
-  }
-  @HostBinding('style.border-width.px')
-  get borderWidth(): number {
-    return +this.node.borderWidth?.toFixed(10);
-  }
-
-  @HostBinding('style.z-index')
-  get zIndex(): number {
-    return this.node.zIndex;
-  }
-
-  @HostBinding('style.background')
-  get background(): SafeStyle {
-    return `${this.node.backgroundRepeat ?? ''} ${this.node.backgroundPosition ?? ''} url(${this.node.backgroundImage ?? ''}) ${
-      this.node.backgroundColor ?? ''
-    }`
-      .trim()
-      .replace(/^url\(\)$/, '');
+  private generatorStyles() {
+    if (this.eleRef.nativeElement) {
+      this.renderer.setAttribute(this.eleRef.nativeElement, 'id', `box-item-${this.node.id}`);
+      this.renderer.setStyle(this.eleRef.nativeElement, 'width', `${this.node.width}px`);
+      this.renderer.setStyle(this.eleRef.nativeElement, 'height', `${this.node.height}px`);
+      this.renderer.setStyle(
+        this.eleRef.nativeElement,
+        'transform',
+        `translate3d(${this.node.left}px,${this.node.top}px,0px) rotate(${this.node.rotate ?? 0}deg)`
+      );
+      this.renderer.setStyle(this.eleRef.nativeElement, 'border-style', this.node.borderStyle);
+      this.renderer.setStyle(this.eleRef.nativeElement, 'border-color', this.node.borderColor);
+      this.renderer.setStyle(this.eleRef.nativeElement, 'border-width', `${this.node.borderWidth}px`);
+      this.renderer.setStyle(this.eleRef.nativeElement, 'z-index', this.node.zIndex);
+      this.renderer.setStyle(this.eleRef.nativeElement, 'background-image', this.node.backgroundImage);
+      this.renderer.setStyle(this.eleRef.nativeElement, 'background-position', this.node.backgroundPosition);
+      this.renderer.setStyle(this.eleRef.nativeElement, 'background-repeat', this.node.backgroundRepeat);
+      this.renderer.setStyle(this.eleRef.nativeElement, 'background-size', this.node.backgroundSize);
+      this.renderer.setStyle(this.eleRef.nativeElement, 'background-color', this.node.backgroundColor);
+    }
   }
 }
