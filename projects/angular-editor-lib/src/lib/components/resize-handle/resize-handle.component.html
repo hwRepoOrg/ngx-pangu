@@ -1,6 +1,6 @@
-<ce-rotate-handle *ngIf="selected?.size === 1"></ce-rotate-handle>
+<ce-rotate-handle *ngIf="hasSelected$ | async"></ce-rotate-handle>
 <div
-  *ngIf="selected?.size === 1"
+  *ngIf="hasSelected$ | async"
   class="resizable-handle t"
   ceDraggable
   (ceOnStart)="resizeStart($event)"
@@ -8,7 +8,7 @@
   (ceOnStop)="resizeEnd()"
 ></div>
 <div
-  *ngIf="selected?.size === 1"
+  *ngIf="hasSelected$ | async"
   class="resizable-handle r"
   ceDraggable
   (ceOnStart)="resizeStart($event)"
@@ -16,7 +16,7 @@
   (ceOnStop)="resizeEnd()"
 ></div>
 <div
-  *ngIf="selected?.size === 1"
+  *ngIf="hasSelected$ | async"
   class="resizable-handle b"
   ceDraggable
   (ceOnStart)="resizeStart($event)"
@@ -24,7 +24,7 @@
   (ceOnStop)="resizeEnd()"
 ></div>
 <div
-  *ngIf="selected?.size === 1"
+  *ngIf="hasSelected$ | async"
   class="resizable-handle l"
   ceDraggable
   (ceOnStart)="resizeStart($event)"
@@ -35,10 +35,10 @@
 <div class="resizable-handle br" ceDraggable (ceOnStart)="resizeStart($event)" (ceOnMove)="resizing($event, 'br')" (ceOnStop)="resizeEnd()"></div>
 <div class="resizable-handle tl" ceDraggable (ceOnStart)="resizeStart($event)" (ceOnMove)="resizing($event, 'tl')" (ceOnStop)="resizeEnd()"></div>
 <div class="resizable-handle bl" ceDraggable (ceOnStart)="resizeStart($event)" (ceOnMove)="resizing($event, 'bl')" (ceOnStop)="resizeEnd()"></div>
-<div *ngIf="selected?.size === 1" class="t circle"></div>
-<div *ngIf="selected?.size === 1" class="r circle"></div>
-<div *ngIf="selected?.size === 1" class="b circle"></div>
-<div *ngIf="selected?.size === 1" class="l circle"></div>
+<div *ngIf="hasSelected$ | async" class="t circle"></div>
+<div *ngIf="hasSelected$ | async" class="r circle"></div>
+<div *ngIf="hasSelected$ | async" class="b circle"></div>
+<div *ngIf="hasSelected$ | async" class="l circle"></div>
 <div class="tr circle"></div>
 <div class="br circle"></div>
 <div class="tl circle"></div>

@@ -1,7 +1,7 @@
-import { Component, ContentChild, ViewEncapsulation } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ContentChild, ViewEncapsulation } from '@angular/core';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { breakNode, clearBordered, clearSelected, groupNodes, updateCanvasPosition } from '../../actions';
+import { breakNode, clearBordered, clearSelected, groupNodes } from '../../actions';
 import { CeToolbarDirective } from '../../directives';
 import { EditorStore } from '../../services';
 import { CeUtilsService } from '../../services/utils.service';
@@ -13,6 +13,7 @@ import { INode, IStore } from '../../store';
   templateUrl: 'toolbar.component.html',
   styleUrls: ['toolbar.component.less'],
   encapsulation: ViewEncapsulation.None,
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ToolbarComponent {
   @ContentChild(CeToolbarDirective)
@@ -22,27 +23,24 @@ export class ToolbarComponent {
   public get copyStatus$(): Observable<boolean> {
     return this.selected$.pipe(map((state) => state.size === 0));
   }
-  public get groupStatus$(): Observable<boolean> {
-    return this.selected$.pipe(map((state) => state.size <= 1));
-  }
-  public get breakStatus$(): Observable<boolean> {
-    return this.selected$.pipe(
+  public groupStatus$: Observable<boolean>;
+  public breakStatus$: Observable<boolean>;
+  private selected: Set<string>;
+  private nodes: INode[];
+
+  constructor(public store: EditorStore<IStore>, private utils: CeUtilsService) {
+    this.store
+      .selectDifferent((state) => ({ selected: state.selected, nodes: state.nodes }))
+      .subscribe(({ selected, nodes }) => {
+        this.selected = selected;
+        this.nodes = nodes;
+      });
+    this.selected$ = this.store.selectDifferent((state) => state.selected);
+    this.groupStatus$ = this.selected$.pipe(map((state) => state.size <= 1));
+    this.breakStatus$ = this.selected$.pipe(
       map((state) => (state.size === 1 ? [...state][0] : false)),
       map((id) => id && !!this.utils.getNodeById(id as string, this.nodes)?.children?.length)
     );
-  }
-  private nodes: INode[] = [];
-  private selected: Set<string>;
-
-  constructor(public store: EditorStore<IStore>, private utils: CeUtilsService) {
-    this.selected$ = this.store.select((state) => state.selected);
-    this.store.select((state) => state.nodes).subscribe((nodes) => (this.nodes = nodes));
-    this.store.select((state) => state.canvasPosition).subscribe((state) => (this.scale = state.scale));
-    this.selected$.subscribe((selected) => (this.selected = selected));
-  }
-
-  setCanvasScale(scale: number): void {
-    this.store.dispatch(updateCanvasPosition({ scale: scale / 100 }));
   }
 
   groupNodes(): void {

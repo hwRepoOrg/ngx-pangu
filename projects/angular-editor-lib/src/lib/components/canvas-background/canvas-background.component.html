@@ -1,1 +1,5 @@
-<img *ngIf="backgroundImage" [src]="ds.bypassSecurityTrustUrl(backgroundImage)" alt="" />
+<div [style.background-color]="backgroundColor$ | async">
+  <ng-template [ngIf]="backgroundImage$ | async">
+    <img [src]="backgroundImage$ | async | nzSanitizer: 'url'" alt="" />
+  </ng-template>
+</div>

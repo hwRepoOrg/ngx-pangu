@@ -43,7 +43,8 @@ export class WidgetFormComponent implements OnInit {
       .pipe(
         filter((selected) => selected.size === 1),
         map((selected) => [...selected][0]),
-        switchMap((id) => this.store.select((state) => state.nodes.find((item) => item.id === id)))
+        switchMap((id) => this.store.select((state) => state.nodes.find((item) => item.id === id))),
+        filter((node) => !!node)
       )
       .subscribe((node) => {
         this.boundingFormGroup.patchValue(

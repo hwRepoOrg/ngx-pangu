@@ -1,6 +1,6 @@
 <div
   class="box-border"
-  *ngFor="let node of nodeList; trackBy: trackByFn"
+  *ngFor="let node of borderedNodeList$ | async; trackBy: trackByFn"
   [style.left.%]="node.left"
   [style.top.%]="node.top"
   [style.width.%]="node.width"

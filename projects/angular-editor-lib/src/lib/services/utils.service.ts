@@ -75,6 +75,8 @@ export class CeUtilsService {
               }
             });
             return flag;
+          } else if (v1 instanceof Set && v2 instanceof Set) {
+            return this.isDeepEqual([...v1], [...v2]);
           } else {
             let flag = true;
             Object.keys(v1).forEach((v1k) => {

@@ -1,6 +1,8 @@
-import { Component, ViewChild, ViewEncapsulation } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ElementRef, ViewChild, ViewEncapsulation } from '@angular/core';
 import { NzContextMenuService, NzDropdownMenuComponent } from 'ng-zorro-antd/dropdown';
 import { NzFormatEmitEvent, NzTreeComponent, NzTreeNode, NzTreeNodeOptions } from 'ng-zorro-antd/tree';
+import { Observable } from 'rxjs';
+import { filter, map } from 'rxjs/operators';
 import {
   addBorderedNodes,
   breakNode,
@@ -24,38 +26,44 @@ import { INode, IStore } from '../../store';
   templateUrl: 'layer-tree.component.html',
   styleUrls: ['layer-tree.component.less'],
   encapsulation: ViewEncapsulation.None,
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LayerTreeComponent {
-  public openedKeys = new Set<string>();
-  public treeNodes: NzTreeNodeOptions[];
+  public treeNodes$: Observable<NzTreeNodeOptions[]>;
   public selected: Set<string>;
-  public selectedKeys: string[];
-  public expandedKeys: string[];
+  public selectedKeys$: Observable<string[]>;
   @ViewChild('layerTree', { read: NzTreeComponent })
   public layerTree: NzTreeComponent;
   private parentKey: string;
-  public get groupStatus(): boolean {
-    return this.selectedKeys.length > 1
-      ? !this.selectedKeys.find((id) => {
-          const node = this.layerTree?.getSelectedNodeList().find((item) => item.key === id);
-          return node && node.parentNode;
-        })
-      : false;
-  }
+  public groupStatus$: Observable<boolean>;
 
-  constructor(private store: EditorStore<IStore>, private utils: CeUtilsService, private contextMenuSrv: NzContextMenuService) {
+  constructor(
+    public eleRef: ElementRef<HTMLElement>,
+    private store: EditorStore<IStore>,
+    private utils: CeUtilsService,
+    private contextMenuSrv: NzContextMenuService
+  ) {
+    this.treeNodes$ = this.store
+      .selectDifferent((state) => state.nodes)
+      .pipe(map((nodes) => this.transferNodesToNzNodes(this.utils.sortNodeListByIndex(nodes))));
+    this.selectedKeys$ = this.store.selectDifferent((state) => state.selected).pipe(map((selected) => [...selected]));
+    this.groupStatus$ = this.store
+      .selectDifferent((state) => state.selected)
+      .pipe(
+        filter(() => !!this.layerTree),
+        map((selected) =>
+          selected.size > 1
+            ? !![...selected].find((id) => {
+                const node = this.layerTree?.getSelectedNodeList().find((item) => item.key === id);
+                return node && node.parentNode;
+              })
+            : false
+        )
+      );
     this.store
-      .select((state) => state.selected)
+      .selectDifferent((state) => state.selected)
       .subscribe((selected) => {
         this.selected = selected;
-        this.selectedKeys = [...selected];
-      });
-    this.store
-      .select((state) => state.nodes)
-      .subscribe((nodes) => {
-        this.treeNodes = this.transferNodesToNzNodes(this.utils.sortNodeListByIndex(nodes));
-        this.selectedKeys = [...this.selected];
-        this.expandedKeys = this.expandedKeys && [...this.expandedKeys];
       });
   }
 
@@ -126,10 +134,6 @@ export class LayerTreeComponent {
         }
       }
     }
-  }
-
-  expandGroup(event: NzFormatEmitEvent): void {
-    this.expandedKeys = [...event.keys];
   }
 
   group(ids: string[]): void {

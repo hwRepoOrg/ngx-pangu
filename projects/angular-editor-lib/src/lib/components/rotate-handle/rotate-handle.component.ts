@@ -1,4 +1,4 @@
-import { Component, OnInit, Optional, SkipSelf, ViewEncapsulation } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, Optional, SkipSelf, ViewEncapsulation } from '@angular/core';
 import { updateNodes } from '../../actions';
 import { EditorStore } from '../../services';
 import { CeUtilsService } from '../../services/utils.service';
@@ -10,6 +10,7 @@ import { ResizeHandleComponent } from '../resize-handle/resize-handle.component'
   templateUrl: 'rotate-handle.component.html',
   styleUrls: ['rotate-handle.component.less'],
   encapsulation: ViewEncapsulation.None,
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class RotateHandleComponent implements OnInit {
   private selected: Set<string>;

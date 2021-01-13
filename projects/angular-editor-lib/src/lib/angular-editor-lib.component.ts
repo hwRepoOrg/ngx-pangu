@@ -1,5 +1,5 @@
-import { Component, ElementRef, Input, ViewChild, ViewEncapsulation } from '@angular/core';
-import { fromEvent, Subscription } from 'rxjs';
+import { ChangeDetectionStrategy, Component, ElementRef, Input, ViewChild, ViewEncapsulation } from '@angular/core';
+import { fromEvent, Observable, Subscription } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { clearBordered, clearSelected, setBorderedNodes, setSelectedNodes, updateCanvasPosition } from './actions';
 import { ISelectorRect } from './directives/selector.directive';
@@ -12,11 +12,13 @@ import { ICanvasPosition, INode, IPanel, IRefLineDirection, IRefLineState, IStor
   styleUrls: ['angular-editor-lib.less'],
   encapsulation: ViewEncapsulation.None,
   providers: [EditorStore],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  exportAs: 'ceEditor',
 })
 export class AngularEditorLibComponent<T = any> {
   @Input()
   set state(state: Partial<IStore<T>>) {
-    this.editorStore?.setState((oldState) => ({ ...oldState, ...state }));
+    this.store?.setState((oldState) => ({ ...oldState, ...state }));
   }
   @ViewChild('container', { read: ElementRef, static: true })
   private containerEleRef: ElementRef<HTMLDivElement>;
@@ -26,19 +28,19 @@ export class AngularEditorLibComponent<T = any> {
   public matrix: string;
   public selectorRect: ISelectorRect = null;
   public nodes: INode[];
-  public refLineState: { [P in IRefLineDirection]: IRefLineState };
+  public refLineState$: Observable<{ [P in IRefLineDirection]: IRefLineState }>;
   private nodesRectSnapshot: Map<string, Partial<DOMRect>> = null;
   private nodeIdList: string[] = null;
-  constructor(public editorStore: EditorStore) {
-    this.editorStore
+  constructor(public store: EditorStore) {
+    this.store
       .select((state) => state.canvasPosition)
       .subscribe((canvasPosition) => {
         this.canvasPosition = canvasPosition;
         this.matrix = `translate3d(${this.canvasPosition.left}px,${this.canvasPosition.top}px,0)`;
       });
 
-    this.editorStore.select((state) => state.nodes).subscribe((nodes) => (this.nodes = nodes));
-    this.editorStore.select((state) => state.refLineState).subscribe((refLineState) => (this.refLineState = refLineState));
+    this.store.select((state) => state.nodes).subscribe((nodes) => (this.nodes = nodes));
+    this.refLineState$ = this.store.selectDifferent((state) => state.refLineState);
   }
 
   ngAfterViewInit(): void {
@@ -61,7 +63,7 @@ export class AngularEditorLibComponent<T = any> {
     if (this.startPoints) {
       const [sx, sy, left, top] = this.startPoints;
       const [mx, my] = [ev.clientX - sx, ev.clientY - sy];
-      this.editorStore.dispatch(updateCanvasPosition({ left: left + mx, top: top + my }));
+      this.store.dispatch(updateCanvasPosition({ left: left + mx, top: top + my }));
     }
   }
 
@@ -81,7 +83,7 @@ export class AngularEditorLibComponent<T = any> {
           const wheelDelta = (e.wheelDelta / 120 || -e.deltaY / 3) * 0.05;
           const [x, y] = [e.clientX - containerBox.left, e.clientY - containerBox.top];
           if (this.canvasPosition.scale + wheelDelta >= 0.2) {
-            this.editorStore.dispatch(
+            this.store.dispatch(
               updateCanvasPosition({
                 scale: this.canvasPosition.scale + wheelDelta,
                 left: (this.canvasPosition.left - x) * (wheelDelta / this.canvasPosition.scale) + this.canvasPosition.left,
@@ -116,8 +118,8 @@ export class AngularEditorLibComponent<T = any> {
         this.nodeIdList.push(id);
       }
     });
-    this.editorStore.dispatch(setBorderedNodes<T>(this.nodeIdList));
-    this.editorStore.dispatch(setSelectedNodes(this.nodeIdList));
+    this.store.dispatch(setBorderedNodes<T>(this.nodeIdList));
+    this.store.dispatch(setSelectedNodes(this.nodeIdList));
   }
 
   selectorEnd(): void {
@@ -127,8 +129,8 @@ export class AngularEditorLibComponent<T = any> {
   }
 
   private clearSelectAndBorder(): void {
-    this.editorStore.dispatch(clearBordered<T>());
-    this.editorStore.dispatch(clearSelected<T>());
+    this.store.dispatch(clearBordered<T>());
+    this.store.dispatch(clearSelected<T>());
   }
 }
 

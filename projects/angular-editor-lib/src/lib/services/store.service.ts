@@ -24,13 +24,17 @@ export class EditorStore<T = any> extends ComponentStore<IStore<T>> {
     this.setState(state);
   }
 
+  _get() {
+    return this.get();
+  }
+
   dispatch(action: (state: IStore<T>) => IStore<T>) {
     this.setState(action);
   }
 
   selectDifferent<R>(cb: (state: IStore<T>) => R) {
     return this.select(cb).pipe(
-      startWith(0, 0),
+      startWith(null, cb(this.get())),
       pairwise<R>(),
       filter(([prev, present]) => !this.utils.isDeepEqual(prev, present)),
       map(([, present]) => present)
@@ -56,6 +60,16 @@ export class EditorStore<T = any> extends ComponentStore<IStore<T>> {
 
   getPanel(key: string) {
     return [...this._defaultPanels, ...this.panels].find((panel) => panel.key === key);
+  }
+
+  updatePanelPosition(key: string, [x, y]: [number, number]) {
+    [...this._defaultPanels, ...this.panels].forEach((panel) => {
+      if (panel.key === key) {
+        panel.x = x;
+        panel.y = y;
+      }
+    });
+    this.panels$.next([...this._defaultPanels, ...this.panels]);
   }
 
   togglePanelVisible(key: string) {

@@ -2,13 +2,11 @@
   #layerTree
   nzBlockNode
   nzMultiple
-  [nzData]="treeNodes"
-  [nzSelectedKeys]="selectedKeys"
-  [nzExpandedKeys]="expandedKeys"
+  [nzData]="treeNodes$ | async"
+  [nzSelectedKeys]="selectedKeys$ | async"
   [nzTreeTemplate]="nzTreeTemplate"
   [nzExpandedIcon]="multiExpandedIconTpl"
   (nzClick)="clickNode($event)"
-  (nzExpandChange)="expandGroup($event)"
 >
   <ng-template #multiExpandedIconTpl let-node let-origin="origin">
     <i *ngIf="!node.isLeaf" nz-icon [nzType]="node.isExpanded ? 'folder-open' : 'folder'" class="ant-tree-switcher-line-icon"></i>
@@ -18,26 +16,26 @@
       class="layer"
       [class.locked]="node.locked"
       (contextmenu)="contextMenu($event, menu, node)"
-      (mouseenter)="showBordered(node.id)"
-      (mouseleave)="clearBordered(node.id)"
+      (pointerenter)="showBordered(node.id)"
+      (pointerleave)="clearBordered(node.id)"
     >
       <span>{{ node.title }}</span>
     </div>
     <nz-dropdown-menu #menu="nzDropdownMenu">
       <ul nz-menu>
-        <li *ngIf="!node.locked" nz-menu-item class="action-item" (click)="toggleNodesLockState(selectedKeys, true)">
+        <li *ngIf="!node.locked" nz-menu-item class="action-item" (click)="toggleNodesLockState(layerTree.nzSelectedKeys, true)">
           <i nz-icon nzType="lock"></i>
           <span>锁定</span>
         </li>
-        <li *ngIf="node.locked" nz-menu-item class="action-item" (click)="toggleNodesLockState(selectedKeys, false)">
+        <li *ngIf="node.locked" nz-menu-item class="action-item" (click)="toggleNodesLockState(layerTree.nzSelectedKeys, false)">
           <i nz-icon nzType="unlock"></i>
           <span>解锁</span>
         </li>
-        <li nz-menu-item class="action-item" (click)="deleteNodes(selectedKeys)">
+        <li nz-menu-item class="action-item" (click)="deleteNodes(layerTree.nzSelectedKeys)">
           <i nz-icon nzType="delete"></i>
           <span>删除</span>
         </li>
-        <li *ngIf="groupStatus" nz-menu-item class="action-item" (click)="group(selectedKeys)">
+        <li *ngIf="groupStatus$ | async" nz-menu-item class="action-item" (click)="group(layerTree.nzSelectedKeys)">
           <i nz-icon nzIconfont="icon-group"></i>
           <span>组合</span>
           <span class="shortcuts"> ctrl+shift+G </span>

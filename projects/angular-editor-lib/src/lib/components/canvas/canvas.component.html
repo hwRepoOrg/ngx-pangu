@@ -1,5 +1,5 @@
 <ce-box-item
-  *ngFor="let node of nodes; trackBy: nodeListTrackByFn"
+  *ngFor="let node of nodes$ | async; trackBy: nodeListTrackByFn"
   ceDraggable
   [ceDragDisabled]="node?.locked"
   (ceOnStart)="moveStart($event, node)"

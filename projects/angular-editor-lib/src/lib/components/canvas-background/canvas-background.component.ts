@@ -1,24 +1,20 @@
-import { Component, HostBinding, ViewEncapsulation } from '@angular/core';
-import { DomSanitizer } from '@angular/platform-browser';
+import { ChangeDetectionStrategy, Component, ViewEncapsulation } from '@angular/core';
+import { Observable } from 'rxjs';
 import { EditorStore } from '../../services';
 import { IStore } from '../../store';
 
 @Component({
-  selector: 'ce-canvas-background',
+  selector: 'ce-canvas-background,[ceCanvasBackground]',
   templateUrl: 'canvas-background.component.html',
   styleUrls: ['canvas-background.component.less'],
   encapsulation: ViewEncapsulation.None,
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CanvasBackgroundComponent {
-  @HostBinding('style.background-color')
-  public backgroundColor: string;
-  public backgroundImage: string;
-  constructor(private store: EditorStore<IStore>, public ds: DomSanitizer) {
-    this.store
-      .select((state) => state.canvasBackground)
-      .subscribe((state) => {
-        this.backgroundColor = state.backgroundColor;
-        this.backgroundImage = state.backgroundImage;
-      });
+  public backgroundColor$: Observable<string>;
+  public backgroundImage$: Observable<string>;
+  constructor(private store: EditorStore<IStore>) {
+    this.backgroundColor$ = this.store.selectDifferent((state) => state.canvasBackground.backgroundColor);
+    this.backgroundImage$ = this.store.selectDifferent((state) => state.canvasBackground.backgroundImage);
   }
 }

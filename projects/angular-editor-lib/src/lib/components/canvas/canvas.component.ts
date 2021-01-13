@@ -1,4 +1,5 @@
-import { Component, ViewEncapsulation } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ViewEncapsulation } from '@angular/core';
+import { Observable } from 'rxjs';
 import {
   addBorderedNodes,
   addSelectedNodes,
@@ -128,8 +129,10 @@ const REF_LINE_DIRECTION_COMPARE_MAP: {
   templateUrl: 'canvas.component.html',
   styleUrls: ['canvas.component.less'],
   encapsulation: ViewEncapsulation.None,
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CanvasComponent {
+  public nodes$: Observable<INode[]>;
   public nodes: INode[];
   private selected: Set<string>;
   private canvasPosition: ICanvasPosition;
@@ -140,6 +143,7 @@ export class CanvasComponent {
   private gap = 5;
 
   constructor(private store: EditorStore<IStore>, private utils: CeUtilsService) {
+    this.nodes$ = this.store.selectDifferent((state) => state.nodes);
     this.store.select((state) => state.nodes).subscribe((nodes) => (this.nodes = nodes));
     this.store.select((state) => state.selected).subscribe((state) => (this.selected = state));
     this.store.select((state) => state.canvasPosition).subscribe((state) => (this.canvasPosition = state));

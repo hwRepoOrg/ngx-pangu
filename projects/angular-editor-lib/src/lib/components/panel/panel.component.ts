@@ -1,5 +1,5 @@
 import { CdkDragEnd } from '@angular/cdk/drag-drop';
-import { Component, Input, ViewEncapsulation } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input, ViewEncapsulation } from '@angular/core';
 import { CeUtilsService, EditorStore } from '../../services';
 import { IPanel } from '../../store';
 
@@ -8,6 +8,7 @@ import { IPanel } from '../../store';
   templateUrl: './panel.component.html',
   styleUrls: ['./panel.component.less'],
   encapsulation: ViewEncapsulation.None,
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PanelComponent<T> {
   private _panel: IPanel<T>;
@@ -22,7 +23,7 @@ export class PanelComponent<T> {
   constructor(public utils: CeUtilsService, public store: EditorStore) {}
 
   updatePosition(event: CdkDragEnd) {
-    this.panel = { ...this.panel, x: this.panel.x + event.distance.x, y: this.panel.y + event.distance.y };
+    this.store.updatePanelPosition(this.panel.key, [this.panel.x + event.distance.x, this.panel.y + event.distance.y]);
   }
 
   toggleCollapsed() {

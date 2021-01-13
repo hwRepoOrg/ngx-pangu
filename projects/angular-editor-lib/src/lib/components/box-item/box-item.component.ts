@@ -30,11 +30,9 @@ export class BoxItemComponent<T = any> implements AfterViewInit {
       this.renderer.setAttribute(this.eleRef.nativeElement, 'id', `box-item-${this.node.id}`);
       this.renderer.setStyle(this.eleRef.nativeElement, 'width', `${this.node.width}px`);
       this.renderer.setStyle(this.eleRef.nativeElement, 'height', `${this.node.height}px`);
-      this.renderer.setStyle(
-        this.eleRef.nativeElement,
-        'transform',
-        `translate3d(${this.node.left}px,${this.node.top}px,0px) rotate(${this.node.rotate ?? 0}deg)`
-      );
+      this.renderer.setStyle(this.eleRef.nativeElement, 'left', `${this.node.left}px`);
+      this.renderer.setStyle(this.eleRef.nativeElement, 'top', `${this.node.top}px`);
+      this.renderer.setStyle(this.eleRef.nativeElement, 'transform', `translate3d(0,0,0) rotate(${this.node.rotate ?? 0}deg)`);
       this.renderer.setStyle(this.eleRef.nativeElement, 'border-style', this.node.borderStyle);
       this.renderer.setStyle(this.eleRef.nativeElement, 'border-color', this.node.borderColor);
       this.renderer.setStyle(this.eleRef.nativeElement, 'border-width', `${this.node.borderWidth}px`);

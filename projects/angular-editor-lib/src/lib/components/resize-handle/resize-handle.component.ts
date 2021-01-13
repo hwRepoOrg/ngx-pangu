@@ -1,14 +1,16 @@
-import { Component, ElementRef, HostBinding, ViewEncapsulation } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ElementRef, HostBinding, ViewEncapsulation } from '@angular/core';
+import { Observable } from 'rxjs';
 import { updateNodesSize } from '../../actions';
 import { EditorStore } from '../../services';
 import { CeUtilsService, IAbsolutePosition, IDOMRect, IRectDirection } from '../../services/utils.service';
 import { ICanvasPosition, INode, IStore } from '../../store';
 
 @Component({
-  selector: 'ce-resize-handle',
+  selector: 'ce-resize-handle,[ceResizeHandle]',
   templateUrl: 'resize-handle.component.html',
   styleUrls: ['resize-handle.component.less'],
   encapsulation: ViewEncapsulation.None,
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ResizeHandleComponent {
   @HostBinding('style.display')
@@ -26,6 +28,7 @@ export class ResizeHandleComponent {
     return `rotate(${this.rotate ?? 0}deg)`;
   }
   public selected: Set<string>;
+  public hasSelected$: Observable<boolean>;
   private canvasPosition: ICanvasPosition;
   private rotate: number;
   private nodes: INode[];
@@ -36,9 +39,10 @@ export class ResizeHandleComponent {
   private nodePositionSnapshotList = new Map<string, IAbsolutePosition>();
 
   constructor(private store: EditorStore<IStore>, private utils: CeUtilsService, public eleRef: ElementRef<HTMLElement>) {
+    this.hasSelected$ = this.store.selectDifferent((state) => !!state.selected.size);
     this.store
-      .select((state) => [state.selected, state.canvasPosition, state.nodes] as any)
-      .subscribe(([selected, canvasPosition, nodes]) => {
+      .selectDifferent((state) => ({ selected: state.selected, canvasPosition: state.canvasPosition, nodes: state.nodes }))
+      .subscribe(({ selected, canvasPosition, nodes }) => {
         this.display = selected.size ? 'block' : 'none';
         this.selected = selected;
         this.canvasPosition = canvasPosition;

@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { EditorStore } from '../../services';
@@ -10,6 +10,7 @@ import { WidgetFormComponent } from './forms/widget-form/widget-form.component';
   templateUrl: './property-form.component.html',
   styleUrls: ['./property-form.component.less'],
   encapsulation: ViewEncapsulation.None,
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PropertyFormComponent implements OnInit {
   formComponent$: Observable<any>;
