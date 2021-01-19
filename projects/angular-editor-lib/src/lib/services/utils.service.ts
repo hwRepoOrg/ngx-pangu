@@ -30,6 +30,8 @@ export interface IDOMRect {
 
 export type IRectDirection = 'tl' | 't' | 'tr' | 'r' | 'br' | 'b' | 'bl' | 'l';
 
+type TreeNode = INode & { children: TreeNode[] };
+
 const SPECIAL_ROTATE = new Set([0, 90, 180, 270, 360]);
 
 export function genNodeId(): string {
@@ -95,26 +97,38 @@ export class CeUtilsService {
   }
 
   /**
+   * 将平铺的节点列表转为树
+   * @param nodes 节点列表
+   */
+  public transferNodesListToNodesTree(nodes: INode[]): TreeNode[] {
+    const tree: TreeNode[] = [];
+    const childrenOf = {};
+    for (const node of nodes) {
+      const id = node.id;
+      const pid = node.parentId;
+      childrenOf[id] = childrenOf[id] || [];
+      node.children = childrenOf[id];
+      if (pid !== undefined && pid !== '') {
+        childrenOf[pid] = childrenOf[pid] || [];
+        childrenOf[pid].push(node);
+      } else {
+        tree.push(node as TreeNode);
+      }
+    }
+    return tree;
+  }
+
+  public getNodeChildren(id: string, nodes: INode[]) {
+    return nodes.filter((node) => node.parentId === id);
+  }
+
+  /**
    * 通过节点ID在树中查找节点
    * @param id 节点ID
    * @param nodes 节点树
    */
   public getNodeById<T = any>(id: string, nodes: INode<T>[]): INode<T> {
-    let flag = false;
-    let node: INode<T>;
-    const stack = [...nodes];
-    while (!flag && stack.length) {
-      const item = stack.pop();
-      if (item.id === id) {
-        flag = true;
-        node = item;
-      } else {
-        if (item.children && item.children.length) {
-          stack.push(...item.children.map((i) => ({ ...i, parentNode: item })));
-        }
-      }
-    }
-    return node;
+    return nodes.find((node) => node.id === id);
   }
 
   /**
@@ -126,26 +140,14 @@ export class CeUtilsService {
     if (!id) {
       return [];
     }
-    const rootIdSet = new Set(nodes.map((node) => node.id));
-    let flag = false;
-    let path: INode[] = [];
-    const stack = [...nodes];
-    while (!flag && stack.length) {
-      const node = stack.shift();
-      if (rootIdSet.has(node.id)) {
-        path = [];
-      }
-      if (node.id === id) {
-        flag = true;
-        path.unshift(node);
-      } else {
-        if (node.children && node.children.length) {
-          path.unshift(node);
-          stack.unshift(...node.children);
-        }
-      }
+    const arr: INode<T>[] = [nodes.find((n) => n.id === id)];
+
+    let parentId = arr[1]?.parentId;
+    while (parentId) {
+      arr.push(nodes.find((n) => n.id === parentId));
+      parentId = arr[arr.length - 1]?.parentId;
     }
-    return path;
+    return arr;
   }
 
   /**
@@ -154,18 +156,11 @@ export class CeUtilsService {
    * @param nodes 节点集合
    */
   public getSameLayerParentByChildren(childrenIds: string[], nodes: INode[]): INode | false {
-    let flag = true;
-    const parents = childrenIds.map((id) => this.getNodeAndParentListById(id, nodes)[1]);
-    let prevParent = parents.pop();
-    while (flag && parents.length) {
-      const parent = parents.pop();
-      if (prevParent?.id === parent?.id) {
-        prevParent = parent;
-      } else {
-        flag = false;
-      }
+    const parentIds = childrenIds.map((id) => nodes.find((node) => node.id === id)?.parentId ?? '');
+    if (new Set(parentIds).size === 1) {
+      return nodes.find((node) => node.id === parentIds[0]);
     }
-    return flag && prevParent;
+    return false;
   }
 
   /**
@@ -317,7 +312,7 @@ export class CeUtilsService {
    * 依据zIndex对节点递归排序
    * @param list 节点列表
    */
-  public sortNodeListByIndex(list?: INode[]): INode[] {
+  public sortNodeListByIndex(list?: TreeNode[]): TreeNode[] {
     return (
       list &&
       _.chain(list)

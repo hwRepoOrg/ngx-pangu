@@ -4,8 +4,6 @@ export interface INode<T = any> {
   id: string;
   name: string;
   locked?: boolean;
-  data?: T;
-  children?: INode[];
   width: number;
   height: number;
   left: number;
@@ -21,6 +19,8 @@ export interface INode<T = any> {
   backgroundRepeat?: string;
   backgroundPosition?: string;
   backgroundSize?: string;
+  parentId?: string;
+  data?: T;
   [key: string]: any;
 }
 
