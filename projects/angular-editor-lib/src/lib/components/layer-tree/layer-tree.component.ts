@@ -45,7 +45,7 @@ export class LayerTreeComponent {
   ) {
     this.treeNodes$ = this.store
       .selectDifferent((state) => state.nodes)
-      .pipe(map((nodes) => this.transferNodesToNzNodes(this.utils.sortNodeListByIndex(this.utils.transferNodesListToNodesTree(nodes)))));
+      .pipe(map((nodes) => this.transferNodesToNzNodes(this.utils.sortNodeListByIndex(nodes))));
     this.selectedKeys$ = this.store.selectDifferent((state) => state.selected).pipe(map((selected) => [...selected]));
     this.groupStatus$ = this.store
       .selectDifferent((state) => state.selected)
