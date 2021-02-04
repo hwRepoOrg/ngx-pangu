@@ -28,7 +28,7 @@ export class ResizeHandleComponent {
     return `rotate(${this.rotate ?? 0}deg)`;
   }
   public selected: Set<string>;
-  public hasSelected$: Observable<boolean>;
+  public selectedSize$: Observable<number>;
   private canvasPosition: ICanvasPosition;
   private rotate: number;
   private nodes: INode[];
@@ -39,7 +39,7 @@ export class ResizeHandleComponent {
   private nodePositionSnapshotList = new Map<string, IAbsolutePosition>();
 
   constructor(private store: EditorStore<IStore>, private utils: CeUtilsService, public eleRef: ElementRef<HTMLElement>) {
-    this.hasSelected$ = this.store.selectDifferent((state) => !!state.selected.size);
+    this.selectedSize$ = this.store.selectDifferent((state) => state.selected.size);
     this.store
       .selectDifferent((state) => ({ selected: state.selected, canvasPosition: state.canvasPosition, nodes: state.nodes }))
       .subscribe(({ selected, canvasPosition, nodes }) => {
