@@ -25,8 +25,6 @@
 
   function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
-  function _createForOfIteratorHelper(o, allowArrayLike) { var it; if (typeof Symbol === "undefined" || o[Symbol.iterator] == null) { if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e2) { throw _e2; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = o[Symbol.iterator](); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e3) { didErr = true; err = _e3; }, f: function f() { try { if (!normalCompletion && it["return"] != null) it["return"](); } finally { if (didErr) throw err; } } }; }
-
   function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread(); }
 
   function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
@@ -465,50 +463,6 @@
             }
           }
           /**
-           * 将平铺的节点列表转为树
-           * @param nodes 节点列表
-           */
-
-        }, {
-          key: "transferNodesListToNodesTree",
-          value: function transferNodesListToNodesTree(nodes) {
-            var tree = [];
-            var childrenOf = {};
-
-            var _iterator = _createForOfIteratorHelper(nodes),
-                _step;
-
-            try {
-              for (_iterator.s(); !(_step = _iterator.n()).done;) {
-                var node = _step.value;
-                var id = node.id;
-                var pid = node.parentId;
-                childrenOf[id] = childrenOf[id] || [];
-                node.children = childrenOf[id];
-
-                if (pid !== undefined && pid !== '') {
-                  childrenOf[pid] = childrenOf[pid] || [];
-                  childrenOf[pid].push(node);
-                } else {
-                  tree.push(node);
-                }
-              }
-            } catch (err) {
-              _iterator.e(err);
-            } finally {
-              _iterator.f();
-            }
-
-            return tree;
-          }
-        }, {
-          key: "getNodeChildren",
-          value: function getNodeChildren(id, nodes) {
-            return nodes.filter(function (node) {
-              return node.parentId === id;
-            });
-          }
-          /**
            * 通过节点ID在树中查找节点
            * @param id 节点ID
            * @param nodes 节点树
@@ -517,9 +471,33 @@
         }, {
           key: "getNodeById",
           value: function getNodeById(id, nodes) {
-            return nodes.find(function (node) {
-              return node.id === id;
-            });
+            var flag = false;
+            var node;
+
+            var stack = _toConsumableArray(nodes);
+
+            var _loop = function _loop() {
+              var item = stack.pop();
+
+              if (item.id === id) {
+                flag = true;
+                node = item;
+              } else {
+                if (item.children && item.children.length) {
+                  stack.push.apply(stack, _toConsumableArray(item.children.map(function (i) {
+                    return Object.assign(Object.assign({}, i), {
+                      parentNode: item
+                    });
+                  })));
+                }
+              }
+            };
+
+            while (!flag && stack.length) {
+              _loop();
+            }
+
+            return node;
           }
           /**
            * 通过节点ID查找节点及节点所有父级
@@ -530,25 +508,37 @@
         }, {
           key: "getNodeAndParentListById",
           value: function getNodeAndParentListById(id, nodes) {
-            var _a, _b;
-
             if (!id) {
               return [];
             }
 
-            var arr = [nodes.find(function (n) {
-              return n.id === id;
-            })];
-            var parentId = (_a = arr[1]) === null || _a === void 0 ? void 0 : _a.parentId;
+            var rootIdSet = new Set(nodes.map(function (node) {
+              return node.id;
+            }));
+            var flag = false;
+            var path = [];
 
-            while (parentId) {
-              arr.push(nodes.find(function (n) {
-                return n.id === parentId;
-              }));
-              parentId = (_b = arr[arr.length - 1]) === null || _b === void 0 ? void 0 : _b.parentId;
+            var stack = _toConsumableArray(nodes);
+
+            while (!flag && stack.length) {
+              var node = stack.shift();
+
+              if (rootIdSet.has(node.id)) {
+                path = [];
+              }
+
+              if (node.id === id) {
+                flag = true;
+                path.unshift(node);
+              } else {
+                if (node.children && node.children.length) {
+                  path.unshift(node);
+                  stack.unshift.apply(stack, _toConsumableArray(node.children));
+                }
+              }
             }
 
-            return arr;
+            return path;
           }
           /**
            * 通过子节点id集合和节点树，获取子节点的父节点，若子节点不在同一级则返回undefined
@@ -559,21 +549,25 @@
         }, {
           key: "getSameLayerParentByChildren",
           value: function getSameLayerParentByChildren(childrenIds, nodes) {
-            var parentIds = childrenIds.map(function (id) {
-              var _a, _b;
+            var _this2 = this;
 
-              return (_b = (_a = nodes.find(function (node) {
-                return node.id === id;
-              })) === null || _a === void 0 ? void 0 : _a.parentId) !== null && _b !== void 0 ? _b : '';
+            var flag = true;
+            var parents = childrenIds.map(function (id) {
+              return _this2.getNodeAndParentListById(id, nodes)[1];
             });
+            var prevParent = parents.pop();
 
-            if (new Set(parentIds).size === 1) {
-              return nodes.find(function (node) {
-                return node.id === parentIds[0];
-              });
+            while (flag && parents.length) {
+              var parent = parents.pop();
+
+              if ((prevParent === null || prevParent === void 0 ? void 0 : prevParent.id) === (parent === null || parent === void 0 ? void 0 : parent.id)) {
+                prevParent = parent;
+              } else {
+                flag = false;
+              }
             }
 
-            return false;
+            return flag && prevParent;
           }
           /**
            * 通过直线的两点方程获取直线上人一点点的坐标
@@ -781,13 +775,13 @@
         }, {
           key: "sortNodeListByIndex",
           value: function sortNodeListByIndex(list) {
-            var _this2 = this;
+            var _this3 = this;
 
             return list && Object(lodash__WEBPACK_IMPORTED_MODULE_2__["chain"])(list).sortBy(function (item) {
               return item.zIndex;
             }).map(function (item) {
               return Object.assign(Object.assign({}, item), {
-                children: _this2.sortNodeListByIndex(item.children)
+                children: _this3.sortNodeListByIndex(item.children)
               });
             }).value();
           }
@@ -991,10 +985,10 @@
         }, {
           key: "getChildrenBoundingBoxBaseOnParentCoordinateSystem",
           value: function getChildrenBoundingBoxBaseOnParentCoordinateSystem(children, parents) {
-            var _this3 = this;
+            var _this4 = this;
 
             var outerBox = this.getOuterBoundingBox(children.map(function (child) {
-              return _this3.getAbsolutePosition(child.left + child.width / 2, child.top + child.height / 2, child.width, child.height, child.rotate);
+              return _this4.getAbsolutePosition(child.left + child.width / 2, child.top + child.height / 2, child.width, child.height, child.rotate);
             }));
             var domRect = Object.assign({}, outerBox);
 
@@ -1014,7 +1008,7 @@
         }, {
           key: "getResizeBoundingBox",
           value: function getResizeBoundingBox(selected, nodes) {
-            var _this4 = this;
+            var _this5 = this;
 
             var _a;
 
@@ -1040,7 +1034,7 @@
                 var _parents = this.getNodeAndParentListById(parent === null || parent === void 0 ? void 0 : parent.id, nodes);
 
                 rect = this.getChildrenBoundingBoxBaseOnParentCoordinateSystem(selected.map(function (id) {
-                  return _this4.getNodeById(id, nodes);
+                  return _this5.getNodeById(id, nodes);
                 }), _toConsumableArray(_parents));
                 rotate = _parents.reduce(function (sum, p) {
                   var _a;
@@ -1140,13 +1134,13 @@
         var _super = _createSuper(EditorStore);
 
         function EditorStore(utils) {
-          var _this5;
+          var _this6;
 
           _classCallCheck(this, EditorStore);
 
-          _this5 = _super.call(this, DEFAULT_STORE);
-          _this5.utils = utils;
-          _this5._defaultPanels = [{
+          _this6 = _super.call(this, DEFAULT_STORE);
+          _this6.utils = utils;
+          _this6._defaultPanels = [{
             key: 'LAYERS',
             title: '图层',
             content: LayerTreeComponent,
@@ -1168,9 +1162,9 @@
             x: window.innerWidth - 350,
             y: 60
           }];
-          _this5.panels = [];
-          _this5.panels$ = new rxjs__WEBPACK_IMPORTED_MODULE_4__["BehaviorSubject"]([].concat(_toConsumableArray(_this5._defaultPanels), _toConsumableArray(_this5.panels)));
-          return _this5;
+          _this6.panels = [];
+          _this6.panels$ = new rxjs__WEBPACK_IMPORTED_MODULE_4__["BehaviorSubject"]([].concat(_toConsumableArray(_this6._defaultPanels), _toConsumableArray(_this6.panels)));
+          return _this6;
         }
 
         _createClass(EditorStore, [{
@@ -1191,14 +1185,14 @@
         }, {
           key: "selectDifferent",
           value: function selectDifferent(cb) {
-            var _this6 = this;
+            var _this7 = this;
 
             return this.select(cb).pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_1__["startWith"])(null, cb(this.get())), Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_1__["pairwise"])(), Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_1__["filter"])(function (_ref) {
               var _ref2 = _slicedToArray(_ref, 2),
                   prev = _ref2[0],
                   present = _ref2[1];
 
-              return !_this6.utils.isDeepEqual(prev, present);
+              return !_this7.utils.isDeepEqual(prev, present);
             }), Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_1__["map"])(function (_ref3) {
               var _ref4 = _slicedToArray(_ref3, 2),
                   present = _ref4[1];
@@ -1316,7 +1310,7 @@
         _createClass(BorderedAreaComponent, [{
           key: "ngOnInit",
           value: function ngOnInit() {
-            var _this7 = this;
+            var _this8 = this;
 
             this.borderedNodeList$ = this.store.selectDifferent(function (state) {
               return {
@@ -1332,7 +1326,7 @@
               if (!bordered.size) {
                 return [];
               } else {
-                return _this7.refreshBorderedList(nodes, bordered, canvasSize);
+                return _this8.refreshBorderedList(nodes, bordered, canvasSize);
               }
             }));
           }
@@ -1353,25 +1347,25 @@
         }, {
           key: "refreshBorderedList",
           value: function refreshBorderedList(nodes, bordered, canvasSize) {
-            var _this8 = this;
+            var _this9 = this;
 
             return _toConsumableArray(bordered).map(function (id) {
-              return _this8.utils.getNodeById(id, nodes);
+              return _this9.utils.getNodeById(id, nodes);
             }).filter(function (node) {
               return !!node;
             }).map(function (node) {
               var _a;
 
               {
-                var _this8$utils$getNodeA = _this8.utils.getNodeAndParentListById(node.id, nodes),
-                    _this8$utils$getNodeA2 = _toArray(_this8$utils$getNodeA),
-                    parents = _this8$utils$getNodeA2.slice(1);
+                var _this9$utils$getNodeA = _this9.utils.getNodeAndParentListById(node.id, nodes),
+                    _this9$utils$getNodeA2 = _toArray(_this9$utils$getNodeA),
+                    parents = _this9$utils$getNodeA2.slice(1);
 
                 var child = Object.assign({}, node);
 
                 while (parents.length) {
                   var parent = parents.shift();
-                  child = Object.assign(Object.assign(Object.assign({}, child), _this8.utils.getChildPositionBaseOnParentCoordinateSystem(parent, (_a = parent.rotate) !== null && _a !== void 0 ? _a : 0, child)), {
+                  child = Object.assign(Object.assign(Object.assign({}, child), _this9.utils.getChildPositionBaseOnParentCoordinateSystem(parent, (_a = parent.rotate) !== null && _a !== void 0 ? _a : 0, child)), {
                     rotate: child.rotate + parent.rotate
                   });
                 }
@@ -1643,7 +1637,7 @@
 
       var CanvasGridComponent = /*#__PURE__*/function () {
         function CanvasGridComponent(store) {
-          var _this9 = this;
+          var _this10 = this;
 
           _classCallCheck(this, CanvasGridComponent);
 
@@ -1652,10 +1646,10 @@
             return state.canvasPosition.scale;
           });
           this.childDPath$ = scale$.pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_1__["map"])(function (scale) {
-            return _this9.getPath(10, scale);
+            return _this10.getPath(10, scale);
           }));
           this.parentDPath$ = scale$.pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_1__["map"])(function (scale) {
-            return _this9.getPath(50, scale);
+            return _this10.getPath(50, scale);
           }));
           this.childWidth$ = scale$.pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_1__["map"])(function (scale) {
             return 10 * scale;
@@ -1886,24 +1880,20 @@
           } else {
             var _ret = function () {
               var originalParentId = parent.id;
-              var newNodes = state.nodes.filter(function (node) {
-                return !ids.includes(node.id);
-              });
               var prevParent;
               var prevParentId;
               var parents = CeUtilsService.shared.getNodeAndParentListById(parent.id, Object(lodash__WEBPACK_IMPORTED_MODULE_2__["cloneDeep"])(state.nodes));
 
-              var _loop = function _loop() {
-                var parent = parents.shift();
+              while (parents.length) {
+                parent = parents.shift();
                 var children = void 0;
-                var parentChildren = CeUtilsService.shared.getNodeChildren(parent.id, state.nodes);
 
                 if (parent.id === originalParentId) {
-                  children = parentChildren.filter(function (child) {
+                  children = parent.children.filter(function (child) {
                     return !ids.includes(child.id);
                   });
                 } else {
-                  children = parentChildren.filter(function (child) {
+                  children = parent.children.filter(function (child) {
                     return child.id === prevParentId ? prevParent : child;
                   }).filter(function (child) {
                     return !!child;
@@ -1924,32 +1914,25 @@
                   parent.height = rect.height;
                   parent.left = rect.left;
                   parent.top = rect.top;
+                  parent.children = children;
                 } else if (children.length === 1) {
                   var _rect = CeUtilsService.shared.getChildPositionBaseOnParentCoordinateSystem(parent, parent.rotate, children[0]);
 
-                  parent = Object.assign(Object.assign(Object.assign({}, children[0]), _rect), {
-                    parentId: parent.parentId
-                  });
-                  newNodes = newNodes.map(function (node) {
-                    return node.id === parent.id ? Object.assign({}, parent) : node;
-                  });
+                  parent = Object.assign(Object.assign({}, children[0]), _rect);
                 } else if (children.length === 0) {
-                  newNodes = newNodes.filter(function (node) {
-                    return node.id !== parent.id;
-                  });
                   parent = null;
                 }
 
                 prevParent = parent;
-              };
-
-              while (parents.length) {
-                _loop();
               }
 
               return {
                 v: Object.assign(Object.assign({}, state), {
-                  nodes: newNodes
+                  nodes: state.nodes.map(function (node) {
+                    return node.id === prevParentId ? parent : node;
+                  }).filter(function (node) {
+                    return !!node;
+                  })
                 })
               };
             }();
@@ -1973,7 +1956,42 @@
 
       function updateNodesSize(nodesSizeMap) {
         return function (state) {
-          return state;
+          var _a;
+
+          var inSameLayer = true;
+
+          var ids = _toConsumableArray(nodesSizeMap.keys());
+
+          var parent;
+
+          while (inSameLayer && ids.length) {
+            var id = ids.pop();
+            var node = CeUtilsService.shared.getNodeById(id, state.nodes);
+            inSameLayer = (parent === null || parent === void 0 ? void 0 : parent.id) === ((_a = node.parentNode) === null || _a === void 0 ? void 0 : _a.id);
+            parent = node.parentNode;
+          }
+
+          if (!inSameLayer) {
+            return state;
+          } else {
+            if (!parent) {
+              return Object.assign(Object.assign({}, state), {
+                nodes: state.nodes.map(function (node) {
+                  var newNode = Object.assign(Object.assign({}, node), nodesSizeMap.get(node.id));
+
+                  if (node.children && node.children.length) {
+                    return Object.assign(Object.assign({}, newNode), {
+                      children: recursiveUpdateNodeChildrenSize(newNode.children, Object.assign({}, node), Object.assign({}, newNode))
+                    });
+                  } else {
+                    return newNode;
+                  }
+                })
+              });
+            } else {
+              return state;
+            }
+          }
         };
       }
 
@@ -2086,6 +2104,71 @@
             if (typeof _ret2 === "object") return _ret2.v;
           }
         };
+      } // /**
+      //  * 递归更新节点的位置和大小
+      //  * @param nodes 节点列表
+      //  * @param oldParentRect 父节点的旧尺寸和位置
+      //  * @param newParentRect 父节点的新尺寸和位置
+      //  */
+      // function recursiveUpdateNodeChildrenSize(nodes: INode[], oldParentRect: IDOMRect, newParentRect: IDOMRect): INode[] {
+      //   const { width, height } = newParentRect;
+      //   return nodes.map((node) => {
+      //     const cxPercent = (node.left + node.width / 2) / oldParentRect.width;
+      //     const cyPercent = (node.top + node.height / 2) / oldParentRect.height;
+      //     const widthPercent = node.width / oldParentRect.width;
+      //     const heightPercent = node.height / oldParentRect.height;
+      //     const newNodeRect: IDOMRect = {
+      //       width: widthPercent * width,
+      //       height: heightPercent * height,
+      //       left: cxPercent * width - (widthPercent * width) / 2,
+      //       top: cyPercent * height - (heightPercent * height) / 2,
+      //     };
+      //     if (node.children && node.children.length) {
+      //       return { ...node, ...newNodeRect, children: recursiveUpdateNodeChildrenSize(node.children, { ...node }, { ...newNodeRect }) };
+      //     } else {
+      //       return { ...node, ...newNodeRect };
+      //     }
+      //   });
+      // }
+
+      /**
+       * 递归更新节点的位置和大小
+       * @param nodes 节点列表
+       * @param oldParentRect 父节点的旧尺寸和位置
+       * @param newParentRect 父节点的新尺寸和位置
+       */
+
+
+      function recursiveUpdateNodeChildrenSize(nodes, oldParentRect, newParentRect) {
+        var width = newParentRect.width,
+            height = newParentRect.height;
+        return nodes.map(function (node) {
+          var nodeAbsolutePosition = CeUtilsService.shared.getAbsolutePosition(node.left + node.width / 2, node.top + node.height / 2, node.width, node.height, node.rotate);
+
+          var _CeUtilsService$share4 = CeUtilsService.shared.getItemPercentPositionInGroup(Object.assign(Object.assign({}, oldParentRect), {
+            left: 0,
+            top: 0
+          }), nodeAbsolutePosition),
+              tl = _CeUtilsService$share4.tl,
+              tr = _CeUtilsService$share4.tr,
+              bl = _CeUtilsService$share4.bl,
+              br = _CeUtilsService$share4.br;
+
+          var newNodeRect = CeUtilsService.shared.getRelativePosition({
+            tl: [tl[0] * width, tl[1] * height],
+            tr: [tr[0] * width, tr[1] * height],
+            bl: [bl[0] * width, bl[1] * height],
+            br: [br[0] * width, br[1] * height]
+          });
+
+          if (node.children && node.children.length) {
+            return Object.assign(Object.assign(Object.assign({}, node), newNodeRect), {
+              children: recursiveUpdateNodeChildrenSize(node.children, Object.assign({}, node), Object.assign({}, newNodeRect))
+            });
+          } else {
+            return Object.assign(Object.assign({}, node), newNodeRect);
+          }
+        });
       }
 
       function updateRefLineState(direction, state) {
@@ -2140,21 +2223,21 @@
         _createClass(DraggableDirective, [{
           key: "ngOnInit",
           value: function ngOnInit() {
-            var _this10 = this;
+            var _this11 = this;
 
             this.listenSpaceKeyEvent();
             this.mouseDown$.pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_1__["filter"])(function () {
-              return !_this10.ceDragDisabled;
+              return !_this11.ceDragDisabled;
             }), Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_1__["filter"])(function () {
-              return _this10.ceUseSpace ? _this10.spaceKeyDown : true;
+              return _this11.ceUseSpace ? _this11.spaceKeyDown : true;
             }), Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_1__["switchMap"])(function (startEv) {
-              _this10.ceOnStart.emit(startEv);
+              _this11.ceOnStart.emit(startEv);
 
-              return _this10.mouseMove$.pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_1__["takeUntil"])(_this10.mouseUp$.pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_1__["map"])(function (stopEv) {
-                return _this10.ceOnStop.emit(stopEv);
+              return _this11.mouseMove$.pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_1__["takeUntil"])(_this11.mouseUp$.pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_1__["map"])(function (stopEv) {
+                return _this11.ceOnStop.emit(stopEv);
               }))));
             })).subscribe(function (moveEv) {
-              return _this10.ceOnMove.emit(moveEv);
+              return _this11.ceOnMove.emit(moveEv);
             });
           }
         }, {
@@ -2165,32 +2248,32 @@
         }, {
           key: "listenSpaceKeyEvent",
           value: function listenSpaceKeyEvent() {
-            var _this11 = this;
+            var _this12 = this;
 
             this.subscription.add(this.mouseEnter$.pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_1__["filter"])(function () {
-              return !_this11.ceDragDisabled;
+              return !_this12.ceDragDisabled;
             }), Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_1__["filter"])(function () {
-              return _this11.ceUseSpace;
+              return _this12.ceUseSpace;
             }), Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_1__["switchMap"])(function () {
-              return _this11.keyDown$.pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_1__["switchMap"])(function (e) {
-                _this11.spaceKeyDown = e.key === ' ';
+              return _this12.keyDown$.pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_1__["switchMap"])(function (e) {
+                _this12.spaceKeyDown = e.key === ' ';
 
-                _this11.cdr.detectChanges();
+                _this12.cdr.detectChanges();
 
-                if (_this11.spaceKeyDown) {
+                if (_this12.spaceKeyDown) {
                   e.preventDefault();
                   e.stopPropagation();
                 }
 
-                return _this11.keyUp$;
+                return _this12.keyUp$;
               }), Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_1__["map"])(function () {
-                _this11.spaceKeyDown = false;
+                _this12.spaceKeyDown = false;
 
-                _this11.ceOnStop.emit();
-              }), Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_1__["takeUntil"])(_this11.mouseLeave$), Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_1__["finalize"])(function () {
-                _this11.spaceKeyDown = false;
+                _this12.ceOnStop.emit();
+              }), Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_1__["takeUntil"])(_this12.mouseLeave$), Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_1__["finalize"])(function () {
+                _this12.spaceKeyDown = false;
 
-                _this11.ceOnStop.emit();
+                _this12.ceOnStop.emit();
               }));
             })).subscribe());
           }
@@ -2468,7 +2551,7 @@
 
       var CanvasComponent = /*#__PURE__*/function () {
         function CanvasComponent(store, utils) {
-          var _this12 = this;
+          var _this13 = this;
 
           _classCallCheck(this, CanvasComponent);
 
@@ -2483,17 +2566,17 @@
           this.store.select(function (state) {
             return state.nodes;
           }).subscribe(function (nodes) {
-            return _this12.nodes = nodes;
+            return _this13.nodes = nodes;
           });
           this.store.select(function (state) {
             return state.selected;
           }).subscribe(function (state) {
-            return _this12.selected = state;
+            return _this13.selected = state;
           });
           this.store.select(function (state) {
             return state.canvasPosition;
           }).subscribe(function (state) {
-            return _this12.canvasPosition = state;
+            return _this13.canvasPosition = state;
           });
         }
 
@@ -2505,7 +2588,7 @@
         }, {
           key: "moveStart",
           value: function moveStart(ev, node) {
-            var _this13 = this;
+            var _this14 = this;
 
             ev.preventDefault();
             ev.stopPropagation();
@@ -2522,28 +2605,28 @@
             }
 
             this.outerBoxSnapshot = this.utils.getOuterBoundingBox(selected.map(function (id) {
-              return _this13.utils.getNodeById(id, _this13.nodes);
+              return _this14.utils.getNodeById(id, _this14.nodes);
             }).map(function (item) {
-              return _this13.utils.getAbsolutePosition(item.left + item.width / 2, item.top + item.height / 2, item.width, item.height, item.rotate);
+              return _this14.utils.getAbsolutePosition(item.left + item.width / 2, item.top + item.height / 2, item.width, item.height, item.rotate);
             }));
             this.unselectedNodes = this.nodes.filter(function (item) {
               return !selected.includes(item.id);
             });
             selected.forEach(function (id) {
-              var item = _this13.nodes.find(function (n) {
+              var item = _this14.nodes.find(function (n) {
                 return n.id === id;
               });
 
-              _this13.nodesSnapshot.set(item.id, Object.assign(Object.assign({}, item), {
-                cxPercent: (item.left + item.width / 2 - _this13.outerBoxSnapshot.left) / _this13.outerBoxSnapshot.width,
-                cyPercent: (item.top + item.height / 2 - _this13.outerBoxSnapshot.top) / _this13.outerBoxSnapshot.height
+              _this14.nodesSnapshot.set(item.id, Object.assign(Object.assign({}, item), {
+                cxPercent: (item.left + item.width / 2 - _this14.outerBoxSnapshot.left) / _this14.outerBoxSnapshot.width,
+                cyPercent: (item.top + item.height / 2 - _this14.outerBoxSnapshot.top) / _this14.outerBoxSnapshot.height
               }));
             });
           }
         }, {
           key: "moving",
           value: function moving(ev) {
-            var _this14 = this;
+            var _this15 = this;
 
             if (this.pointerSnapshot) {
               this.store.dispatch(resetRefLineState());
@@ -2572,10 +2655,10 @@
                 cy: null
               };
               this.unselectedNodes.forEach(function (node) {
-                var nodeRect = _this14.utils.getBoundingBox(node.width, node.height, node.left, node.top, node.rotate);
+                var nodeRect = _this15.utils.getBoundingBox(node.width, node.height, node.left, node.top, node.rotate);
 
                 ['tx', 'bx', 'ly', 'ry', 'cx', 'cy'].forEach(function (direction) {
-                  var result = getRefLineStateByDirection(direction, baseRect, nodeRect, _this14.gap / scale);
+                  var result = getRefLineStateByDirection(direction, baseRect, nodeRect, _this15.gap / scale);
 
                   if (result) {
                     var state = result.state,
@@ -2881,7 +2964,7 @@
 
       var LayerTreeComponent = /*#__PURE__*/function () {
         function LayerTreeComponent(eleRef, store, utils, contextMenuSrv) {
-          var _this15 = this;
+          var _this16 = this;
 
           _classCallCheck(this, LayerTreeComponent);
 
@@ -2892,7 +2975,7 @@
           this.treeNodes$ = this.store.selectDifferent(function (state) {
             return state.nodes;
           }).pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_1__["map"])(function (nodes) {
-            return _this15.transferNodesToNzNodes(_this15.utils.sortNodeListByIndex(_this15.utils.transferNodesListToNodesTree(nodes)));
+            return _this16.transferNodesToNzNodes(_this16.utils.sortNodeListByIndex(nodes));
           }));
           this.selectedKeys$ = this.store.selectDifferent(function (state) {
             return state.selected;
@@ -2902,12 +2985,12 @@
           this.groupStatus$ = this.store.selectDifferent(function (state) {
             return state.selected;
           }).pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_1__["filter"])(function () {
-            return !!_this15.layerTree;
+            return !!_this16.layerTree;
           }), Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_1__["map"])(function (selected) {
             return selected.size > 1 ? !!_toConsumableArray(selected).find(function (id) {
               var _a;
 
-              var node = (_a = _this15.layerTree) === null || _a === void 0 ? void 0 : _a.getSelectedNodeList().find(function (item) {
+              var node = (_a = _this16.layerTree) === null || _a === void 0 ? void 0 : _a.getSelectedNodeList().find(function (item) {
                 return item.key === id;
               });
               return node && node.parentNode;
@@ -2916,7 +2999,7 @@
           this.store.selectDifferent(function (state) {
             return state.selected;
           }).subscribe(function (selected) {
-            _this15.selected = selected;
+            _this16.selected = selected;
           });
         }
 
@@ -2940,13 +3023,13 @@
         }, {
           key: "transferNodesToNzNodes",
           value: function transferNodesToNzNodes(nodes) {
-            var _this16 = this;
+            var _this17 = this;
 
             return nodes.map(function (node) {
               var _a;
 
               return Object.assign(Object.assign({}, node), {
-                children: node.children && _this16.transferNodesToNzNodes(node.children),
+                children: node.children && _this17.transferNodesToNzNodes(node.children),
                 title: node.name,
                 key: node.id,
                 isLeaf: !((_a = node.children) === null || _a === void 0 ? void 0 : _a.length)
@@ -2972,14 +3055,14 @@
         }, {
           key: "multipleSelected",
           value: function multipleSelected(event) {
-            var _this17 = this;
+            var _this18 = this;
 
             if (!this.parentKey) {
               this.parentKey = this.getParentKey(event.node.parentNode);
             }
 
             var ids = event.selectedKeys.filter(function (node) {
-              return _this17.getParentKey(node.parentNode) === _this17.parentKey;
+              return _this18.getParentKey(node.parentNode) === _this18.parentKey;
             }).map(function (node) {
               return node.key;
             });
@@ -3323,7 +3406,7 @@
 
       var CanvasFormsComponent = /*#__PURE__*/function () {
         function CanvasFormsComponent(fb, store) {
-          var _this18 = this;
+          var _this19 = this;
 
           _classCallCheck(this, CanvasFormsComponent);
 
@@ -3346,7 +3429,7 @@
           this.subscription.add(this.store.selectDifferent(function (state) {
             return state.canvasSize;
           }).subscribe(function (state) {
-            _this18.canvasSizeFormGroup.patchValue(state, {
+            _this19.canvasSizeFormGroup.patchValue(state, {
               emitEvent: false
             });
           }));
@@ -3355,7 +3438,7 @@
           }).subscribe(function (state) {
             var _a;
 
-            _this18.canvasPositionFormGroup.patchValue({
+            _this19.canvasPositionFormGroup.patchValue({
               left: Math.round(state.left),
               top: Math.round(state.top),
               scale: (_a = state.scale) === null || _a === void 0 ? void 0 : _a.toFixed(2)
@@ -3366,7 +3449,7 @@
           this.subscription.add(this.store.selectDifferent(function (state) {
             return state.canvasBackground;
           }).subscribe(function (state) {
-            _this18.canvasBackgroundFormGroup.patchValue(state, {
+            _this19.canvasBackgroundFormGroup.patchValue(state, {
               emitEvent: false
             });
           }));
@@ -3375,18 +3458,18 @@
         _createClass(CanvasFormsComponent, [{
           key: "ngOnInit",
           value: function ngOnInit() {
-            var _this19 = this;
+            var _this20 = this;
 
             this.canvasSizeFormGroup.valueChanges.subscribe(function (value) {
-              _this19.store.dispatch(updateCanvasSize(value));
+              _this20.store.dispatch(updateCanvasSize(value));
             });
             this.canvasPositionFormGroup.valueChanges.subscribe(function (value) {
-              _this19.store.dispatch(updateCanvasPosition(value));
+              _this20.store.dispatch(updateCanvasPosition(value));
             });
             this.canvasBackgroundFormGroup.valueChanges.subscribe(function (value) {
               console.log(value);
 
-              _this19.store.dispatch(updateCanvasBackground(value));
+              _this20.store.dispatch(updateCanvasBackground(value));
             });
           }
         }, {
@@ -3715,7 +3798,7 @@
         _createClass(WidgetFormComponent, [{
           key: "ngOnInit",
           value: function ngOnInit() {
-            var _this20 = this;
+            var _this21 = this;
 
             this.store.select(function (state) {
               return state.selected;
@@ -3724,7 +3807,7 @@
             }), Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_1__["map"])(function (selected) {
               return _toConsumableArray(selected)[0];
             }), Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_1__["switchMap"])(function (id) {
-              return _this20.store.select(function (state) {
+              return _this21.store.select(function (state) {
                 return state.nodes.find(function (item) {
                   return item.id === id;
                 });
@@ -3732,7 +3815,7 @@
             }), Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_1__["filter"])(function (node) {
               return !!node;
             })).subscribe(function (node) {
-              _this20.boundingFormGroup.patchValue(Object.assign(Object.assign({}, node), {
+              _this21.boundingFormGroup.patchValue(Object.assign(Object.assign({}, node), {
                 width: Math.round(node.width),
                 height: Math.round(node.height),
                 left: Math.round(node.left),
@@ -3742,7 +3825,7 @@
               });
             });
             this.boundingFormGroup.valueChanges.subscribe(function (values) {
-              _this20.store.dispatch(updateNodes([values]));
+              _this21.store.dispatch(updateNodes([values]));
             });
           }
         }]);
@@ -4152,7 +4235,7 @@
 
       var ResizeHandleComponent = /*#__PURE__*/function () {
         function ResizeHandleComponent(store, utils, eleRef) {
-          var _this21 = this;
+          var _this22 = this;
 
           _classCallCheck(this, ResizeHandleComponent);
 
@@ -4174,13 +4257,13 @@
             var selected = _ref9.selected,
                 canvasPosition = _ref9.canvasPosition,
                 nodes = _ref9.nodes;
-            _this21.display = selected.size ? 'block' : 'none';
-            _this21.selected = selected;
-            _this21.canvasPosition = canvasPosition;
-            _this21.nodes = nodes;
+            _this22.display = selected.size ? 'block' : 'none';
+            _this22.selected = selected;
+            _this22.canvasPosition = canvasPosition;
+            _this22.nodes = nodes;
 
-            if (_this21.selected.size) {
-              _this21.refreshResizeHandle();
+            if (_this22.selected.size) {
+              _this22.refreshResizeHandle();
             }
           });
         }
@@ -4208,7 +4291,7 @@
         }, {
           key: "resizeStart",
           value: function resizeStart(event) {
-            var _this22 = this;
+            var _this23 = this;
 
             event.preventDefault();
             event.stopPropagation();
@@ -4226,20 +4309,20 @@
               relative: [(event.clientX - canvasRect.left) / scale, (event.clientY - canvasRect.top) / scale]
             };
             this.selected.forEach(function (id) {
-              var node = _this22.utils.getNodeById(id, _this22.nodes);
+              var node = _this23.utils.getNodeById(id, _this23.nodes);
 
-              var nodeAbsolutePosition = _this22.utils.getAbsolutePosition(node.left + node.width / 2, node.top + node.height / 2, node.width, node.height, node.rotate);
+              var nodeAbsolutePosition = _this23.utils.getAbsolutePosition(node.left + node.width / 2, node.top + node.height / 2, node.width, node.height, node.rotate);
 
-              if (_this22.selected.size > 1) {
-                _this22.resizeMode = 'GROUP';
+              if (_this23.selected.size > 1) {
+                _this23.resizeMode = 'GROUP';
 
-                var percentPosition = _this22.utils.getItemPercentPositionInGroup(Object.assign({}, _this22.groupRectSnapshot), nodeAbsolutePosition);
+                var percentPosition = _this23.utils.getItemPercentPositionInGroup(Object.assign({}, _this23.groupRectSnapshot), nodeAbsolutePosition);
 
-                _this22.nodePositionSnapshotList.set(id, percentPosition);
+                _this23.nodePositionSnapshotList.set(id, percentPosition);
               } else {
-                _this22.resizeMode = 'SINGLE';
+                _this23.resizeMode = 'SINGLE';
 
-                _this22.nodePositionSnapshotList.set(id, nodeAbsolutePosition);
+                _this23.nodePositionSnapshotList.set(id, nodeAbsolutePosition);
               }
             });
           }
@@ -4271,7 +4354,7 @@
         }, {
           key: "resizingNodeList",
           value: function resizingNodeList(direction, mx, my) {
-            var _this23 = this;
+            var _this24 = this;
 
             var scale = this.canvasPosition.scale;
             var relative = this.resizePointSnapshot.relative;
@@ -4285,7 +4368,7 @@
                   bl = _ref10.bl,
                   br = _ref10.br,
                   tr = _ref10.tr;
-              nodesSizeMap.set(id, _this23.utils.getRelativePosition({
+              nodesSizeMap.set(id, _this24.utils.getRelativePosition({
                 bl: [bl[0] * newGroupRect.width + newGroupRect.left, bl[1] * newGroupRect.height + newGroupRect.top],
                 br: [br[0] * newGroupRect.width + newGroupRect.left, br[1] * newGroupRect.height + newGroupRect.top],
                 tl: [tl[0] * newGroupRect.width + newGroupRect.left, tl[1] * newGroupRect.height + newGroupRect.top],
@@ -4297,13 +4380,13 @@
         }, {
           key: "resizingNode",
           value: function resizingNode(direction, mx, my) {
-            var _this24 = this;
+            var _this25 = this;
 
             var scale = this.canvasPosition.scale;
             var relative = this.resizePointSnapshot.relative;
             var endPointer = [relative[0] + mx / scale, relative[1] + my / scale];
             this.nodePositionSnapshotList.forEach(function (position, id) {
-              _this24.store.dispatch(updateNodesSize(new Map([[id, getDOMRectByDirectionAndPosition(direction, position, endPointer)]])));
+              _this25.store.dispatch(updateNodesSize(new Map([[id, getDOMRectByDirectionAndPosition(direction, position, endPointer)]])));
             });
           }
         }, {
@@ -4653,17 +4736,17 @@
         _createClass(RotateHandleComponent, [{
           key: "ngOnInit",
           value: function ngOnInit() {
-            var _this25 = this;
+            var _this26 = this;
 
             this.store.select(function (state) {
               return state.selected;
             }).subscribe(function (selected) {
-              return _this25.selected = selected;
+              return _this26.selected = selected;
             });
             this.store.select(function (state) {
               return state.nodes;
             }).subscribe(function (nodes) {
-              return _this25.nodes = nodes;
+              return _this26.nodes = nodes;
             });
           }
         }, {
@@ -4768,7 +4851,7 @@
       })();
 
       var NoZoomAreaDirective = function NoZoomAreaDirective(store) {
-        var _this26 = this;
+        var _this27 = this;
 
         _classCallCheck(this, NoZoomAreaDirective);
 
@@ -4778,8 +4861,8 @@
             scale: state.canvasPosition.scale
           });
         }).subscribe(function (state) {
-          _this26.width = state.width * state.scale;
-          _this26.height = state.height * state.scale;
+          _this27.width = state.width * state.scale;
+          _this27.height = state.height * state.scale;
         });
       };
 
@@ -4841,43 +4924,43 @@
         _createClass(SelectorDirective, [{
           key: "ngOnInit",
           value: function ngOnInit() {
-            var _this27 = this;
+            var _this28 = this;
 
             this.subscription.add(Object(rxjs__WEBPACK_IMPORTED_MODULE_4__["fromEvent"])(this.eleRef.nativeElement, 'pointerdown').pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_1__["filter"])(function (e) {
               return e.button === 0;
             }), Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_1__["filter"])(function () {
-              return !_this27.ceSelectorDisabled;
+              return !_this28.ceSelectorDisabled;
             }), Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_1__["switchMap"])(function (ev) {
-              _this27.boxRect = _this27.eleRef.nativeElement.getBoundingClientRect();
-              _this27.startPointSnapshot = [ev.clientX, ev.clientY];
+              _this28.boxRect = _this28.eleRef.nativeElement.getBoundingClientRect();
+              _this28.startPointSnapshot = [ev.clientX, ev.clientY];
 
-              _this27.ceOnSelectorStart.emit();
+              _this28.ceOnSelectorStart.emit();
 
-              return _this27.move$.pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_1__["finalize"])(function () {
-                _this27.startPointSnapshot = null;
+              return _this28.move$.pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_1__["finalize"])(function () {
+                _this28.startPointSnapshot = null;
 
-                _this27.ceOnSelectorStop.emit();
-              }), Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_1__["takeUntil"])(_this27.up$));
+                _this28.ceOnSelectorStop.emit();
+              }), Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_1__["takeUntil"])(_this28.up$));
             })).subscribe(function (e) {
-              if (_this27.startPointSnapshot) {
+              if (_this28.startPointSnapshot) {
                 var x;
                 var y;
-                var mx = e.clientX - _this27.startPointSnapshot[0],
-                    my = e.clientY - _this27.startPointSnapshot[1];
+                var mx = e.clientX - _this28.startPointSnapshot[0],
+                    my = e.clientY - _this28.startPointSnapshot[1];
 
                 if (mx >= 0) {
-                  x = _this27.startPointSnapshot[0] - _this27.boxRect.left;
+                  x = _this28.startPointSnapshot[0] - _this28.boxRect.left;
                 } else {
-                  x = e.clientX - _this27.boxRect.left;
+                  x = e.clientX - _this28.boxRect.left;
                 }
 
                 if (my >= 0) {
-                  y = _this27.startPointSnapshot[1] - _this27.boxRect.top;
+                  y = _this28.startPointSnapshot[1] - _this28.boxRect.top;
                 } else {
-                  y = e.clientY - _this27.boxRect.top;
+                  y = e.clientY - _this28.boxRect.top;
                 }
 
-                _this27.ceOnSelectorMoving.emit({
+                _this28.ceOnSelectorMoving.emit({
                   x: x,
                   y: y,
                   width: Math.abs(mx),
@@ -4944,7 +5027,7 @@
       })();
 
       var ZoomAreaDirective = function ZoomAreaDirective(store) {
-        var _this28 = this;
+        var _this29 = this;
 
         _classCallCheck(this, ZoomAreaDirective);
 
@@ -4955,9 +5038,9 @@
             scale: state.canvasPosition.scale
           });
         }).subscribe(function (state) {
-          _this28.scale = "perspective(1px) scale(".concat(state.scale, ")");
-          _this28.width = state.width;
-          _this28.height = state.height;
+          _this29.scale = "perspective(1px) scale(".concat(state.scale, ")");
+          _this29.width = state.width;
+          _this29.height = state.height;
         });
       };
 
@@ -5201,7 +5284,7 @@
 
       var ToolbarComponent = /*#__PURE__*/function () {
         function ToolbarComponent(store, utils) {
-          var _this29 = this;
+          var _this30 = this;
 
           _classCallCheck(this, ToolbarComponent);
 
@@ -5215,8 +5298,8 @@
           }).subscribe(function (_ref11) {
             var selected = _ref11.selected,
                 nodes = _ref11.nodes;
-            _this29.selected = selected;
-            _this29.nodes = nodes;
+            _this30.selected = selected;
+            _this30.nodes = nodes;
           });
           this.selected$ = this.store.selectDifferent(function (state) {
             return state.selected;
@@ -5229,7 +5312,7 @@
           }), Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_1__["map"])(function (id) {
             var _a, _b;
 
-            return id && !!((_b = (_a = _this29.utils.getNodeById(id, _this29.nodes)) === null || _a === void 0 ? void 0 : _a.children) === null || _b === void 0 ? void 0 : _b.length);
+            return id && !!((_b = (_a = _this30.utils.getNodeById(id, _this30.nodes)) === null || _a === void 0 ? void 0 : _a.children) === null || _b === void 0 ? void 0 : _b.length);
           }));
         }
 
@@ -5381,7 +5464,7 @@
 
       var _c0$4 = ["container"];
 
-      function AngularEditorLibComponent_div_31_Template(rf, ctx) {
+      function AngularEditorLibComponent_div_32_Template(rf, ctx) {
         if (rf & 1) {
           Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelement"])(0, "div", 14);
         }
@@ -5392,7 +5475,7 @@
         }
       }
 
-      function AngularEditorLibComponent_ng_container_32_ce_panel_1_Template(rf, ctx) {
+      function AngularEditorLibComponent_ng_container_33_ce_panel_1_Template(rf, ctx) {
         if (rf & 1) {
           Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelement"])(0, "ce-panel", 16);
         }
@@ -5403,10 +5486,10 @@
         }
       }
 
-      function AngularEditorLibComponent_ng_container_32_Template(rf, ctx) {
+      function AngularEditorLibComponent_ng_container_33_Template(rf, ctx) {
         if (rf & 1) {
           Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementContainerStart"])(0);
-          Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtemplate"])(1, AngularEditorLibComponent_ng_container_32_ce_panel_1_Template, 1, 1, "ce-panel", 15);
+          Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtemplate"])(1, AngularEditorLibComponent_ng_container_33_ce_panel_1_Template, 1, 1, "ce-panel", 15);
           Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementContainerEnd"])();
         }
 
@@ -5422,7 +5505,7 @@
 
       var AngularEditorLibComponent = /*#__PURE__*/function () {
         function AngularEditorLibComponent(store) {
-          var _this30 = this;
+          var _this31 = this;
 
           _classCallCheck(this, AngularEditorLibComponent);
 
@@ -5435,13 +5518,13 @@
           this.store.select(function (state) {
             return state.canvasPosition;
           }).subscribe(function (canvasPosition) {
-            _this30.canvasPosition = canvasPosition;
-            _this30.matrix = "translate3d(".concat(_this30.canvasPosition.left, "px,").concat(_this30.canvasPosition.top, "px,0)");
+            _this31.canvasPosition = canvasPosition;
+            _this31.matrix = "translate3d(".concat(_this31.canvasPosition.left, "px,").concat(_this31.canvasPosition.top, "px,0)");
           });
           this.store.select(function (state) {
             return state.nodes;
           }).subscribe(function (nodes) {
-            return _this30.nodes = nodes;
+            return _this31.nodes = nodes;
           });
           this.refLineState$ = this.store.selectDifferent(function (state) {
             return state.refLineState;
@@ -5494,7 +5577,7 @@
         }, {
           key: "listenScaleEvent",
           value: function listenScaleEvent() {
-            var _this31 = this;
+            var _this32 = this;
 
             var scaleEle = this.containerEleRef.nativeElement;
             this.subscription.add(Object(rxjs__WEBPACK_IMPORTED_MODULE_4__["fromEvent"])(scaleEle, 'wheel').pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_1__["filter"])(function (e) {
@@ -5507,11 +5590,11 @@
               var x = e.clientX - containerBox.left,
                   y = e.clientY - containerBox.top;
 
-              if (_this31.canvasPosition.scale + wheelDelta >= 0.2) {
-                _this31.store.dispatch(updateCanvasPosition({
-                  scale: _this31.canvasPosition.scale + wheelDelta,
-                  left: (_this31.canvasPosition.left - x) * (wheelDelta / _this31.canvasPosition.scale) + _this31.canvasPosition.left,
-                  top: (_this31.canvasPosition.top - y) * (wheelDelta / _this31.canvasPosition.scale) + _this31.canvasPosition.top
+              if (_this32.canvasPosition.scale + wheelDelta >= 0.2) {
+                _this32.store.dispatch(updateCanvasPosition({
+                  scale: _this32.canvasPosition.scale + wheelDelta,
+                  left: (_this32.canvasPosition.left - x) * (wheelDelta / _this32.canvasPosition.scale) + _this32.canvasPosition.left,
+                  top: (_this32.canvasPosition.top - y) * (wheelDelta / _this32.canvasPosition.scale) + _this32.canvasPosition.top
                 }));
               }
             }));
@@ -5519,7 +5602,7 @@
         }, {
           key: "selectorStart",
           value: function selectorStart() {
-            var _this32 = this;
+            var _this33 = this;
 
             this.clearSelectAndBorder();
             var boxRect = this.containerEleRef.nativeElement.getBoundingClientRect();
@@ -5537,7 +5620,7 @@
                     left = rect.left,
                     top = rect.top;
 
-                _this32.nodesRectSnapshot.set(node.id, {
+                _this33.nodesRectSnapshot.set(node.id, {
                   width: width,
                   height: height,
                   left: left - boxRect.left,
@@ -5549,13 +5632,13 @@
         }, {
           key: "selectorMoving",
           value: function selectorMoving(rect) {
-            var _this33 = this;
+            var _this34 = this;
 
             this.selectorRect = rect;
             this.nodeIdList = [];
             this.nodesRectSnapshot.forEach(function (item, id) {
-              if (isInBound(item, _this33.selectorRect)) {
-                _this33.nodeIdList.push(id);
+              if (isInBound(item, _this34.selectorRect)) {
+                _this34.nodeIdList.push(id);
               }
             });
             this.store.dispatch(setBorderedNodes(this.nodeIdList));
@@ -5612,7 +5695,7 @@
         exportAs: ["ceEditor"],
         features: [Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵProvidersFeature"])([EditorStore])],
         ngContentSelectors: _c2$1,
-        decls: 34,
+        decls: 35,
         vars: 60,
         consts: [[1, "col", "p-0", "d-flex"], ["ceDraggable", "", "ceUseSpace", "", "ceSelector", "", 1, "canvas-container", 3, "ceSelectorDisabled", "ceOnStart", "ceOnMove", "ceOnStop", "ceOnSelectorStart", "ceOnSelectorMoving", "ceOnSelectorStop"], ["ceDrag", "ceDraggable", "container", ""], [1, "canvas-content"], ["ceNoZoomArea", ""], ["ceZoomArea", ""], ["cx", "", 1, "ref-line", "y"], ["cy", "", 1, "ref-line", "x"], ["tx", "", 1, "ref-line", "y"], ["bx", "", 1, "ref-line", "y"], ["ly", "", 1, "ref-line", "x"], ["ry", "", 1, "ref-line", "x"], ["class", "selector", 3, "left", "top", "width", "height", 4, "ngIf"], [4, "ngFor", "ngForOf", "ngForTrackBy"], [1, "selector"], [3, "panel", 4, "ngIf"], [3, "panel"]],
         template: function AngularEditorLibComponent_Template(rf, ctx) {
@@ -5639,35 +5722,37 @@
             Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelement"])(7, "ce-canvas-background");
             Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelement"])(8, "ce-canvas-grid");
             Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"])();
-            Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelement"])(9, "div", 5);
-            Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"])(10, "div", 4);
-            Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelement"])(11, "ce-bordered-area");
-            Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelement"])(12, "ce-resize-handle");
-            Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelement"])(13, "div", 6);
-            Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵpipe"])(14, "async");
+            Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"])(9, "div", 5);
+            Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelement"])(10, "ce-canvas");
+            Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"])();
+            Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"])(11, "div", 4);
+            Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelement"])(12, "ce-bordered-area");
+            Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelement"])(13, "ce-resize-handle");
+            Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelement"])(14, "div", 6);
             Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵpipe"])(15, "async");
-            Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelement"])(16, "div", 7);
-            Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵpipe"])(17, "async");
+            Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵpipe"])(16, "async");
+            Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelement"])(17, "div", 7);
             Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵpipe"])(18, "async");
-            Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelement"])(19, "div", 8);
-            Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵpipe"])(20, "async");
+            Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵpipe"])(19, "async");
+            Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelement"])(20, "div", 8);
             Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵpipe"])(21, "async");
-            Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelement"])(22, "div", 9);
-            Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵpipe"])(23, "async");
+            Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵpipe"])(22, "async");
+            Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelement"])(23, "div", 9);
             Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵpipe"])(24, "async");
-            Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelement"])(25, "div", 10);
-            Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵpipe"])(26, "async");
+            Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵpipe"])(25, "async");
+            Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelement"])(26, "div", 10);
             Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵpipe"])(27, "async");
-            Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelement"])(28, "div", 11);
-            Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵpipe"])(29, "async");
+            Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵpipe"])(28, "async");
+            Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelement"])(29, "div", 11);
             Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵpipe"])(30, "async");
+            Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵpipe"])(31, "async");
             Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"])();
             Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"])();
-            Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtemplate"])(31, AngularEditorLibComponent_div_31_Template, 1, 8, "div", 12);
+            Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtemplate"])(32, AngularEditorLibComponent_div_32_Template, 1, 8, "div", 12);
             Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"])();
             Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"])();
-            Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtemplate"])(32, AngularEditorLibComponent_ng_container_32_Template, 2, 1, "ng-container", 13);
-            Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵpipe"])(33, "async");
+            Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtemplate"])(33, AngularEditorLibComponent_ng_container_33_Template, 2, 1, "ng-container", 13);
+            Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵpipe"])(34, "async");
           }
 
           if (rf & 2) {
@@ -5690,31 +5775,31 @@
             Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"])("ceSelectorDisabled", _r0.spaceKeyDown);
             Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"])(3);
             Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵstyleProp"])("transform", ctx.matrix);
-            Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"])(8);
-            Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵstyleProp"])("top", ((tmp_4_0 = Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵpipeBind1"])(14, 34, ctx.refLineState$)) == null ? null : tmp_4_0.cx == null ? null : tmp_4_0.cx.position) * ctx.canvasPosition.scale, "px");
-            Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵclassProp"])("active", (tmp_5_0 = Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵpipeBind1"])(15, 36, ctx.refLineState$)) == null ? null : tmp_5_0.cx == null ? null : tmp_5_0.cx.state);
+            Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"])(9);
+            Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵstyleProp"])("top", ((tmp_4_0 = Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵpipeBind1"])(15, 34, ctx.refLineState$)) == null ? null : tmp_4_0.cx == null ? null : tmp_4_0.cx.position) * ctx.canvasPosition.scale, "px");
+            Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵclassProp"])("active", (tmp_5_0 = Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵpipeBind1"])(16, 36, ctx.refLineState$)) == null ? null : tmp_5_0.cx == null ? null : tmp_5_0.cx.state);
             Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"])(3);
-            Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵstyleProp"])("left", ((tmp_6_0 = Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵpipeBind1"])(17, 38, ctx.refLineState$)) == null ? null : tmp_6_0.cy == null ? null : tmp_6_0.cy.position) * ctx.canvasPosition.scale, "px");
-            Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵclassProp"])("active", (tmp_7_0 = Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵpipeBind1"])(18, 40, ctx.refLineState$)) == null ? null : tmp_7_0.cy == null ? null : tmp_7_0.cy.state);
+            Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵstyleProp"])("left", ((tmp_6_0 = Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵpipeBind1"])(18, 38, ctx.refLineState$)) == null ? null : tmp_6_0.cy == null ? null : tmp_6_0.cy.position) * ctx.canvasPosition.scale, "px");
+            Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵclassProp"])("active", (tmp_7_0 = Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵpipeBind1"])(19, 40, ctx.refLineState$)) == null ? null : tmp_7_0.cy == null ? null : tmp_7_0.cy.state);
             Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"])(3);
-            Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵstyleProp"])("top", ((tmp_8_0 = Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵpipeBind1"])(20, 42, ctx.refLineState$)) == null ? null : tmp_8_0.tx == null ? null : tmp_8_0.tx.position) * ctx.canvasPosition.scale, "px");
-            Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵclassProp"])("active", (tmp_9_0 = Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵpipeBind1"])(21, 44, ctx.refLineState$)) == null ? null : tmp_9_0.tx == null ? null : tmp_9_0.tx.state);
+            Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵstyleProp"])("top", ((tmp_8_0 = Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵpipeBind1"])(21, 42, ctx.refLineState$)) == null ? null : tmp_8_0.tx == null ? null : tmp_8_0.tx.position) * ctx.canvasPosition.scale, "px");
+            Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵclassProp"])("active", (tmp_9_0 = Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵpipeBind1"])(22, 44, ctx.refLineState$)) == null ? null : tmp_9_0.tx == null ? null : tmp_9_0.tx.state);
             Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"])(3);
-            Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵstyleProp"])("top", ((tmp_10_0 = Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵpipeBind1"])(23, 46, ctx.refLineState$)) == null ? null : tmp_10_0.bx == null ? null : tmp_10_0.bx.position) * ctx.canvasPosition.scale, "px");
-            Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵclassProp"])("active", (tmp_11_0 = Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵpipeBind1"])(24, 48, ctx.refLineState$)) == null ? null : tmp_11_0.bx == null ? null : tmp_11_0.bx.state);
+            Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵstyleProp"])("top", ((tmp_10_0 = Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵpipeBind1"])(24, 46, ctx.refLineState$)) == null ? null : tmp_10_0.bx == null ? null : tmp_10_0.bx.position) * ctx.canvasPosition.scale, "px");
+            Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵclassProp"])("active", (tmp_11_0 = Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵpipeBind1"])(25, 48, ctx.refLineState$)) == null ? null : tmp_11_0.bx == null ? null : tmp_11_0.bx.state);
             Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"])(3);
-            Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵstyleProp"])("left", ((tmp_12_0 = Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵpipeBind1"])(26, 50, ctx.refLineState$)) == null ? null : tmp_12_0.ly == null ? null : tmp_12_0.ly.position) * ctx.canvasPosition.scale, "px");
-            Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵclassProp"])("active", (tmp_13_0 = Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵpipeBind1"])(27, 52, ctx.refLineState$)) == null ? null : tmp_13_0.ly == null ? null : tmp_13_0.ly.state);
+            Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵstyleProp"])("left", ((tmp_12_0 = Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵpipeBind1"])(27, 50, ctx.refLineState$)) == null ? null : tmp_12_0.ly == null ? null : tmp_12_0.ly.position) * ctx.canvasPosition.scale, "px");
+            Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵclassProp"])("active", (tmp_13_0 = Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵpipeBind1"])(28, 52, ctx.refLineState$)) == null ? null : tmp_13_0.ly == null ? null : tmp_13_0.ly.state);
             Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"])(3);
-            Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵstyleProp"])("left", ((tmp_14_0 = Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵpipeBind1"])(29, 54, ctx.refLineState$)) == null ? null : tmp_14_0.ry == null ? null : tmp_14_0.ry.position) * ctx.canvasPosition.scale, "px");
-            Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵclassProp"])("active", (tmp_15_0 = Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵpipeBind1"])(30, 56, ctx.refLineState$)) == null ? null : tmp_15_0.ry == null ? null : tmp_15_0.ry.state);
+            Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵstyleProp"])("left", ((tmp_14_0 = Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵpipeBind1"])(30, 54, ctx.refLineState$)) == null ? null : tmp_14_0.ry == null ? null : tmp_14_0.ry.position) * ctx.canvasPosition.scale, "px");
+            Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵclassProp"])("active", (tmp_15_0 = Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵpipeBind1"])(31, 56, ctx.refLineState$)) == null ? null : tmp_15_0.ry == null ? null : tmp_15_0.ry.state);
             Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"])(3);
             Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"])("ngIf", ctx.selectorRect);
             Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"])(1);
-            Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"])("ngForOf", Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵpipeBind1"])(33, 58, ctx.store.panels$))("ngForTrackBy", ctx.panelsTrackByFn);
+            Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"])("ngForOf", Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵpipeBind1"])(34, 58, ctx.store.panels$))("ngForTrackBy", ctx.panelsTrackByFn);
           }
         },
-        directives: [DraggableDirective, SelectorDirective, NoZoomAreaDirective, CanvasBackgroundComponent, CanvasGridComponent, ZoomAreaDirective, BorderedAreaComponent, ResizeHandleComponent, _angular_common__WEBPACK_IMPORTED_MODULE_5__["NgIf"], _angular_common__WEBPACK_IMPORTED_MODULE_5__["NgForOf"], PanelComponent],
+        directives: [DraggableDirective, SelectorDirective, NoZoomAreaDirective, CanvasBackgroundComponent, CanvasGridComponent, ZoomAreaDirective, CanvasComponent, BorderedAreaComponent, ResizeHandleComponent, _angular_common__WEBPACK_IMPORTED_MODULE_5__["NgIf"], _angular_common__WEBPACK_IMPORTED_MODULE_5__["NgForOf"], PanelComponent],
         pipes: [_angular_common__WEBPACK_IMPORTED_MODULE_5__["AsyncPipe"]],
         styles: ["@import \"styles/bootstrap.css\";[nz-button]~[nz-button],[nz-icon]~[nz-icon]{margin-left:.5rem}.svg-icon{width:80px}.svg-icon>*{fill:currentColor}[ceNoZoomArea]{display:block;pointer-events:none}[ceNoZoomArea],[ceZoomArea]{position:absolute}.ant-tree .ant-tree-treenode{align-items:center}ce-editor{bottom:0;display:flex;flex-direction:column;height:100vh;left:0;overflow:hidden;position:absolute;right:0;top:0;width:100vw}ce-editor .left-side{width:300px}ce-editor .canvas-container{background-color:#f0f0f0;flex:1;overflow:hidden;position:relative}ce-editor .canvas-container.start-drag{cursor:grab}ce-editor .canvas-container.start-drag>*{pointer-events:none}ce-editor .canvas-container.start-drag.dragging{cursor:grabbing}ce-editor .canvas-container .canvas-content{position:absolute}ce-editor .canvas-container .selector{background-color:rgba(24,144,255,.3);border:1px solid #1890ff;box-sizing:border-box;position:absolute}ce-editor .canvas-container .ref-line{background-color:#fa8c16;display:none;opacity:.8;position:absolute;z-index:999999999999}ce-editor .canvas-container .ref-line.active{display:inline-block}ce-editor .canvas-container .ref-line.x{bottom:0;height:100%;top:0;width:1px}ce-editor .canvas-container .ref-line.y{height:1px;left:0;right:0;width:100%}ce-editor .aside{border:solid #f0f0f0;border-width:0 1px 0 0;display:flex}ce-editor .aside ul{list-style:none;margin:0;padding:0}ce-editor .aside ul li{align-items:center;border-bottom:1px solid #f0f0f0;display:flex;justify-content:center;margin:0;padding:3px 0;width:100%}"],
         encapsulation: 2,
