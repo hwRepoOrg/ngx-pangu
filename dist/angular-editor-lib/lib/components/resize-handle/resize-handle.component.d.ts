@@ -15,7 +15,7 @@ export declare class ResizeHandleComponent {
     top: number;
     get transform(): string;
     selected: Set<string>;
-    hasSelected$: Observable<boolean>;
+    selectedSize$: Observable<number>;
     private canvasPosition;
     private rotate;
     private nodes;

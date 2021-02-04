@@ -2300,7 +2300,7 @@ class ResizeHandleComponent {
         this.eleRef = eleRef;
         this.display = 'none';
         this.nodePositionSnapshotList = new Map();
-        this.hasSelected$ = this.store.selectDifferent((state) => !!state.selected.size);
+        this.selectedSize$ = this.store.selectDifferent((state) => state.selected.size);
         this.store
             .selectDifferent((state) => ({ selected: state.selected, canvasPosition: state.canvasPosition, nodes: state.nodes }))
             .subscribe(({ selected, canvasPosition, nodes }) => {
@@ -2437,23 +2437,23 @@ ResizeHandleComponent.ɵcmp = ɵɵdefineComponent({ type: ResizeHandleComponent,
         ɵɵelement(24, "div", 15);
         ɵɵelement(25, "div", 16);
     } if (rf & 2) {
-        ɵɵproperty("ngIf", ɵɵpipeBind1(1, 9, ctx.hasSelected$));
+        ɵɵproperty("ngIf", ɵɵpipeBind1(1, 9, ctx.selectedSize$) === 1);
         ɵɵadvance(2);
-        ɵɵproperty("ngIf", ɵɵpipeBind1(3, 11, ctx.hasSelected$));
+        ɵɵproperty("ngIf", ɵɵpipeBind1(3, 11, ctx.selectedSize$));
         ɵɵadvance(2);
-        ɵɵproperty("ngIf", ɵɵpipeBind1(5, 13, ctx.hasSelected$));
+        ɵɵproperty("ngIf", ɵɵpipeBind1(5, 13, ctx.selectedSize$));
         ɵɵadvance(2);
-        ɵɵproperty("ngIf", ɵɵpipeBind1(7, 15, ctx.hasSelected$));
+        ɵɵproperty("ngIf", ɵɵpipeBind1(7, 15, ctx.selectedSize$));
         ɵɵadvance(2);
-        ɵɵproperty("ngIf", ɵɵpipeBind1(9, 17, ctx.hasSelected$));
+        ɵɵproperty("ngIf", ɵɵpipeBind1(9, 17, ctx.selectedSize$));
         ɵɵadvance(6);
-        ɵɵproperty("ngIf", ɵɵpipeBind1(15, 19, ctx.hasSelected$));
+        ɵɵproperty("ngIf", ɵɵpipeBind1(15, 19, ctx.selectedSize$) === 1);
         ɵɵadvance(2);
-        ɵɵproperty("ngIf", ɵɵpipeBind1(17, 21, ctx.hasSelected$));
+        ɵɵproperty("ngIf", ɵɵpipeBind1(17, 21, ctx.selectedSize$) === 1);
         ɵɵadvance(2);
-        ɵɵproperty("ngIf", ɵɵpipeBind1(19, 23, ctx.hasSelected$));
+        ɵɵproperty("ngIf", ɵɵpipeBind1(19, 23, ctx.selectedSize$) === 1);
         ɵɵadvance(2);
-        ɵɵproperty("ngIf", ɵɵpipeBind1(21, 25, ctx.hasSelected$));
+        ɵɵproperty("ngIf", ɵɵpipeBind1(21, 25, ctx.selectedSize$) === 1);
     } }, styles: ["[ceResizeHandle],ce-resize-handle{border:1px solid #1890ff;box-sizing:border-box;position:absolute}[ceResizeHandle] .resizable-handle,ce-resize-handle .resizable-handle{cursor:pointer;height:14px;pointer-events:auto;position:absolute;width:14px;z-index:1}[ceResizeHandle] .circle,ce-resize-handle .circle{background:#fff;border:1px solid #1890ff;border-radius:50%;height:7px;position:absolute;width:7px}[ceResizeHandle] .b,[ceResizeHandle] .t,ce-resize-handle .b,ce-resize-handle .t{left:50%;margin-left:-3.5px}[ceResizeHandle] .b.resizable-handle,[ceResizeHandle] .t.resizable-handle,ce-resize-handle .b.resizable-handle,ce-resize-handle .t.resizable-handle{margin-left:-7px}[ceResizeHandle] .l,[ceResizeHandle] .r,ce-resize-handle .l,ce-resize-handle .r{margin-top:-3.5px;top:50%}[ceResizeHandle] .l.resizable-handle,[ceResizeHandle] .r.resizable-handle,ce-resize-handle .l.resizable-handle,ce-resize-handle .r.resizable-handle{margin-top:-7px}[ceResizeHandle] .t,[ceResizeHandle] .tl,[ceResizeHandle] .tr,ce-resize-handle .t,ce-resize-handle .tl,ce-resize-handle .tr{top:-3.5px}[ceResizeHandle] .t.resizable-handle,[ceResizeHandle] .tl.resizable-handle,[ceResizeHandle] .tr.resizable-handle,ce-resize-handle .t.resizable-handle,ce-resize-handle .tl.resizable-handle,ce-resize-handle .tr.resizable-handle{top:-7px}[ceResizeHandle] .b,[ceResizeHandle] .bl,[ceResizeHandle] .br,ce-resize-handle .b,ce-resize-handle .bl,ce-resize-handle .br{bottom:-3.5px}[ceResizeHandle] .b.resizable-handle,[ceResizeHandle] .bl.resizable-handle,[ceResizeHandle] .br.resizable-handle,ce-resize-handle .b.resizable-handle,ce-resize-handle .bl.resizable-handle,ce-resize-handle .br.resizable-handle{bottom:-7px}[ceResizeHandle] .br,[ceResizeHandle] .r,[ceResizeHandle] .tr,ce-resize-handle .br,ce-resize-handle .r,ce-resize-handle .tr{right:-3.5px}[ceResizeHandle] .br.resizable-handle,[ceResizeHandle] .r.resizable-handle,[ceResizeHandle] .tr.resizable-handle,ce-resize-handle .br.resizable-handle,ce-resize-handle .r.resizable-handle,ce-resize-handle .tr.resizable-handle{right:-7px}[ceResizeHandle] .bl,[ceResizeHandle] .l,[ceResizeHandle] .tl,ce-resize-handle .bl,ce-resize-handle .l,ce-resize-handle .tl{left:-3.5px}[ceResizeHandle] .bl.resizable-handle,[ceResizeHandle] .l.resizable-handle,[ceResizeHandle] .tl.resizable-handle,ce-resize-handle .bl.resizable-handle,ce-resize-handle .l.resizable-handle,ce-resize-handle .tl.resizable-handle{left:-7px}"], encapsulation: 2, changeDetection: 0 });
 /*@__PURE__*/ (function () { ɵsetClassMetadata(ResizeHandleComponent, [{
         type: Component,
