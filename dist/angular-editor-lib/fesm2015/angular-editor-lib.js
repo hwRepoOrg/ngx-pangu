@@ -93,37 +93,27 @@ class CeUtilsService {
         }
     }
     /**
-     * 将平铺的节点列表转为树
-     * @param nodes 节点列表
-     */
-    transferNodesListToNodesTree(nodes) {
-        const tree = [];
-        const childrenOf = {};
-        for (const node of nodes) {
-            const id = node.id;
-            const pid = node.parentId;
-            childrenOf[id] = childrenOf[id] || [];
-            node.children = childrenOf[id];
-            if (pid !== undefined && pid !== '') {
-                childrenOf[pid] = childrenOf[pid] || [];
-                childrenOf[pid].push(node);
-            }
-            else {
-                tree.push(node);
-            }
-        }
-        return tree;
-    }
-    getNodeChildren(id, nodes) {
-        return nodes.filter((node) => node.parentId === id);
-    }
-    /**
      * 通过节点ID在树中查找节点
      * @param id 节点ID
      * @param nodes 节点树
      */
     getNodeById(id, nodes) {
-        return nodes.find((node) => node.id === id);
+        let flag = false;
+        let node;
+        const stack = [...nodes];
+        while (!flag && stack.length) {
+            const item = stack.pop();
+            if (item.id === id) {
+                flag = true;
+                node = item;
+            }
+            else {
+                if (item.children && item.children.length) {
+                    stack.push(...item.children.map((i) => (Object.assign(Object.assign({}, i), { parentNode: item }))));
+                }
+            }
+        }
+        return node;
     }
     /**
      * 通过节点ID查找节点及节点所有父级
@@ -131,17 +121,30 @@ class CeUtilsService {
      * @param nodes 节点树
      */
     getNodeAndParentListById(id, nodes) {
-        var _a, _b;
         if (!id) {
             return [];
         }
-        const arr = [nodes.find((n) => n.id === id)];
-        let parentId = (_a = arr[1]) === null || _a === void 0 ? void 0 : _a.parentId;
-        while (parentId) {
-            arr.push(nodes.find((n) => n.id === parentId));
-            parentId = (_b = arr[arr.length - 1]) === null || _b === void 0 ? void 0 : _b.parentId;
+        const rootIdSet = new Set(nodes.map((node) => node.id));
+        let flag = false;
+        let path = [];
+        const stack = [...nodes];
+        while (!flag && stack.length) {
+            const node = stack.shift();
+            if (rootIdSet.has(node.id)) {
+                path = [];
+            }
+            if (node.id === id) {
+                flag = true;
+                path.unshift(node);
+            }
+            else {
+                if (node.children && node.children.length) {
+                    path.unshift(node);
+                    stack.unshift(...node.children);
+                }
+            }
         }
-        return arr;
+        return path;
     }
     /**
      * 通过子节点id集合和节点树，获取子节点的父节点，若子节点不在同一级则返回undefined
@@ -149,11 +152,19 @@ class CeUtilsService {
      * @param nodes 节点集合
      */
     getSameLayerParentByChildren(childrenIds, nodes) {
-        const parentIds = childrenIds.map((id) => { var _a, _b; return (_b = (_a = nodes.find((node) => node.id === id)) === null || _a === void 0 ? void 0 : _a.parentId) !== null && _b !== void 0 ? _b : ''; });
-        if (new Set(parentIds).size === 1) {
-            return nodes.find((node) => node.id === parentIds[0]);
+        let flag = true;
+        const parents = childrenIds.map((id) => this.getNodeAndParentListById(id, nodes)[1]);
+        let prevParent = parents.pop();
+        while (flag && parents.length) {
+            const parent = parents.pop();
+            if ((prevParent === null || prevParent === void 0 ? void 0 : prevParent.id) === (parent === null || parent === void 0 ? void 0 : parent.id)) {
+                prevParent = parent;
+            }
+            else {
+                flag = false;
+            }
         }
-        return false;
+        return flag && prevParent;
     }
     /**
      * 通过直线的两点方程获取直线上人一点点的坐标
@@ -917,20 +928,18 @@ function removeNodes(ids) {
             return Object.assign(Object.assign({}, state), { nodes: state.nodes.filter((node) => !ids.includes(node.id)) });
         }
         else {
-            let originalParentId = parent.id;
-            let newNodes = state.nodes.filter((node) => !ids.includes(node.id));
+            const originalParentId = parent.id;
             let prevParent;
             let prevParentId;
             const parents = CeUtilsService.shared.getNodeAndParentListById(parent.id, cloneDeep(state.nodes));
             while (parents.length) {
-                let parent = parents.shift();
+                parent = parents.shift();
                 let children;
-                const parentChildren = CeUtilsService.shared.getNodeChildren(parent.id, state.nodes);
                 if (parent.id === originalParentId) {
-                    children = parentChildren.filter((child) => !ids.includes(child.id));
+                    children = parent.children.filter((child) => !ids.includes(child.id));
                 }
                 else {
-                    children = parentChildren
+                    children = parent.children
                         .filter((child) => (child.id === prevParentId ? prevParent : child))
                         .filter((child) => !!child);
                 }
@@ -943,19 +952,18 @@ function removeNodes(ids) {
                     parent.height = rect.height;
                     parent.left = rect.left;
                     parent.top = rect.top;
+                    parent.children = children;
                 }
                 else if (children.length === 1) {
                     const rect = CeUtilsService.shared.getChildPositionBaseOnParentCoordinateSystem(parent, parent.rotate, children[0]);
-                    parent = Object.assign(Object.assign(Object.assign({}, children[0]), rect), { parentId: parent.parentId });
-                    newNodes = newNodes.map((node) => (node.id === parent.id ? Object.assign({}, parent) : node));
+                    parent = Object.assign(Object.assign({}, children[0]), rect);
                 }
                 else if (children.length === 0) {
-                    newNodes = newNodes.filter((node) => node.id !== parent.id);
                     parent = null;
                 }
                 prevParent = parent;
             }
-            return Object.assign(Object.assign({}, state), { nodes: newNodes });
+            return Object.assign(Object.assign({}, state), { nodes: state.nodes.map((node) => (node.id === prevParentId ? parent : node)).filter((node) => !!node) });
         }
     };
 }
@@ -963,7 +971,37 @@ function updateNodes(nodes) {
     return (state) => (Object.assign(Object.assign({}, state), { nodes: state.nodes.map((item) => (Object.assign(Object.assign({}, item), nodes.find((i) => i.id === item.id)))) }));
 }
 function updateNodesSize(nodesSizeMap) {
-    return (state) => state;
+    return (state) => {
+        var _a;
+        let inSameLayer = true;
+        const ids = [...nodesSizeMap.keys()];
+        let parent;
+        while (inSameLayer && ids.length) {
+            const id = ids.pop();
+            const node = CeUtilsService.shared.getNodeById(id, state.nodes);
+            inSameLayer = (parent === null || parent === void 0 ? void 0 : parent.id) === ((_a = node.parentNode) === null || _a === void 0 ? void 0 : _a.id);
+            parent = node.parentNode;
+        }
+        if (!inSameLayer) {
+            return state;
+        }
+        else {
+            if (!parent) {
+                return Object.assign(Object.assign({}, state), { nodes: state.nodes.map((node) => {
+                        const newNode = Object.assign(Object.assign({}, node), nodesSizeMap.get(node.id));
+                        if (node.children && node.children.length) {
+                            return Object.assign(Object.assign({}, newNode), { children: recursiveUpdateNodeChildrenSize(newNode.children, Object.assign({}, node), Object.assign({}, newNode)) });
+                        }
+                        else {
+                            return newNode;
+                        }
+                    }) });
+            }
+            else {
+                return state;
+            }
+        }
+    };
 }
 function groupNodes(ids) {
     return (state) => {
@@ -1020,6 +1058,57 @@ function breakNode(id) {
             return Object.assign(Object.assign({}, state), { nodes: [...state.nodes.filter((i) => i.id !== parent.id), parent] });
         }
     };
+}
+// /**
+//  * 递归更新节点的位置和大小
+//  * @param nodes 节点列表
+//  * @param oldParentRect 父节点的旧尺寸和位置
+//  * @param newParentRect 父节点的新尺寸和位置
+//  */
+// function recursiveUpdateNodeChildrenSize(nodes: INode[], oldParentRect: IDOMRect, newParentRect: IDOMRect): INode[] {
+//   const { width, height } = newParentRect;
+//   return nodes.map((node) => {
+//     const cxPercent = (node.left + node.width / 2) / oldParentRect.width;
+//     const cyPercent = (node.top + node.height / 2) / oldParentRect.height;
+//     const widthPercent = node.width / oldParentRect.width;
+//     const heightPercent = node.height / oldParentRect.height;
+//     const newNodeRect: IDOMRect = {
+//       width: widthPercent * width,
+//       height: heightPercent * height,
+//       left: cxPercent * width - (widthPercent * width) / 2,
+//       top: cyPercent * height - (heightPercent * height) / 2,
+//     };
+//     if (node.children && node.children.length) {
+//       return { ...node, ...newNodeRect, children: recursiveUpdateNodeChildrenSize(node.children, { ...node }, { ...newNodeRect }) };
+//     } else {
+//       return { ...node, ...newNodeRect };
+//     }
+//   });
+// }
+/**
+ * 递归更新节点的位置和大小
+ * @param nodes 节点列表
+ * @param oldParentRect 父节点的旧尺寸和位置
+ * @param newParentRect 父节点的新尺寸和位置
+ */
+function recursiveUpdateNodeChildrenSize(nodes, oldParentRect, newParentRect) {
+    const { width, height } = newParentRect;
+    return nodes.map((node) => {
+        const nodeAbsolutePosition = CeUtilsService.shared.getAbsolutePosition(node.left + node.width / 2, node.top + node.height / 2, node.width, node.height, node.rotate);
+        const { tl, tr, bl, br } = CeUtilsService.shared.getItemPercentPositionInGroup(Object.assign(Object.assign({}, oldParentRect), { left: 0, top: 0 }), nodeAbsolutePosition);
+        const newNodeRect = CeUtilsService.shared.getRelativePosition({
+            tl: [tl[0] * width, tl[1] * height],
+            tr: [tr[0] * width, tr[1] * height],
+            bl: [bl[0] * width, bl[1] * height],
+            br: [br[0] * width, br[1] * height],
+        });
+        if (node.children && node.children.length) {
+            return Object.assign(Object.assign(Object.assign({}, node), newNodeRect), { children: recursiveUpdateNodeChildrenSize(node.children, Object.assign({}, node), Object.assign({}, newNodeRect)) });
+        }
+        else {
+            return Object.assign(Object.assign({}, node), newNodeRect);
+        }
+    });
 }
 
 function updateRefLineState(direction, state) {
@@ -1446,7 +1535,7 @@ class LayerTreeComponent {
         this.contextMenuSrv = contextMenuSrv;
         this.treeNodes$ = this.store
             .selectDifferent((state) => state.nodes)
-            .pipe(map((nodes) => this.transferNodesToNzNodes(this.utils.sortNodeListByIndex(this.utils.transferNodesListToNodesTree(nodes)))));
+            .pipe(map((nodes) => this.transferNodesToNzNodes(this.utils.sortNodeListByIndex(nodes))));
         this.selectedKeys$ = this.store.selectDifferent((state) => state.selected).pipe(map((selected) => [...selected]));
         this.groupStatus$ = this.store
             .selectDifferent((state) => state.selected)
@@ -2909,21 +2998,21 @@ WidgetListComponent.ɵcmp = ɵɵdefineComponent({ type: WidgetListComponent, sel
     }], function () { return []; }, null); })();
 
 const _c0$4 = ["container"];
-function AngularEditorLibComponent_div_31_Template(rf, ctx) { if (rf & 1) {
+function AngularEditorLibComponent_div_32_Template(rf, ctx) { if (rf & 1) {
     ɵɵelement(0, "div", 14);
 } if (rf & 2) {
     const ctx_r2 = ɵɵnextContext();
     ɵɵstyleProp("left", ctx_r2.selectorRect.x, "px")("top", ctx_r2.selectorRect.y, "px")("width", ctx_r2.selectorRect.width, "px")("height", ctx_r2.selectorRect.height, "px");
 } }
-function AngularEditorLibComponent_ng_container_32_ce_panel_1_Template(rf, ctx) { if (rf & 1) {
+function AngularEditorLibComponent_ng_container_33_ce_panel_1_Template(rf, ctx) { if (rf & 1) {
     ɵɵelement(0, "ce-panel", 16);
 } if (rf & 2) {
     const panel_r4 = ɵɵnextContext().$implicit;
     ɵɵproperty("panel", panel_r4);
 } }
-function AngularEditorLibComponent_ng_container_32_Template(rf, ctx) { if (rf & 1) {
+function AngularEditorLibComponent_ng_container_33_Template(rf, ctx) { if (rf & 1) {
     ɵɵelementContainerStart(0);
-    ɵɵtemplate(1, AngularEditorLibComponent_ng_container_32_ce_panel_1_Template, 1, 1, "ce-panel", 15);
+    ɵɵtemplate(1, AngularEditorLibComponent_ng_container_33_ce_panel_1_Template, 1, 1, "ce-panel", 15);
     ɵɵelementContainerEnd();
 } if (rf & 2) {
     const panel_r4 = ctx.$implicit;
@@ -3036,7 +3125,7 @@ AngularEditorLibComponent.ɵcmp = ɵɵdefineComponent({ type: AngularEditorLibCo
     } if (rf & 2) {
         let _t;
         ɵɵqueryRefresh(_t = ɵɵloadQuery()) && (ctx.containerEleRef = _t.first);
-    } }, inputs: { state: "state" }, exportAs: ["ceEditor"], features: [ɵɵProvidersFeature([EditorStore])], ngContentSelectors: _c2$1, decls: 34, vars: 60, consts: [[1, "col", "p-0", "d-flex"], ["ceDraggable", "", "ceUseSpace", "", "ceSelector", "", 1, "canvas-container", 3, "ceSelectorDisabled", "ceOnStart", "ceOnMove", "ceOnStop", "ceOnSelectorStart", "ceOnSelectorMoving", "ceOnSelectorStop"], ["ceDrag", "ceDraggable", "container", ""], [1, "canvas-content"], ["ceNoZoomArea", ""], ["ceZoomArea", ""], ["cx", "", 1, "ref-line", "y"], ["cy", "", 1, "ref-line", "x"], ["tx", "", 1, "ref-line", "y"], ["bx", "", 1, "ref-line", "y"], ["ly", "", 1, "ref-line", "x"], ["ry", "", 1, "ref-line", "x"], ["class", "selector", 3, "left", "top", "width", "height", 4, "ngIf"], [4, "ngFor", "ngForOf", "ngForTrackBy"], [1, "selector"], [3, "panel", 4, "ngIf"], [3, "panel"]], template: function AngularEditorLibComponent_Template(rf, ctx) { if (rf & 1) {
+    } }, inputs: { state: "state" }, exportAs: ["ceEditor"], features: [ɵɵProvidersFeature([EditorStore])], ngContentSelectors: _c2$1, decls: 35, vars: 60, consts: [[1, "col", "p-0", "d-flex"], ["ceDraggable", "", "ceUseSpace", "", "ceSelector", "", 1, "canvas-container", 3, "ceSelectorDisabled", "ceOnStart", "ceOnMove", "ceOnStop", "ceOnSelectorStart", "ceOnSelectorMoving", "ceOnSelectorStop"], ["ceDrag", "ceDraggable", "container", ""], [1, "canvas-content"], ["ceNoZoomArea", ""], ["ceZoomArea", ""], ["cx", "", 1, "ref-line", "y"], ["cy", "", 1, "ref-line", "x"], ["tx", "", 1, "ref-line", "y"], ["bx", "", 1, "ref-line", "y"], ["ly", "", 1, "ref-line", "x"], ["ry", "", 1, "ref-line", "x"], ["class", "selector", 3, "left", "top", "width", "height", 4, "ngIf"], [4, "ngFor", "ngForOf", "ngForTrackBy"], [1, "selector"], [3, "panel", 4, "ngIf"], [3, "panel"]], template: function AngularEditorLibComponent_Template(rf, ctx) { if (rf & 1) {
         ɵɵprojectionDef(_c1$2);
         ɵɵprojection(0);
         ɵɵelementStart(1, "div", 0);
@@ -3047,35 +3136,37 @@ AngularEditorLibComponent.ɵcmp = ɵɵdefineComponent({ type: AngularEditorLibCo
         ɵɵelement(7, "ce-canvas-background");
         ɵɵelement(8, "ce-canvas-grid");
         ɵɵelementEnd();
-        ɵɵelement(9, "div", 5);
-        ɵɵelementStart(10, "div", 4);
-        ɵɵelement(11, "ce-bordered-area");
-        ɵɵelement(12, "ce-resize-handle");
-        ɵɵelement(13, "div", 6);
-        ɵɵpipe(14, "async");
+        ɵɵelementStart(9, "div", 5);
+        ɵɵelement(10, "ce-canvas");
+        ɵɵelementEnd();
+        ɵɵelementStart(11, "div", 4);
+        ɵɵelement(12, "ce-bordered-area");
+        ɵɵelement(13, "ce-resize-handle");
+        ɵɵelement(14, "div", 6);
         ɵɵpipe(15, "async");
-        ɵɵelement(16, "div", 7);
-        ɵɵpipe(17, "async");
+        ɵɵpipe(16, "async");
+        ɵɵelement(17, "div", 7);
         ɵɵpipe(18, "async");
-        ɵɵelement(19, "div", 8);
-        ɵɵpipe(20, "async");
+        ɵɵpipe(19, "async");
+        ɵɵelement(20, "div", 8);
         ɵɵpipe(21, "async");
-        ɵɵelement(22, "div", 9);
-        ɵɵpipe(23, "async");
+        ɵɵpipe(22, "async");
+        ɵɵelement(23, "div", 9);
         ɵɵpipe(24, "async");
-        ɵɵelement(25, "div", 10);
-        ɵɵpipe(26, "async");
+        ɵɵpipe(25, "async");
+        ɵɵelement(26, "div", 10);
         ɵɵpipe(27, "async");
-        ɵɵelement(28, "div", 11);
-        ɵɵpipe(29, "async");
+        ɵɵpipe(28, "async");
+        ɵɵelement(29, "div", 11);
         ɵɵpipe(30, "async");
+        ɵɵpipe(31, "async");
         ɵɵelementEnd();
         ɵɵelementEnd();
-        ɵɵtemplate(31, AngularEditorLibComponent_div_31_Template, 1, 8, "div", 12);
+        ɵɵtemplate(32, AngularEditorLibComponent_div_32_Template, 1, 8, "div", 12);
         ɵɵelementEnd();
         ɵɵelementEnd();
-        ɵɵtemplate(32, AngularEditorLibComponent_ng_container_32_Template, 2, 1, "ng-container", 13);
-        ɵɵpipe(33, "async");
+        ɵɵtemplate(33, AngularEditorLibComponent_ng_container_33_Template, 2, 1, "ng-container", 13);
+        ɵɵpipe(34, "async");
     } if (rf & 2) {
         const _r0 = ɵɵreference(3);
         let tmp_4_0 = null;
@@ -3095,29 +3186,29 @@ AngularEditorLibComponent.ɵcmp = ɵɵdefineComponent({ type: AngularEditorLibCo
         ɵɵproperty("ceSelectorDisabled", _r0.spaceKeyDown);
         ɵɵadvance(3);
         ɵɵstyleProp("transform", ctx.matrix);
-        ɵɵadvance(8);
-        ɵɵstyleProp("top", ((tmp_4_0 = ɵɵpipeBind1(14, 34, ctx.refLineState$)) == null ? null : tmp_4_0.cx == null ? null : tmp_4_0.cx.position) * ctx.canvasPosition.scale, "px");
-        ɵɵclassProp("active", (tmp_5_0 = ɵɵpipeBind1(15, 36, ctx.refLineState$)) == null ? null : tmp_5_0.cx == null ? null : tmp_5_0.cx.state);
+        ɵɵadvance(9);
+        ɵɵstyleProp("top", ((tmp_4_0 = ɵɵpipeBind1(15, 34, ctx.refLineState$)) == null ? null : tmp_4_0.cx == null ? null : tmp_4_0.cx.position) * ctx.canvasPosition.scale, "px");
+        ɵɵclassProp("active", (tmp_5_0 = ɵɵpipeBind1(16, 36, ctx.refLineState$)) == null ? null : tmp_5_0.cx == null ? null : tmp_5_0.cx.state);
         ɵɵadvance(3);
-        ɵɵstyleProp("left", ((tmp_6_0 = ɵɵpipeBind1(17, 38, ctx.refLineState$)) == null ? null : tmp_6_0.cy == null ? null : tmp_6_0.cy.position) * ctx.canvasPosition.scale, "px");
-        ɵɵclassProp("active", (tmp_7_0 = ɵɵpipeBind1(18, 40, ctx.refLineState$)) == null ? null : tmp_7_0.cy == null ? null : tmp_7_0.cy.state);
+        ɵɵstyleProp("left", ((tmp_6_0 = ɵɵpipeBind1(18, 38, ctx.refLineState$)) == null ? null : tmp_6_0.cy == null ? null : tmp_6_0.cy.position) * ctx.canvasPosition.scale, "px");
+        ɵɵclassProp("active", (tmp_7_0 = ɵɵpipeBind1(19, 40, ctx.refLineState$)) == null ? null : tmp_7_0.cy == null ? null : tmp_7_0.cy.state);
         ɵɵadvance(3);
-        ɵɵstyleProp("top", ((tmp_8_0 = ɵɵpipeBind1(20, 42, ctx.refLineState$)) == null ? null : tmp_8_0.tx == null ? null : tmp_8_0.tx.position) * ctx.canvasPosition.scale, "px");
-        ɵɵclassProp("active", (tmp_9_0 = ɵɵpipeBind1(21, 44, ctx.refLineState$)) == null ? null : tmp_9_0.tx == null ? null : tmp_9_0.tx.state);
+        ɵɵstyleProp("top", ((tmp_8_0 = ɵɵpipeBind1(21, 42, ctx.refLineState$)) == null ? null : tmp_8_0.tx == null ? null : tmp_8_0.tx.position) * ctx.canvasPosition.scale, "px");
+        ɵɵclassProp("active", (tmp_9_0 = ɵɵpipeBind1(22, 44, ctx.refLineState$)) == null ? null : tmp_9_0.tx == null ? null : tmp_9_0.tx.state);
         ɵɵadvance(3);
-        ɵɵstyleProp("top", ((tmp_10_0 = ɵɵpipeBind1(23, 46, ctx.refLineState$)) == null ? null : tmp_10_0.bx == null ? null : tmp_10_0.bx.position) * ctx.canvasPosition.scale, "px");
-        ɵɵclassProp("active", (tmp_11_0 = ɵɵpipeBind1(24, 48, ctx.refLineState$)) == null ? null : tmp_11_0.bx == null ? null : tmp_11_0.bx.state);
+        ɵɵstyleProp("top", ((tmp_10_0 = ɵɵpipeBind1(24, 46, ctx.refLineState$)) == null ? null : tmp_10_0.bx == null ? null : tmp_10_0.bx.position) * ctx.canvasPosition.scale, "px");
+        ɵɵclassProp("active", (tmp_11_0 = ɵɵpipeBind1(25, 48, ctx.refLineState$)) == null ? null : tmp_11_0.bx == null ? null : tmp_11_0.bx.state);
         ɵɵadvance(3);
-        ɵɵstyleProp("left", ((tmp_12_0 = ɵɵpipeBind1(26, 50, ctx.refLineState$)) == null ? null : tmp_12_0.ly == null ? null : tmp_12_0.ly.position) * ctx.canvasPosition.scale, "px");
-        ɵɵclassProp("active", (tmp_13_0 = ɵɵpipeBind1(27, 52, ctx.refLineState$)) == null ? null : tmp_13_0.ly == null ? null : tmp_13_0.ly.state);
+        ɵɵstyleProp("left", ((tmp_12_0 = ɵɵpipeBind1(27, 50, ctx.refLineState$)) == null ? null : tmp_12_0.ly == null ? null : tmp_12_0.ly.position) * ctx.canvasPosition.scale, "px");
+        ɵɵclassProp("active", (tmp_13_0 = ɵɵpipeBind1(28, 52, ctx.refLineState$)) == null ? null : tmp_13_0.ly == null ? null : tmp_13_0.ly.state);
         ɵɵadvance(3);
-        ɵɵstyleProp("left", ((tmp_14_0 = ɵɵpipeBind1(29, 54, ctx.refLineState$)) == null ? null : tmp_14_0.ry == null ? null : tmp_14_0.ry.position) * ctx.canvasPosition.scale, "px");
-        ɵɵclassProp("active", (tmp_15_0 = ɵɵpipeBind1(30, 56, ctx.refLineState$)) == null ? null : tmp_15_0.ry == null ? null : tmp_15_0.ry.state);
+        ɵɵstyleProp("left", ((tmp_14_0 = ɵɵpipeBind1(30, 54, ctx.refLineState$)) == null ? null : tmp_14_0.ry == null ? null : tmp_14_0.ry.position) * ctx.canvasPosition.scale, "px");
+        ɵɵclassProp("active", (tmp_15_0 = ɵɵpipeBind1(31, 56, ctx.refLineState$)) == null ? null : tmp_15_0.ry == null ? null : tmp_15_0.ry.state);
         ɵɵadvance(3);
         ɵɵproperty("ngIf", ctx.selectorRect);
         ɵɵadvance(1);
-        ɵɵproperty("ngForOf", ɵɵpipeBind1(33, 58, ctx.store.panels$))("ngForTrackBy", ctx.panelsTrackByFn);
-    } }, directives: [DraggableDirective, SelectorDirective, NoZoomAreaDirective, CanvasBackgroundComponent, CanvasGridComponent, ZoomAreaDirective, BorderedAreaComponent, ResizeHandleComponent, NgIf, NgForOf, PanelComponent], pipes: [AsyncPipe], styles: ["@import \"styles/bootstrap.css\";[nz-button]~[nz-button],[nz-icon]~[nz-icon]{margin-left:.5rem}.svg-icon{width:80px}.svg-icon>*{fill:currentColor}[ceNoZoomArea]{display:block;pointer-events:none}[ceNoZoomArea],[ceZoomArea]{position:absolute}.ant-tree .ant-tree-treenode{align-items:center}ce-editor{bottom:0;display:flex;flex-direction:column;height:100vh;left:0;overflow:hidden;position:absolute;right:0;top:0;width:100vw}ce-editor .left-side{width:300px}ce-editor .canvas-container{background-color:#f0f0f0;flex:1;overflow:hidden;position:relative}ce-editor .canvas-container.start-drag{cursor:grab}ce-editor .canvas-container.start-drag>*{pointer-events:none}ce-editor .canvas-container.start-drag.dragging{cursor:grabbing}ce-editor .canvas-container .canvas-content{position:absolute}ce-editor .canvas-container .selector{background-color:rgba(24,144,255,.3);border:1px solid #1890ff;box-sizing:border-box;position:absolute}ce-editor .canvas-container .ref-line{background-color:#fa8c16;display:none;opacity:.8;position:absolute;z-index:999999999999}ce-editor .canvas-container .ref-line.active{display:inline-block}ce-editor .canvas-container .ref-line.x{bottom:0;height:100%;top:0;width:1px}ce-editor .canvas-container .ref-line.y{height:1px;left:0;right:0;width:100%}ce-editor .aside{border:solid #f0f0f0;border-width:0 1px 0 0;display:flex}ce-editor .aside ul{list-style:none;margin:0;padding:0}ce-editor .aside ul li{align-items:center;border-bottom:1px solid #f0f0f0;display:flex;justify-content:center;margin:0;padding:3px 0;width:100%}"], encapsulation: 2, changeDetection: 0 });
+        ɵɵproperty("ngForOf", ɵɵpipeBind1(34, 58, ctx.store.panels$))("ngForTrackBy", ctx.panelsTrackByFn);
+    } }, directives: [DraggableDirective, SelectorDirective, NoZoomAreaDirective, CanvasBackgroundComponent, CanvasGridComponent, ZoomAreaDirective, CanvasComponent, BorderedAreaComponent, ResizeHandleComponent, NgIf, NgForOf, PanelComponent], pipes: [AsyncPipe], styles: ["@import \"styles/bootstrap.css\";[nz-button]~[nz-button],[nz-icon]~[nz-icon]{margin-left:.5rem}.svg-icon{width:80px}.svg-icon>*{fill:currentColor}[ceNoZoomArea]{display:block;pointer-events:none}[ceNoZoomArea],[ceZoomArea]{position:absolute}.ant-tree .ant-tree-treenode{align-items:center}ce-editor{bottom:0;display:flex;flex-direction:column;height:100vh;left:0;overflow:hidden;position:absolute;right:0;top:0;width:100vw}ce-editor .left-side{width:300px}ce-editor .canvas-container{background-color:#f0f0f0;flex:1;overflow:hidden;position:relative}ce-editor .canvas-container.start-drag{cursor:grab}ce-editor .canvas-container.start-drag>*{pointer-events:none}ce-editor .canvas-container.start-drag.dragging{cursor:grabbing}ce-editor .canvas-container .canvas-content{position:absolute}ce-editor .canvas-container .selector{background-color:rgba(24,144,255,.3);border:1px solid #1890ff;box-sizing:border-box;position:absolute}ce-editor .canvas-container .ref-line{background-color:#fa8c16;display:none;opacity:.8;position:absolute;z-index:999999999999}ce-editor .canvas-container .ref-line.active{display:inline-block}ce-editor .canvas-container .ref-line.x{bottom:0;height:100%;top:0;width:1px}ce-editor .canvas-container .ref-line.y{height:1px;left:0;right:0;width:100%}ce-editor .aside{border:solid #f0f0f0;border-width:0 1px 0 0;display:flex}ce-editor .aside ul{list-style:none;margin:0;padding:0}ce-editor .aside ul li{align-items:center;border-bottom:1px solid #f0f0f0;display:flex;justify-content:center;margin:0;padding:3px 0;width:100%}"], encapsulation: 2, changeDetection: 0 });
 /*@__PURE__*/ (function () { ɵsetClassMetadata(AngularEditorLibComponent, [{
         type: Component,
         args: [{

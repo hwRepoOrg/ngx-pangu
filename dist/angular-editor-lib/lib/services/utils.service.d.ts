@@ -24,21 +24,12 @@ export interface IDOMRect {
     right?: number;
 }
 export declare type IRectDirection = 'tl' | 't' | 'tr' | 'r' | 'br' | 'b' | 'bl' | 'l';
-declare type TreeNode = INode & {
-    children: TreeNode[];
-};
 export declare function genNodeId(): string;
 export declare class CeUtilsService {
     static shared: CeUtilsService;
     constructor();
     isTemplateType(content: any): boolean;
     isDeepEqual(v1: any, v2: any): any;
-    /**
-     * 将平铺的节点列表转为树
-     * @param nodes 节点列表
-     */
-    transferNodesListToNodesTree(nodes: INode[]): TreeNode[];
-    getNodeChildren(id: string, nodes: INode[]): INode<any>[];
     /**
      * 通过节点ID在树中查找节点
      * @param id 节点ID
@@ -113,7 +104,7 @@ export declare class CeUtilsService {
      * 依据zIndex对节点递归排序
      * @param list 节点列表
      */
-    sortNodeListByIndex(list?: TreeNode[]): TreeNode[];
+    sortNodeListByIndex(list?: INode[]): INode[];
     /**
      * 通过直线的斜率方程和直线上两点A，B以及直线外一点D，求出D点上直线AB的垂线DC和直线AB的交点C的坐标
      * @param PA 点A
@@ -198,5 +189,4 @@ export declare class CeUtilsService {
     static ɵfac: i0.ɵɵFactoryDef<CeUtilsService, never>;
     static ɵprov: i0.ɵɵInjectableDef<CeUtilsService>;
 }
-export {};
 //# sourceMappingURL=utils.service.d.ts.map
