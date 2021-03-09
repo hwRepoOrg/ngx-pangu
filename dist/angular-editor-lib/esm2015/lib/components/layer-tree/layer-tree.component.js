@@ -8,8 +8,8 @@ import * as i2 from "../../services/utils.service";
 import * as i3 from "ng-zorro-antd/dropdown";
 import * as i4 from "ng-zorro-antd/tree";
 import * as i5 from "@angular/common";
-import * as i6 from "ng-zorro-antd/icon";
-import * as i7 from "ng-zorro-antd/core/transition-patch";
+import * as i6 from "ng-zorro-antd/core/transition-patch";
+import * as i7 from "ng-zorro-antd/icon";
 import * as i8 from "ng-zorro-antd/menu";
 const _c0 = ["layerTree"];
 function LayerTreeComponent_ng_template_4_i_0_Template(rf, ctx) { if (rf & 1) {
@@ -233,7 +233,7 @@ LayerTreeComponent.ɵcmp = i0.ɵɵdefineComponent({ type: LayerTreeComponent, se
         const _r1 = i0.ɵɵreference(5);
         const _r3 = i0.ɵɵreference(7);
         i0.ɵɵproperty("nzData", i0.ɵɵpipeBind1(2, 4, ctx.treeNodes$))("nzSelectedKeys", i0.ɵɵpipeBind1(3, 6, ctx.selectedKeys$))("nzTreeTemplate", _r3)("nzExpandedIcon", _r1);
-    } }, directives: [i4.NzTreeComponent, i5.NgIf, i6.NzIconDirective, i7.ɵNzTransitionPatchDirective, i3.NzDropdownMenuComponent, i8.NzMenuDirective, i8.NzMenuItemDirective], pipes: [i5.AsyncPipe], styles: ["ce-layer-tree{display:block;height:100%;margin:0 -12px 0 0;overflow:auto;position:relative}ce-layer-tree ::-webkit-scrollbar{position:absolute;right:0}ce-layer-tree .layer{align-items:center;display:flex}ce-layer-tree .layer.locked{color:rgba(0,0,0,.45)}.action-item{align-items:center;display:flex;justify-content:flex-start;min-width:200px}.action-item .shortcuts{color:rgba(0,0,0,.45);margin-left:auto}"], encapsulation: 2, changeDetection: 0 });
+    } }, directives: [i4.NzTreeComponent, i5.NgIf, i6.ɵNzTransitionPatchDirective, i7.NzIconDirective, i3.NzDropdownMenuComponent, i8.NzMenuDirective, i8.NzMenuItemDirective], pipes: [i5.AsyncPipe], styles: ["ce-layer-tree{display:block;height:100%;margin:0 -12px 0 0;overflow:auto;position:relative}ce-layer-tree ::-webkit-scrollbar{position:absolute;right:0}ce-layer-tree .layer{align-items:center;display:flex}ce-layer-tree .layer.locked{color:rgba(0,0,0,.45)}.action-item{align-items:center;display:flex;justify-content:flex-start;min-width:200px}.action-item .shortcuts{color:rgba(0,0,0,.45);margin-left:auto}"], encapsulation: 2, changeDetection: 0 });
 /*@__PURE__*/ (function () { i0.ɵsetClassMetadata(LayerTreeComponent, [{
         type: Component,
         args: [{

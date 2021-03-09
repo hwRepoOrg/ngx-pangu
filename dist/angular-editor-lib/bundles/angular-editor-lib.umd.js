@@ -1,8 +1,8 @@
 (function (global, factory) {
-    typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('@angular/core'), require('rxjs/operators'), require('lodash'), require('@ngrx/component-store'), require('rxjs'), require('@angular/common'), require('ng-zorro-antd/pipes'), require('ng-zorro-antd/core/util'), require('ng-zorro-antd/tree'), require('ng-zorro-antd/dropdown'), require('ng-zorro-antd/icon'), require('ng-zorro-antd/core/transition-patch'), require('ng-zorro-antd/menu'), require('ng-zorro-antd/card'), require('@angular/cdk/drag-drop'), require('ng-zorro-antd/button'), require('@angular/forms'), require('ng-zorro-antd/form'), require('ng-zorro-antd/grid'), require('ng-zorro-antd/input-number'), require('ng-zorro-antd/input'), require('ng-zorro-antd/collapse'), require('ng-zorro-antd/switch'), require('ng-zorro-antd/select'), require('ng-zorro-antd/tag'), require('@angular/common/http'), require('@angular/platform-browser/animations'), require('@ant-design/icons-angular/icons'), require('ng-zorro-antd/divider'), require('ng-zorro-antd/tabs'), require('ng-zorro-antd/tooltip')) :
-    typeof define === 'function' && define.amd ? define('angular-editor-lib', ['exports', '@angular/core', 'rxjs/operators', 'lodash', '@ngrx/component-store', 'rxjs', '@angular/common', 'ng-zorro-antd/pipes', 'ng-zorro-antd/core/util', 'ng-zorro-antd/tree', 'ng-zorro-antd/dropdown', 'ng-zorro-antd/icon', 'ng-zorro-antd/core/transition-patch', 'ng-zorro-antd/menu', 'ng-zorro-antd/card', '@angular/cdk/drag-drop', 'ng-zorro-antd/button', '@angular/forms', 'ng-zorro-antd/form', 'ng-zorro-antd/grid', 'ng-zorro-antd/input-number', 'ng-zorro-antd/input', 'ng-zorro-antd/collapse', 'ng-zorro-antd/switch', 'ng-zorro-antd/select', 'ng-zorro-antd/tag', '@angular/common/http', '@angular/platform-browser/animations', '@ant-design/icons-angular/icons', 'ng-zorro-antd/divider', 'ng-zorro-antd/tabs', 'ng-zorro-antd/tooltip'], factory) :
-    (global = typeof globalThis !== 'undefined' ? globalThis : global || self, factory(global['angular-editor-lib'] = {}, global.ng.core, global.rxjs.operators, global._, global.componentStore, global.rxjs, global.ng.common, global.i3, global.util, global.i4, global.i3$1, global.i6, global.i6$1, global.i8, global.i2$1, global.ng.cdk.dragDrop, global.i5, global.ng.forms, global.i3$3, global.i4$1, global.i7, global.i8$1, global.i3$4, global.i9, global.i10, global.i8$2, global.ng.common.http, global.ng.platformBrowser.animations, global.AllIcons, global.divider, global.tabs, global.tooltip));
-}(this, (function (exports, i0, operators, _, componentStore, rxjs, i2, i3, util, i4, i3$1, i6, i6$1, i8, i2$1, i3$2, i5, i1, i3$3, i4$1, i7, i8$1, i3$4, i9, i10, i8$2, http, animations, AllIcons, divider, tabs, tooltip) { 'use strict';
+    typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('@angular/core'), require('rxjs/operators'), require('lodash'), require('@ngrx/component-store'), require('rxjs'), require('@angular/common'), require('ng-zorro-antd/pipes'), require('ng-zorro-antd/core/util'), require('ng-zorro-antd/tree'), require('ng-zorro-antd/dropdown'), require('ng-zorro-antd/core/transition-patch'), require('ng-zorro-antd/icon'), require('ng-zorro-antd/menu'), require('ng-zorro-antd/card'), require('@angular/cdk/drag-drop'), require('ng-zorro-antd/button'), require('@angular/forms'), require('ng-zorro-antd/form'), require('ng-zorro-antd/grid'), require('ng-zorro-antd/input-number'), require('ng-zorro-antd/input'), require('ng-zorro-antd/collapse'), require('ng-zorro-antd/switch'), require('ng-zorro-antd/select'), require('ng-zorro-antd/tag'), require('@angular/common/http'), require('@angular/platform-browser/animations'), require('@ant-design/icons-angular/icons'), require('ng-zorro-antd/divider'), require('ng-zorro-antd/tabs'), require('ng-zorro-antd/tooltip')) :
+    typeof define === 'function' && define.amd ? define('angular-editor-lib', ['exports', '@angular/core', 'rxjs/operators', 'lodash', '@ngrx/component-store', 'rxjs', '@angular/common', 'ng-zorro-antd/pipes', 'ng-zorro-antd/core/util', 'ng-zorro-antd/tree', 'ng-zorro-antd/dropdown', 'ng-zorro-antd/core/transition-patch', 'ng-zorro-antd/icon', 'ng-zorro-antd/menu', 'ng-zorro-antd/card', '@angular/cdk/drag-drop', 'ng-zorro-antd/button', '@angular/forms', 'ng-zorro-antd/form', 'ng-zorro-antd/grid', 'ng-zorro-antd/input-number', 'ng-zorro-antd/input', 'ng-zorro-antd/collapse', 'ng-zorro-antd/switch', 'ng-zorro-antd/select', 'ng-zorro-antd/tag', '@angular/common/http', '@angular/platform-browser/animations', '@ant-design/icons-angular/icons', 'ng-zorro-antd/divider', 'ng-zorro-antd/tabs', 'ng-zorro-antd/tooltip'], factory) :
+    (global = typeof globalThis !== 'undefined' ? globalThis : global || self, factory(global['angular-editor-lib'] = {}, global.ng.core, global.rxjs.operators, global._, global.componentStore, global.rxjs, global.ng.common, global.i3$1, global.util, global.i4, global.i3$2, global.i6, global.i7, global.i8, global.i2, global.ng.cdk.dragDrop, global.i5, global.ng.forms, global.i3$4, global.i4$1, global.i7$1, global.i8$1, global.i3$5, global.i9, global.i10, global.i8$2, global.ng.common.http, global.ng.platformBrowser.animations, global.AllIcons, global.divider, global.tabs, global.tooltip));
+}(this, (function (exports, i0, operators, _, componentStore, rxjs, i3, i3$1, util, i4, i3$2, i6, i7, i8, i2, i3$3, i5, i1, i3$4, i4$1, i7$1, i8$1, i3$5, i9, i10, i8$2, http, animations, AllIcons, divider, tabs, tooltip) { 'use strict';
 
     function _interopNamespace(e) {
         if (e && e.__esModule) return e;
@@ -832,20 +832,7 @@
     })();
 
     var DEFAULT_STORE = {
-        nodes: new Array(500).fill(1).map(function (_v, i) { return ({
-            id: "" + Math.round(Math.random() * Math.pow(10, 8)),
-            height: 100,
-            width: 200,
-            left: Math.round(Math.random() * 900),
-            top: Math.round(Math.random() * 500),
-            name: 'test',
-            rotate: 0,
-            locked: false,
-            zIndex: i + 1,
-            borderWidth: 1,
-            borderColor: '#333',
-            borderStyle: 'dashed',
-        }); }),
+        nodes: [],
         selected: new Set(),
         bordered: new Set(),
         canvasBackground: { backgroundColor: '#ffffff' },
@@ -1030,7 +1017,7 @@
             if (rf & 2) {
                 i0.ɵɵproperty("ngForOf", i0.ɵɵpipeBind1(1, 2, ctx.borderedNodeList$))("ngForTrackBy", ctx.trackByFn);
             }
-        }, directives: [i2.NgForOf], pipes: [i2.AsyncPipe], styles: ["[ceBorderedArea],ce-bordered-area{bottom:0;display:block;left:0;position:absolute;right:0;top:0}[ceBorderedArea] .box-border,ce-bordered-area .box-border{border:1px solid #1890ff;box-sizing:border-box;position:absolute}"], encapsulation: 2, changeDetection: 0 });
+        }, directives: [i3.NgForOf], pipes: [i3.AsyncPipe], styles: ["[ceBorderedArea],ce-bordered-area{bottom:0;display:block;left:0;position:absolute;right:0;top:0}[ceBorderedArea] .box-border,ce-bordered-area .box-border{border:1px solid #1890ff;box-sizing:border-box;position:absolute}"], encapsulation: 2, changeDetection: 0 });
     /*@__PURE__*/ (function () {
         i0.ɵsetClassMetadata(BorderedAreaComponent, [{
                 type: i0.Component,
@@ -1114,7 +1101,7 @@
             if (rf & 2) {
                 i0.ɵɵproperty("ngIf", (ctx.node == null ? null : ctx.node.children) && (ctx.node == null ? null : ctx.node.children.length));
             }
-        }, directives: [i2.NgIf, i2.NgForOf, BoxItemComponent], styles: ["ce-box-item{box-sizing:border-box;display:block;position:absolute}"], encapsulation: 2, changeDetection: 0 });
+        }, directives: [i3.NgIf, i3.NgForOf, BoxItemComponent], styles: ["ce-box-item{box-sizing:border-box;display:block;position:absolute}"], encapsulation: 2, changeDetection: 0 });
     /*@__PURE__*/ (function () {
         i0.ɵsetClassMetadata(BoxItemComponent, [{
                 type: i0.Component,
@@ -1163,7 +1150,7 @@
                 i0.ɵɵadvance(2);
                 i0.ɵɵproperty("ngIf", i0.ɵɵpipeBind1(3, 5, ctx.backgroundImage$));
             }
-        }, directives: [i2.NgIf], pipes: [i2.AsyncPipe, i3.NzSanitizerPipe], styles: ["ce-canvas-background{display:block;left:0;overflow:hidden;position:absolute;top:0}ce-canvas-background,ce-canvas-background>div{height:100%;width:100%}ce-canvas-background img{height:100%;left:50%;position:absolute;top:50%;transform:translate3d(-50%,-50%,0);width:100%}"], encapsulation: 2, changeDetection: 0 });
+        }, directives: [i3.NgIf], pipes: [i3.AsyncPipe, i3$1.NzSanitizerPipe], styles: ["ce-canvas-background{display:block;left:0;overflow:hidden;position:absolute;top:0}ce-canvas-background,ce-canvas-background>div{height:100%;width:100%}ce-canvas-background img{height:100%;left:50%;position:absolute;top:50%;transform:translate3d(-50%,-50%,0);width:100%}"], encapsulation: 2, changeDetection: 0 });
     /*@__PURE__*/ (function () {
         i0.ɵsetClassMetadata(CanvasBackgroundComponent, [{
                 type: i0.Component,
@@ -1229,7 +1216,7 @@
                 i0.ɵɵadvance(3);
                 i0.ɵɵattribute("d", i0.ɵɵpipeBind1(14, 22, ctx.parentDPath$));
             }
-        }, pipes: [i2.AsyncPipe], styles: ["ce-canvas-grid{display:block;height:100%;left:0;position:absolute;top:0;width:100%}ce-canvas-grid .grid{border-bottom:1px solid #cfcfcf;border-right:1px solid #cfcfcf;left:0;position:absolute;top:0;z-index:0}"], encapsulation: 2, changeDetection: 0 });
+        }, pipes: [i3.AsyncPipe], styles: ["ce-canvas-grid{display:block;height:100%;left:0;position:absolute;top:0;width:100%}ce-canvas-grid .grid{border-bottom:1px solid #cfcfcf;border-right:1px solid #cfcfcf;left:0;position:absolute;top:0;z-index:0}"], encapsulation: 2, changeDetection: 0 });
     /*@__PURE__*/ (function () {
         i0.ɵsetClassMetadata(CanvasGridComponent, [{
                 type: i0.Component,
@@ -1795,7 +1782,7 @@
             if (rf & 2) {
                 i0.ɵɵproperty("ngForOf", i0.ɵɵpipeBind1(1, 2, ctx.nodes$))("ngForTrackBy", ctx.nodeListTrackByFn);
             }
-        }, directives: [i2.NgForOf, BoxItemComponent, DraggableDirective], pipes: [i2.AsyncPipe], styles: ["ce-canvas{bottom:0;left:0;position:absolute;right:0;top:0}"], encapsulation: 2, changeDetection: 0 });
+        }, directives: [i3.NgForOf, BoxItemComponent, DraggableDirective], pipes: [i3.AsyncPipe], styles: ["ce-canvas{bottom:0;left:0;position:absolute;right:0;top:0}"], encapsulation: 2, changeDetection: 0 });
     /*@__PURE__*/ (function () {
         i0.ɵsetClassMetadata(CanvasComponent, [{
                 type: i0.Component,
@@ -2046,7 +2033,7 @@
         };
         return LayerTreeComponent;
     }());
-    LayerTreeComponent.ɵfac = function LayerTreeComponent_Factory(t) { return new (t || LayerTreeComponent)(i0.ɵɵdirectiveInject(i0.ElementRef), i0.ɵɵdirectiveInject(EditorStore), i0.ɵɵdirectiveInject(CeUtilsService), i0.ɵɵdirectiveInject(i3$1.NzContextMenuService)); };
+    LayerTreeComponent.ɵfac = function LayerTreeComponent_Factory(t) { return new (t || LayerTreeComponent)(i0.ɵɵdirectiveInject(i0.ElementRef), i0.ɵɵdirectiveInject(EditorStore), i0.ɵɵdirectiveInject(CeUtilsService), i0.ɵɵdirectiveInject(i3$2.NzContextMenuService)); };
     LayerTreeComponent.ɵcmp = i0.ɵɵdefineComponent({ type: LayerTreeComponent, selectors: [["ce-layer-tree"]], viewQuery: function LayerTreeComponent_Query(rf, ctx) {
             if (rf & 1) {
                 i0.ɵɵviewQuery(_c0, true, i4.NzTreeComponent);
@@ -2070,7 +2057,7 @@
                 var _r3 = i0.ɵɵreference(7);
                 i0.ɵɵproperty("nzData", i0.ɵɵpipeBind1(2, 4, ctx.treeNodes$))("nzSelectedKeys", i0.ɵɵpipeBind1(3, 6, ctx.selectedKeys$))("nzTreeTemplate", _r3)("nzExpandedIcon", _r1);
             }
-        }, directives: [i4.NzTreeComponent, i2.NgIf, i6.NzIconDirective, i6$1.ɵNzTransitionPatchDirective, i3$1.NzDropdownMenuComponent, i8.NzMenuDirective, i8.NzMenuItemDirective], pipes: [i2.AsyncPipe], styles: ["ce-layer-tree{display:block;height:100%;margin:0 -12px 0 0;overflow:auto;position:relative}ce-layer-tree ::-webkit-scrollbar{position:absolute;right:0}ce-layer-tree .layer{align-items:center;display:flex}ce-layer-tree .layer.locked{color:rgba(0,0,0,.45)}.action-item{align-items:center;display:flex;justify-content:flex-start;min-width:200px}.action-item .shortcuts{color:rgba(0,0,0,.45);margin-left:auto}"], encapsulation: 2, changeDetection: 0 });
+        }, directives: [i4.NzTreeComponent, i3.NgIf, i6.ɵNzTransitionPatchDirective, i7.NzIconDirective, i3$2.NzDropdownMenuComponent, i8.NzMenuDirective, i8.NzMenuItemDirective], pipes: [i3.AsyncPipe], styles: ["ce-layer-tree{display:block;height:100%;margin:0 -12px 0 0;overflow:auto;position:relative}ce-layer-tree ::-webkit-scrollbar{position:absolute;right:0}ce-layer-tree .layer{align-items:center;display:flex}ce-layer-tree .layer.locked{color:rgba(0,0,0,.45)}.action-item{align-items:center;display:flex;justify-content:flex-start;min-width:200px}.action-item .shortcuts{color:rgba(0,0,0,.45);margin-left:auto}"], encapsulation: 2, changeDetection: 0 });
     /*@__PURE__*/ (function () {
         i0.ɵsetClassMetadata(LayerTreeComponent, [{
                 type: i0.Component,
@@ -2082,7 +2069,7 @@
                         encapsulation: i0.ViewEncapsulation.None,
                         changeDetection: i0.ChangeDetectionStrategy.OnPush,
                     }]
-            }], function () { return [{ type: i0.ElementRef }, { type: EditorStore }, { type: CeUtilsService }, { type: i3$1.NzContextMenuService }]; }, { layerTree: [{
+            }], function () { return [{ type: i0.ElementRef }, { type: EditorStore }, { type: CeUtilsService }, { type: i3$2.NzContextMenuService }]; }, { layerTree: [{
                     type: i0.ViewChild,
                     args: ['layerTree', { read: i4.NzTreeComponent }]
                 }] });
@@ -2194,7 +2181,7 @@
                 i0.ɵɵadvance(1);
                 i0.ɵɵproperty("ngIf", !ctx.utils.isTemplateType(ctx.panel.content));
             }
-        }, directives: [i2$1.NzCardComponent, i3$2.CdkDrag, i2.NgIf, i3$2.CdkDragHandle, i2.NgTemplateOutlet, i2.NgComponentOutlet, i5.NzButtonComponent, i6$1.ɵNzTransitionPatchDirective, i6.NzIconDirective], styles: ["[cePanel],ce-panel{display:block;pointer-events:none;position:absolute;width:300px}[cePanel] *,ce-panel *{pointer-events:auto}[cePanel]>nz-card.collapsed .ant-card-body,ce-panel>nz-card.collapsed .ant-card-body{height:0;overflow:hidden;padding:0}[cePanel]>nz-card.collapsed .collapse-icon,ce-panel>nz-card.collapsed .collapse-icon{transform:rotate(-180deg)}[cePanel]>nz-card .collapse-icon,ce-panel>nz-card .collapse-icon{transform:rotate(0deg);transition:transform .3s ease-in-out}[cePanel]>nz-card .ant-card-head-title,ce-panel>nz-card .ant-card-head-title{cursor:move}[cePanel]>nz-card .ant-card-body,ce-panel>nz-card .ant-card-body{height:calc(100vh - 110px);transition:height .3s ease-in-out,padding .3s ease-in-out}"], encapsulation: 2, changeDetection: 0 });
+        }, directives: [i2.NzCardComponent, i3$3.CdkDrag, i3.NgIf, i3$3.CdkDragHandle, i3.NgTemplateOutlet, i3.NgComponentOutlet, i5.NzButtonComponent, i6.ɵNzTransitionPatchDirective, i7.NzIconDirective], styles: ["[cePanel],ce-panel{display:block;pointer-events:none;position:absolute;width:300px}[cePanel] *,ce-panel *{pointer-events:auto}[cePanel]>nz-card.collapsed .ant-card-body,ce-panel>nz-card.collapsed .ant-card-body{height:0;overflow:hidden;padding:0}[cePanel]>nz-card.collapsed .collapse-icon,ce-panel>nz-card.collapsed .collapse-icon{transform:rotate(-180deg)}[cePanel]>nz-card .collapse-icon,ce-panel>nz-card .collapse-icon{transform:rotate(0deg);transition:transform .3s ease-in-out}[cePanel]>nz-card .ant-card-head-title,ce-panel>nz-card .ant-card-head-title{cursor:move}[cePanel]>nz-card .ant-card-body,ce-panel>nz-card .ant-card-body{height:calc(100vh - 110px);transition:height .3s ease-in-out,padding .3s ease-in-out}"], encapsulation: 2, changeDetection: 0 });
     /*@__PURE__*/ (function () {
         i0.ɵsetClassMetadata(PanelComponent, [{
                 type: i0.Component,
@@ -2392,7 +2379,7 @@
                 i0.ɵɵadvance(17);
                 i0.ɵɵproperty("ngIf", ctx.canvasBackgroundFormGroup.controls["backgroundImage"].value);
             }
-        }, directives: [i1.ɵangular_packages_forms_forms_y, i1.NgControlStatusGroup, i3$3.NzFormDirective, i1.FormGroupDirective, i4$1.NzRowDirective, i4$1.NzColDirective, i3$3.NzFormItemComponent, i3$3.NzFormLabelComponent, i6.NzIconDirective, i6$1.ɵNzTransitionPatchDirective, i3$3.NzFormControlComponent, i7.NzInputNumberComponent, i1.NgControlStatus, i1.FormControlName, i8$1.NzInputDirective, i1.DefaultValueAccessor, i2.NgIf], pipes: [i3.NzSanitizerPipe], styles: ["[ceCanvasForms],ce-canvas-forms{display:block;padding:12px}"], encapsulation: 2, changeDetection: 0 });
+        }, directives: [i1.ɵangular_packages_forms_forms_y, i1.NgControlStatusGroup, i3$4.NzFormDirective, i1.FormGroupDirective, i4$1.NzRowDirective, i4$1.NzColDirective, i3$4.NzFormItemComponent, i3$4.NzFormLabelComponent, i6.ɵNzTransitionPatchDirective, i7.NzIconDirective, i3$4.NzFormControlComponent, i7$1.NzInputNumberComponent, i1.NgControlStatus, i1.FormControlName, i8$1.NzInputDirective, i1.DefaultValueAccessor, i3.NgIf], pipes: [i3$1.NzSanitizerPipe], styles: ["[ceCanvasForms],ce-canvas-forms{display:block;padding:12px}"], encapsulation: 2, changeDetection: 0 });
     /*@__PURE__*/ (function () {
         i0.ɵsetClassMetadata(CanvasFormsComponent, [{
                 type: i0.Component,
@@ -2684,7 +2671,7 @@
                 i0.ɵɵadvance(2);
                 i0.ɵɵproperty("ngTemplateOutlet", _r0)("ngTemplateOutletContext", i0.ɵɵpureFunction1(23, _c2, i0.ɵɵpureFunction0(22, _c5)));
             }
-        }, directives: [i3$4.NzCollapseComponent, i3$4.NzCollapsePanelComponent, i1.ɵangular_packages_forms_forms_y, i1.NgControlStatusGroup, i3$3.NzFormDirective, i1.FormGroupDirective, i4$1.NzRowDirective, i4$1.NzColDirective, i3$3.NzFormItemComponent, i3$3.NzFormLabelComponent, i6.NzIconDirective, i6$1.ɵNzTransitionPatchDirective, i3$3.NzFormControlComponent, i7.NzInputNumberComponent, i1.NgControlStatus, i1.FormControlName, i9.NzSwitchComponent, i10.NzSelectComponent, i10.NzOptionComponent, i2.NgTemplateOutlet, i2.NgSwitch, i2.NgSwitchCase], styles: ["[ceWidgetForm],ce-widget-form{display:block}[ceWidgetForm] .ant-collapse-ghost>.ant-collapse-item,ce-widget-form .ant-collapse-ghost>.ant-collapse-item{border-bottom:1px solid #d9d9d9}[ceWidgetForm] .ant-collapse-ghost>.ant-collapse-item>.ant-collapse-header,ce-widget-form .ant-collapse-ghost>.ant-collapse-item>.ant-collapse-header{padding-left:20px}[ceWidgetForm] .ant-collapse-ghost>.ant-collapse-item>.ant-collapse-header .ant-collapse-arrow,ce-widget-form .ant-collapse-ghost>.ant-collapse-item>.ant-collapse-header .ant-collapse-arrow{left:5px}[ceWidgetForm] .ant-collapse-ghost>.ant-collapse-item>.ant-collapse-content>.ant-collapse-content-box,ce-widget-form .ant-collapse-ghost>.ant-collapse-item>.ant-collapse-content>.ant-collapse-content-box{padding:8px}[ceWidgetForm] .ant-form-item-control-input-content,ce-widget-form .ant-form-item-control-input-content{align-items:center;display:flex}"], encapsulation: 2 });
+        }, directives: [i3$5.NzCollapseComponent, i3$5.NzCollapsePanelComponent, i1.ɵangular_packages_forms_forms_y, i1.NgControlStatusGroup, i3$4.NzFormDirective, i1.FormGroupDirective, i4$1.NzRowDirective, i4$1.NzColDirective, i3$4.NzFormItemComponent, i3$4.NzFormLabelComponent, i6.ɵNzTransitionPatchDirective, i7.NzIconDirective, i3$4.NzFormControlComponent, i7$1.NzInputNumberComponent, i1.NgControlStatus, i1.FormControlName, i9.NzSwitchComponent, i10.NzSelectComponent, i10.NzOptionComponent, i3.NgTemplateOutlet, i3.NgSwitch, i3.NgSwitchCase], styles: ["[ceWidgetForm],ce-widget-form{display:block}[ceWidgetForm] .ant-collapse-ghost>.ant-collapse-item,ce-widget-form .ant-collapse-ghost>.ant-collapse-item{border-bottom:1px solid #d9d9d9}[ceWidgetForm] .ant-collapse-ghost>.ant-collapse-item>.ant-collapse-header,ce-widget-form .ant-collapse-ghost>.ant-collapse-item>.ant-collapse-header{padding-left:20px}[ceWidgetForm] .ant-collapse-ghost>.ant-collapse-item>.ant-collapse-header .ant-collapse-arrow,ce-widget-form .ant-collapse-ghost>.ant-collapse-item>.ant-collapse-header .ant-collapse-arrow{left:5px}[ceWidgetForm] .ant-collapse-ghost>.ant-collapse-item>.ant-collapse-content>.ant-collapse-content-box,ce-widget-form .ant-collapse-ghost>.ant-collapse-item>.ant-collapse-content>.ant-collapse-content-box{padding:8px}[ceWidgetForm] .ant-form-item-control-input-content,ce-widget-form .ant-form-item-control-input-content{align-items:center;display:flex}"], encapsulation: 2 });
     /*@__PURE__*/ (function () {
         i0.ɵsetClassMetadata(WidgetFormComponent, [{
                 type: i0.Component,
@@ -2734,7 +2721,7 @@
             if (rf & 2) {
                 i0.ɵɵproperty("ngComponentOutlet", i0.ɵɵpipeBind1(1, 1, ctx.formComponent$));
             }
-        }, directives: [i2.NgComponentOutlet], pipes: [i2.AsyncPipe], styles: ["[cePropertyForm],ce-property-form{display:block;margin:-12px}"], encapsulation: 2, changeDetection: 0 });
+        }, directives: [i3.NgComponentOutlet], pipes: [i3.AsyncPipe], styles: ["[cePropertyForm],ce-property-form{display:block;margin:-12px}"], encapsulation: 2, changeDetection: 0 });
     /*@__PURE__*/ (function () {
         i0.ɵsetClassMetadata(PropertyFormComponent, [{
                 type: i0.Component,
@@ -3541,7 +3528,7 @@
                 var _r1 = i0.ɵɵreference(2);
                 i0.ɵɵproperty("ngIf", ctx.ceToolbar)("ngIfElse", _r1);
             }
-        }, directives: [i2.NgIf, i2$1.NzCardComponent, i5.NzButtonComponent, i6$1.ɵNzTransitionPatchDirective, i6.NzIconDirective, i8$2.NzTagComponent], pipes: [i2.AsyncPipe], styles: ["ce-toolbar{display:flex;flex:1;height:40px;max-height:40px;width:100%}ce-toolbar .tool-bar{flex:1}ce-toolbar .tool-bar [nz-icon]{font-size:18px}ce-toolbar .tool-bar nz-tag{margin:auto .2rem;padding:auto 2px}ce-toolbar .tool-bar nz-tag [nz-icon]{font-size:13px}ce-toolbar .tool-bar .ant-card-body{display:flex;height:100%;padding:2px 5px}"], encapsulation: 2, changeDetection: 0 });
+        }, directives: [i3.NgIf, i2.NzCardComponent, i5.NzButtonComponent, i6.ɵNzTransitionPatchDirective, i7.NzIconDirective, i8$2.NzTagComponent], pipes: [i3.AsyncPipe], styles: ["ce-toolbar{display:flex;flex:1;height:40px;max-height:40px;width:100%}ce-toolbar .tool-bar{flex:1}ce-toolbar .tool-bar [nz-icon]{font-size:18px}ce-toolbar .tool-bar nz-tag{margin:auto .2rem;padding:auto 2px}ce-toolbar .tool-bar nz-tag [nz-icon]{font-size:13px}ce-toolbar .tool-bar .ant-card-body{display:flex;height:100%;padding:2px 5px}"], encapsulation: 2, changeDetection: 0 });
     /*@__PURE__*/ (function () {
         i0.ɵsetClassMetadata(ToolbarComponent, [{
                 type: i0.Component,
@@ -3820,7 +3807,7 @@
                 i0.ɵɵadvance(1);
                 i0.ɵɵproperty("ngForOf", i0.ɵɵpipeBind1(34, 58, ctx.store.panels$))("ngForTrackBy", ctx.panelsTrackByFn);
             }
-        }, directives: [DraggableDirective, SelectorDirective, NoZoomAreaDirective, CanvasBackgroundComponent, CanvasGridComponent, ZoomAreaDirective, CanvasComponent, BorderedAreaComponent, ResizeHandleComponent, i2.NgIf, i2.NgForOf, PanelComponent], pipes: [i2.AsyncPipe], styles: ["@import \"styles/bootstrap.css\";[nz-button]~[nz-button],[nz-icon]~[nz-icon]{margin-left:.5rem}.svg-icon{width:80px}.svg-icon>*{fill:currentColor}[ceNoZoomArea]{display:block;pointer-events:none}[ceNoZoomArea],[ceZoomArea]{position:absolute}.ant-tree .ant-tree-treenode{align-items:center}ce-editor{bottom:0;display:flex;flex-direction:column;height:100vh;left:0;overflow:hidden;position:absolute;right:0;top:0;width:100vw}ce-editor .left-side{width:300px}ce-editor .canvas-container{background-color:#f0f0f0;flex:1;overflow:hidden;position:relative}ce-editor .canvas-container.start-drag{cursor:grab}ce-editor .canvas-container.start-drag>*{pointer-events:none}ce-editor .canvas-container.start-drag.dragging{cursor:grabbing}ce-editor .canvas-container .canvas-content{position:absolute}ce-editor .canvas-container .selector{background-color:rgba(24,144,255,.3);border:1px solid #1890ff;box-sizing:border-box;position:absolute}ce-editor .canvas-container .ref-line{background-color:#fa8c16;display:none;opacity:.8;position:absolute;z-index:999999999999}ce-editor .canvas-container .ref-line.active{display:inline-block}ce-editor .canvas-container .ref-line.x{bottom:0;height:100%;top:0;width:1px}ce-editor .canvas-container .ref-line.y{height:1px;left:0;right:0;width:100%}ce-editor .aside{border:solid #f0f0f0;border-width:0 1px 0 0;display:flex}ce-editor .aside ul{list-style:none;margin:0;padding:0}ce-editor .aside ul li{align-items:center;border-bottom:1px solid #f0f0f0;display:flex;justify-content:center;margin:0;padding:3px 0;width:100%}"], encapsulation: 2, changeDetection: 0 });
+        }, directives: [DraggableDirective, SelectorDirective, NoZoomAreaDirective, CanvasBackgroundComponent, CanvasGridComponent, ZoomAreaDirective, CanvasComponent, BorderedAreaComponent, ResizeHandleComponent, i3.NgIf, i3.NgForOf, PanelComponent], pipes: [i3.AsyncPipe], styles: ["@import \"styles/bootstrap.css\";[nz-button]~[nz-button],[nz-icon]~[nz-icon]{margin-left:.5rem}.svg-icon{width:80px}.svg-icon>*{fill:currentColor}[ceNoZoomArea]{display:block;pointer-events:none}[ceNoZoomArea],[ceZoomArea]{position:absolute}.ant-tree .ant-tree-treenode{align-items:center}ce-editor{bottom:0;display:flex;flex-direction:column;height:100vh;left:0;overflow:hidden;position:absolute;right:0;top:0;width:100vw}ce-editor .left-side{width:300px}ce-editor .canvas-container{background-color:#f0f0f0;flex:1;overflow:hidden;position:relative}ce-editor .canvas-container.start-drag{cursor:grab}ce-editor .canvas-container.start-drag>*{pointer-events:none}ce-editor .canvas-container.start-drag.dragging{cursor:grabbing}ce-editor .canvas-container .canvas-content{position:absolute}ce-editor .canvas-container .selector{background-color:rgba(24,144,255,.3);border:1px solid #1890ff;box-sizing:border-box;position:absolute}ce-editor .canvas-container .ref-line{background-color:#fa8c16;display:none;opacity:.8;position:absolute;z-index:999999999999}ce-editor .canvas-container .ref-line.active{display:inline-block}ce-editor .canvas-container .ref-line.x{bottom:0;height:100%;top:0;width:1px}ce-editor .canvas-container .ref-line.y{height:1px;left:0;right:0;width:100%}ce-editor .aside{border:solid #f0f0f0;border-width:0 1px 0 0;display:flex}ce-editor .aside ul{list-style:none;margin:0;padding:0}ce-editor .aside ul li{align-items:center;border-bottom:1px solid #f0f0f0;display:flex;justify-content:center;margin:0;padding:3px 0;width:100%}"], encapsulation: 2, changeDetection: 0 });
     /*@__PURE__*/ (function () {
         i0.ɵsetClassMetadata(AngularEditorLibComponent, [{
                 type: i0.Component,
@@ -3846,25 +3833,92 @@
 
     var antDesignIcons = AllIcons__namespace;
     var ICONS = Object.keys(antDesignIcons).map(function (key) { return antDesignIcons[key]; });
-    var ANTD_MODULES = [
-        i2$1.NzCardModule,
-        i6.NzIconModule.forRoot(ICONS),
+    var NG_ZORRO_MODULES = [
         i5.NzButtonModule,
-        i7.NzInputNumberModule,
-        tabs.NzTabsModule,
-        i4.NzTreeModule,
-        i3$1.NzDropDownModule,
-        i3.NzPipesModule,
-        tooltip.NzToolTipModule,
-        i3$3.NzFormModule,
-        i8$1.NzInputModule,
-        i8$2.NzTagModule,
+        i2.NzCardModule,
+        i3$5.NzCollapseModule,
         divider.NzDividerModule,
-        i3$4.NzCollapseModule,
-        i9.NzSwitchModule,
+        i3$2.NzDropDownModule,
+        i3$4.NzFormModule,
+        i7.NzIconModule,
+        i8$1.NzInputModule,
+        i7$1.NzInputNumberModule,
+        i3$1.NzPipesModule,
         i10.NzSelectModule,
+        i9.NzSwitchModule,
+        tabs.NzTabsModule,
+        i8$2.NzTagModule,
+        tooltip.NzToolTipModule,
+        i4.NzTreeModule,
     ];
-    var CDK_MODULES = [i3$2.DragDropModule];
+    var NgZorroModule = /** @class */ (function () {
+        function NgZorroModule(injector) {
+            this.injector = injector;
+            this.injector.get(i7.NzIconService).fetchFromIconfont({ scriptUrl: 'https://at.alicdn.com/t/font_1310204_lmnttxhl5lk.js' });
+        }
+        return NgZorroModule;
+    }());
+    NgZorroModule.ɵmod = i0.ɵɵdefineNgModule({ type: NgZorroModule });
+    NgZorroModule.ɵinj = i0.ɵɵdefineInjector({ factory: function NgZorroModule_Factory(t) { return new (t || NgZorroModule)(i0.ɵɵinject(i0.Injector)); }, imports: [__spread(NG_ZORRO_MODULES, [i7.NzIconModule.forRoot(ICONS)]), i5.NzButtonModule,
+            i2.NzCardModule,
+            i3$5.NzCollapseModule,
+            divider.NzDividerModule,
+            i3$2.NzDropDownModule,
+            i3$4.NzFormModule,
+            i7.NzIconModule,
+            i8$1.NzInputModule,
+            i7$1.NzInputNumberModule,
+            i3$1.NzPipesModule,
+            i10.NzSelectModule,
+            i9.NzSwitchModule,
+            tabs.NzTabsModule,
+            i8$2.NzTagModule,
+            tooltip.NzToolTipModule,
+            i4.NzTreeModule, i7.NzIconModule] });
+    (function () {
+        (typeof ngJitMode === "undefined" || ngJitMode) && i0.ɵɵsetNgModuleScope(NgZorroModule, { imports: [i5.NzButtonModule,
+                i2.NzCardModule,
+                i3$5.NzCollapseModule,
+                divider.NzDividerModule,
+                i3$2.NzDropDownModule,
+                i3$4.NzFormModule,
+                i7.NzIconModule,
+                i8$1.NzInputModule,
+                i7$1.NzInputNumberModule,
+                i3$1.NzPipesModule,
+                i10.NzSelectModule,
+                i9.NzSwitchModule,
+                tabs.NzTabsModule,
+                i8$2.NzTagModule,
+                tooltip.NzToolTipModule,
+                i4.NzTreeModule, i7.NzIconModule], exports: [i5.NzButtonModule,
+                i2.NzCardModule,
+                i3$5.NzCollapseModule,
+                divider.NzDividerModule,
+                i3$2.NzDropDownModule,
+                i3$4.NzFormModule,
+                i7.NzIconModule,
+                i8$1.NzInputModule,
+                i7$1.NzInputNumberModule,
+                i3$1.NzPipesModule,
+                i10.NzSelectModule,
+                i9.NzSwitchModule,
+                tabs.NzTabsModule,
+                i8$2.NzTagModule,
+                tooltip.NzToolTipModule,
+                i4.NzTreeModule, i7.NzIconModule] });
+    })();
+    /*@__PURE__*/ (function () {
+        i0.ɵsetClassMetadata(NgZorroModule, [{
+                type: i0.NgModule,
+                args: [{
+                        imports: __spread(NG_ZORRO_MODULES, [i7.NzIconModule.forRoot(ICONS)]),
+                        exports: __spread(NG_ZORRO_MODULES, [i7.NzIconModule]),
+                    }]
+            }], function () { return [{ type: i0.Injector }]; }, null);
+    })();
+
+    var CDK_MODULES = [i3$3.DragDropModule];
     var FORMS_COMPONENT = [CanvasFormsComponent, WidgetFormComponent];
     var COMPONENTS = [
         ToolbarComponent,
@@ -3883,14 +3937,12 @@
     ];
     var DIRECTIVES = [NoZoomAreaDirective, ZoomAreaDirective, DraggableDirective, SelectorDirective, CeToolbarDirective];
     var AngularEditorLibModule = /** @class */ (function () {
-        function AngularEditorLibModule(injector) {
-            this.injector = injector;
-            this.injector.get(i6.NzIconService).fetchFromIconfont({ scriptUrl: 'https://at.alicdn.com/t/font_1310204_lmnttxhl5lk.js' });
+        function AngularEditorLibModule() {
         }
         return AngularEditorLibModule;
     }());
     AngularEditorLibModule.ɵmod = i0.ɵɵdefineNgModule({ type: AngularEditorLibModule });
-    AngularEditorLibModule.ɵinj = i0.ɵɵdefineInjector({ factory: function AngularEditorLibModule_Factory(t) { return new (t || AngularEditorLibModule)(i0.ɵɵinject(i0.Injector)); }, imports: [__spread([i2.CommonModule, animations.BrowserAnimationsModule, http.HttpClientModule, i1.FormsModule, i1.ReactiveFormsModule], ANTD_MODULES, CDK_MODULES)] });
+    AngularEditorLibModule.ɵinj = i0.ɵɵdefineInjector({ factory: function AngularEditorLibModule_Factory(t) { return new (t || AngularEditorLibModule)(); }, imports: [__spread([i3.CommonModule, animations.BrowserAnimationsModule, http.HttpClientModule, i1.FormsModule, i1.ReactiveFormsModule, NgZorroModule], CDK_MODULES)] });
     (function () {
         (typeof ngJitMode === "undefined" || ngJitMode) && i0.ɵɵsetNgModuleScope(AngularEditorLibModule, { declarations: [ToolbarComponent,
                 LayerTreeComponent,
@@ -3904,20 +3956,7 @@
                 BorderedAreaComponent,
                 AngularEditorLibComponent,
                 PanelComponent,
-                PropertyFormComponent, NoZoomAreaDirective, ZoomAreaDirective, DraggableDirective, SelectorDirective, CeToolbarDirective, CanvasFormsComponent, WidgetFormComponent], imports: [i2.CommonModule, animations.BrowserAnimationsModule, http.HttpClientModule, i1.FormsModule, i1.ReactiveFormsModule, i2$1.NzCardModule, i6.NzIconModule, i5.NzButtonModule,
-                i7.NzInputNumberModule,
-                tabs.NzTabsModule,
-                i4.NzTreeModule,
-                i3$1.NzDropDownModule,
-                i3.NzPipesModule,
-                tooltip.NzToolTipModule,
-                i3$3.NzFormModule,
-                i8$1.NzInputModule,
-                i8$2.NzTagModule,
-                divider.NzDividerModule,
-                i3$4.NzCollapseModule,
-                i9.NzSwitchModule,
-                i10.NzSelectModule, i3$2.DragDropModule], exports: [ToolbarComponent,
+                PropertyFormComponent, NoZoomAreaDirective, ZoomAreaDirective, DraggableDirective, SelectorDirective, CeToolbarDirective, CanvasFormsComponent, WidgetFormComponent], imports: [i3.CommonModule, animations.BrowserAnimationsModule, http.HttpClientModule, i1.FormsModule, i1.ReactiveFormsModule, NgZorroModule, i3$3.DragDropModule], exports: [ToolbarComponent,
                 LayerTreeComponent,
                 WidgetListComponent,
                 CanvasComponent,
@@ -3935,13 +3974,13 @@
         i0.ɵsetClassMetadata(AngularEditorLibModule, [{
                 type: i0.NgModule,
                 args: [{
-                        imports: __spread([i2.CommonModule, animations.BrowserAnimationsModule, http.HttpClientModule, i1.FormsModule, i1.ReactiveFormsModule], ANTD_MODULES, CDK_MODULES),
+                        imports: __spread([i3.CommonModule, animations.BrowserAnimationsModule, http.HttpClientModule, i1.FormsModule, i1.ReactiveFormsModule, NgZorroModule], CDK_MODULES),
                         declarations: __spread(COMPONENTS, DIRECTIVES, FORMS_COMPONENT),
                         exports: __spread(COMPONENTS, DIRECTIVES),
                     }]
-            }], function () { return [{ type: i0.Injector }]; }, null);
+            }], null, null);
     })();
-    i0.ɵɵsetComponentScope(ResizeHandleComponent, [i2.NgIf, RotateHandleComponent, DraggableDirective], [i2.AsyncPipe]);
+    i0.ɵɵsetComponentScope(ResizeHandleComponent, [i3.NgIf, RotateHandleComponent, DraggableDirective], [i3.AsyncPipe]);
 
     /*
      * Public API Surface of angular-editor-lib
@@ -3957,6 +3996,7 @@
     exports.BoxItemComponent = BoxItemComponent;
     exports.CanvasBackgroundComponent = CanvasBackgroundComponent;
     exports.CanvasComponent = CanvasComponent;
+    exports.CanvasFormsComponent = CanvasFormsComponent;
     exports.CanvasGridComponent = CanvasGridComponent;
     exports.CeToolbarDirective = CeToolbarDirective;
     exports.CeUtilsService = CeUtilsService;
@@ -3971,6 +4011,7 @@
     exports.RotateHandleComponent = RotateHandleComponent;
     exports.SelectorDirective = SelectorDirective;
     exports.ToolbarComponent = ToolbarComponent;
+    exports.WidgetFormComponent = WidgetFormComponent;
     exports.WidgetListComponent = WidgetListComponent;
     exports.ZoomAreaDirective = ZoomAreaDirective;
     exports.genNodeId = genNodeId;

@@ -9,8 +9,8 @@ import { __decorate, __rest } from 'tslib';
 import { InputBoolean } from 'ng-zorro-antd/core/util';
 import { NzTreeComponent, NzTreeModule } from 'ng-zorro-antd/tree';
 import { NzContextMenuService, NzDropdownMenuComponent, NzDropDownModule } from 'ng-zorro-antd/dropdown';
-import { NzIconDirective, NzIconModule, NzIconService } from 'ng-zorro-antd/icon';
 import { ɵNzTransitionPatchDirective } from 'ng-zorro-antd/core/transition-patch';
+import { NzIconDirective, NzIconModule, NzIconService } from 'ng-zorro-antd/icon';
 import { NzMenuDirective, NzMenuItemDirective } from 'ng-zorro-antd/menu';
 import { NzCardComponent, NzCardModule } from 'ng-zorro-antd/card';
 import { CdkDrag, CdkDragHandle, DragDropModule } from '@angular/cdk/drag-drop';
@@ -523,20 +523,7 @@ CeUtilsService.ɵprov = ɵɵdefineInjectable({ token: CeUtilsService, factory: C
     }], function () { return []; }, null); })();
 
 const DEFAULT_STORE = {
-    nodes: new Array(500).fill(1).map((_v, i) => ({
-        id: `${Math.round(Math.random() * Math.pow(10, 8))}`,
-        height: 100,
-        width: 200,
-        left: Math.round(Math.random() * 900),
-        top: Math.round(Math.random() * 500),
-        name: 'test',
-        rotate: 0,
-        locked: false,
-        zIndex: i + 1,
-        borderWidth: 1,
-        borderColor: '#333',
-        borderStyle: 'dashed',
-    })),
+    nodes: [],
     selected: new Set(),
     bordered: new Set(),
     canvasBackground: { backgroundColor: '#ffffff' },
@@ -1651,7 +1638,7 @@ LayerTreeComponent.ɵcmp = ɵɵdefineComponent({ type: LayerTreeComponent, selec
         const _r1 = ɵɵreference(5);
         const _r3 = ɵɵreference(7);
         ɵɵproperty("nzData", ɵɵpipeBind1(2, 4, ctx.treeNodes$))("nzSelectedKeys", ɵɵpipeBind1(3, 6, ctx.selectedKeys$))("nzTreeTemplate", _r3)("nzExpandedIcon", _r1);
-    } }, directives: [NzTreeComponent, NgIf, NzIconDirective, ɵNzTransitionPatchDirective, NzDropdownMenuComponent, NzMenuDirective, NzMenuItemDirective], pipes: [AsyncPipe], styles: ["ce-layer-tree{display:block;height:100%;margin:0 -12px 0 0;overflow:auto;position:relative}ce-layer-tree ::-webkit-scrollbar{position:absolute;right:0}ce-layer-tree .layer{align-items:center;display:flex}ce-layer-tree .layer.locked{color:rgba(0,0,0,.45)}.action-item{align-items:center;display:flex;justify-content:flex-start;min-width:200px}.action-item .shortcuts{color:rgba(0,0,0,.45);margin-left:auto}"], encapsulation: 2, changeDetection: 0 });
+    } }, directives: [NzTreeComponent, NgIf, ɵNzTransitionPatchDirective, NzIconDirective, NzDropdownMenuComponent, NzMenuDirective, NzMenuItemDirective], pipes: [AsyncPipe], styles: ["ce-layer-tree{display:block;height:100%;margin:0 -12px 0 0;overflow:auto;position:relative}ce-layer-tree ::-webkit-scrollbar{position:absolute;right:0}ce-layer-tree .layer{align-items:center;display:flex}ce-layer-tree .layer.locked{color:rgba(0,0,0,.45)}.action-item{align-items:center;display:flex;justify-content:flex-start;min-width:200px}.action-item .shortcuts{color:rgba(0,0,0,.45);margin-left:auto}"], encapsulation: 2, changeDetection: 0 });
 /*@__PURE__*/ (function () { ɵsetClassMetadata(LayerTreeComponent, [{
         type: Component,
         args: [{
@@ -1937,7 +1924,7 @@ CanvasFormsComponent.ɵcmp = ɵɵdefineComponent({ type: CanvasFormsComponent, s
         ɵɵproperty("formGroup", ctx.canvasBackgroundFormGroup);
         ɵɵadvance(17);
         ɵɵproperty("ngIf", ctx.canvasBackgroundFormGroup.controls["backgroundImage"].value);
-    } }, directives: [ɵangular_packages_forms_forms_y, NgControlStatusGroup, NzFormDirective, FormGroupDirective, NzRowDirective, NzColDirective, NzFormItemComponent, NzFormLabelComponent, NzIconDirective, ɵNzTransitionPatchDirective, NzFormControlComponent, NzInputNumberComponent, NgControlStatus, FormControlName, NzInputDirective, DefaultValueAccessor, NgIf], pipes: [NzSanitizerPipe], styles: ["[ceCanvasForms],ce-canvas-forms{display:block;padding:12px}"], encapsulation: 2, changeDetection: 0 });
+    } }, directives: [ɵangular_packages_forms_forms_y, NgControlStatusGroup, NzFormDirective, FormGroupDirective, NzRowDirective, NzColDirective, NzFormItemComponent, NzFormLabelComponent, ɵNzTransitionPatchDirective, NzIconDirective, NzFormControlComponent, NzInputNumberComponent, NgControlStatus, FormControlName, NzInputDirective, DefaultValueAccessor, NgIf], pipes: [NzSanitizerPipe], styles: ["[ceCanvasForms],ce-canvas-forms{display:block;padding:12px}"], encapsulation: 2, changeDetection: 0 });
 /*@__PURE__*/ (function () { ɵsetClassMetadata(CanvasFormsComponent, [{
         type: Component,
         args: [{
@@ -2200,7 +2187,7 @@ WidgetFormComponent.ɵcmp = ɵɵdefineComponent({ type: WidgetFormComponent, sel
         ɵɵproperty("ngTemplateOutlet", _r0)("ngTemplateOutletContext", ɵɵpureFunction1(20, _c2, ɵɵpureFunction0(19, _c4)));
         ɵɵadvance(2);
         ɵɵproperty("ngTemplateOutlet", _r0)("ngTemplateOutletContext", ɵɵpureFunction1(23, _c2, ɵɵpureFunction0(22, _c5)));
-    } }, directives: [NzCollapseComponent, NzCollapsePanelComponent, ɵangular_packages_forms_forms_y, NgControlStatusGroup, NzFormDirective, FormGroupDirective, NzRowDirective, NzColDirective, NzFormItemComponent, NzFormLabelComponent, NzIconDirective, ɵNzTransitionPatchDirective, NzFormControlComponent, NzInputNumberComponent, NgControlStatus, FormControlName, NzSwitchComponent, NzSelectComponent, NzOptionComponent, NgTemplateOutlet, NgSwitch, NgSwitchCase], styles: ["[ceWidgetForm],ce-widget-form{display:block}[ceWidgetForm] .ant-collapse-ghost>.ant-collapse-item,ce-widget-form .ant-collapse-ghost>.ant-collapse-item{border-bottom:1px solid #d9d9d9}[ceWidgetForm] .ant-collapse-ghost>.ant-collapse-item>.ant-collapse-header,ce-widget-form .ant-collapse-ghost>.ant-collapse-item>.ant-collapse-header{padding-left:20px}[ceWidgetForm] .ant-collapse-ghost>.ant-collapse-item>.ant-collapse-header .ant-collapse-arrow,ce-widget-form .ant-collapse-ghost>.ant-collapse-item>.ant-collapse-header .ant-collapse-arrow{left:5px}[ceWidgetForm] .ant-collapse-ghost>.ant-collapse-item>.ant-collapse-content>.ant-collapse-content-box,ce-widget-form .ant-collapse-ghost>.ant-collapse-item>.ant-collapse-content>.ant-collapse-content-box{padding:8px}[ceWidgetForm] .ant-form-item-control-input-content,ce-widget-form .ant-form-item-control-input-content{align-items:center;display:flex}"], encapsulation: 2 });
+    } }, directives: [NzCollapseComponent, NzCollapsePanelComponent, ɵangular_packages_forms_forms_y, NgControlStatusGroup, NzFormDirective, FormGroupDirective, NzRowDirective, NzColDirective, NzFormItemComponent, NzFormLabelComponent, ɵNzTransitionPatchDirective, NzIconDirective, NzFormControlComponent, NzInputNumberComponent, NgControlStatus, FormControlName, NzSwitchComponent, NzSelectComponent, NzOptionComponent, NgTemplateOutlet, NgSwitch, NgSwitchCase], styles: ["[ceWidgetForm],ce-widget-form{display:block}[ceWidgetForm] .ant-collapse-ghost>.ant-collapse-item,ce-widget-form .ant-collapse-ghost>.ant-collapse-item{border-bottom:1px solid #d9d9d9}[ceWidgetForm] .ant-collapse-ghost>.ant-collapse-item>.ant-collapse-header,ce-widget-form .ant-collapse-ghost>.ant-collapse-item>.ant-collapse-header{padding-left:20px}[ceWidgetForm] .ant-collapse-ghost>.ant-collapse-item>.ant-collapse-header .ant-collapse-arrow,ce-widget-form .ant-collapse-ghost>.ant-collapse-item>.ant-collapse-header .ant-collapse-arrow{left:5px}[ceWidgetForm] .ant-collapse-ghost>.ant-collapse-item>.ant-collapse-content>.ant-collapse-content-box,ce-widget-form .ant-collapse-ghost>.ant-collapse-item>.ant-collapse-content>.ant-collapse-content-box{padding:8px}[ceWidgetForm] .ant-form-item-control-input-content,ce-widget-form .ant-form-item-control-input-content{align-items:center;display:flex}"], encapsulation: 2 });
 /*@__PURE__*/ (function () { ɵsetClassMetadata(WidgetFormComponent, [{
         type: Component,
         args: [{
@@ -3232,24 +3219,86 @@ function isInBound(rect, bound) {
 
 const antDesignIcons = AllIcons;
 const ICONS = Object.keys(antDesignIcons).map((key) => antDesignIcons[key]);
-const ANTD_MODULES = [
-    NzCardModule,
-    NzIconModule.forRoot(ICONS),
+const NG_ZORRO_MODULES = [
     NzButtonModule,
-    NzInputNumberModule,
-    NzTabsModule,
-    NzTreeModule,
-    NzDropDownModule,
-    NzPipesModule,
-    NzToolTipModule,
-    NzFormModule,
-    NzInputModule,
-    NzTagModule,
-    NzDividerModule,
+    NzCardModule,
     NzCollapseModule,
-    NzSwitchModule,
+    NzDividerModule,
+    NzDropDownModule,
+    NzFormModule,
+    NzIconModule,
+    NzInputModule,
+    NzInputNumberModule,
+    NzPipesModule,
     NzSelectModule,
+    NzSwitchModule,
+    NzTabsModule,
+    NzTagModule,
+    NzToolTipModule,
+    NzTreeModule,
 ];
+class NgZorroModule {
+    constructor(injector) {
+        this.injector = injector;
+        this.injector.get(NzIconService).fetchFromIconfont({ scriptUrl: 'https://at.alicdn.com/t/font_1310204_lmnttxhl5lk.js' });
+    }
+}
+NgZorroModule.ɵmod = ɵɵdefineNgModule({ type: NgZorroModule });
+NgZorroModule.ɵinj = ɵɵdefineInjector({ factory: function NgZorroModule_Factory(t) { return new (t || NgZorroModule)(ɵɵinject(Injector)); }, imports: [[...NG_ZORRO_MODULES, NzIconModule.forRoot(ICONS)], NzButtonModule,
+        NzCardModule,
+        NzCollapseModule,
+        NzDividerModule,
+        NzDropDownModule,
+        NzFormModule,
+        NzIconModule,
+        NzInputModule,
+        NzInputNumberModule,
+        NzPipesModule,
+        NzSelectModule,
+        NzSwitchModule,
+        NzTabsModule,
+        NzTagModule,
+        NzToolTipModule,
+        NzTreeModule, NzIconModule] });
+(function () { (typeof ngJitMode === "undefined" || ngJitMode) && ɵɵsetNgModuleScope(NgZorroModule, { imports: [NzButtonModule,
+        NzCardModule,
+        NzCollapseModule,
+        NzDividerModule,
+        NzDropDownModule,
+        NzFormModule,
+        NzIconModule,
+        NzInputModule,
+        NzInputNumberModule,
+        NzPipesModule,
+        NzSelectModule,
+        NzSwitchModule,
+        NzTabsModule,
+        NzTagModule,
+        NzToolTipModule,
+        NzTreeModule, NzIconModule], exports: [NzButtonModule,
+        NzCardModule,
+        NzCollapseModule,
+        NzDividerModule,
+        NzDropDownModule,
+        NzFormModule,
+        NzIconModule,
+        NzInputModule,
+        NzInputNumberModule,
+        NzPipesModule,
+        NzSelectModule,
+        NzSwitchModule,
+        NzTabsModule,
+        NzTagModule,
+        NzToolTipModule,
+        NzTreeModule, NzIconModule] }); })();
+/*@__PURE__*/ (function () { ɵsetClassMetadata(NgZorroModule, [{
+        type: NgModule,
+        args: [{
+                imports: [...NG_ZORRO_MODULES, NzIconModule.forRoot(ICONS)],
+                exports: [...NG_ZORRO_MODULES, NzIconModule],
+            }]
+    }], function () { return [{ type: Injector }]; }, null); })();
+
 const CDK_MODULES = [DragDropModule];
 const FORMS_COMPONENT = [CanvasFormsComponent, WidgetFormComponent];
 const COMPONENTS = [
@@ -3269,13 +3318,9 @@ const COMPONENTS = [
 ];
 const DIRECTIVES = [NoZoomAreaDirective, ZoomAreaDirective, DraggableDirective, SelectorDirective, CeToolbarDirective];
 class AngularEditorLibModule {
-    constructor(injector) {
-        this.injector = injector;
-        this.injector.get(NzIconService).fetchFromIconfont({ scriptUrl: 'https://at.alicdn.com/t/font_1310204_lmnttxhl5lk.js' });
-    }
 }
 AngularEditorLibModule.ɵmod = ɵɵdefineNgModule({ type: AngularEditorLibModule });
-AngularEditorLibModule.ɵinj = ɵɵdefineInjector({ factory: function AngularEditorLibModule_Factory(t) { return new (t || AngularEditorLibModule)(ɵɵinject(Injector)); }, imports: [[CommonModule, BrowserAnimationsModule, HttpClientModule, FormsModule, ReactiveFormsModule, ...ANTD_MODULES, ...CDK_MODULES]] });
+AngularEditorLibModule.ɵinj = ɵɵdefineInjector({ factory: function AngularEditorLibModule_Factory(t) { return new (t || AngularEditorLibModule)(); }, imports: [[CommonModule, BrowserAnimationsModule, HttpClientModule, FormsModule, ReactiveFormsModule, NgZorroModule, ...CDK_MODULES]] });
 (function () { (typeof ngJitMode === "undefined" || ngJitMode) && ɵɵsetNgModuleScope(AngularEditorLibModule, { declarations: [ToolbarComponent,
         LayerTreeComponent,
         WidgetListComponent,
@@ -3288,20 +3333,7 @@ AngularEditorLibModule.ɵinj = ɵɵdefineInjector({ factory: function AngularEdi
         BorderedAreaComponent,
         AngularEditorLibComponent,
         PanelComponent,
-        PropertyFormComponent, NoZoomAreaDirective, ZoomAreaDirective, DraggableDirective, SelectorDirective, CeToolbarDirective, CanvasFormsComponent, WidgetFormComponent], imports: [CommonModule, BrowserAnimationsModule, HttpClientModule, FormsModule, ReactiveFormsModule, NzCardModule, NzIconModule, NzButtonModule,
-        NzInputNumberModule,
-        NzTabsModule,
-        NzTreeModule,
-        NzDropDownModule,
-        NzPipesModule,
-        NzToolTipModule,
-        NzFormModule,
-        NzInputModule,
-        NzTagModule,
-        NzDividerModule,
-        NzCollapseModule,
-        NzSwitchModule,
-        NzSelectModule, DragDropModule], exports: [ToolbarComponent,
+        PropertyFormComponent, NoZoomAreaDirective, ZoomAreaDirective, DraggableDirective, SelectorDirective, CeToolbarDirective, CanvasFormsComponent, WidgetFormComponent], imports: [CommonModule, BrowserAnimationsModule, HttpClientModule, FormsModule, ReactiveFormsModule, NgZorroModule, DragDropModule], exports: [ToolbarComponent,
         LayerTreeComponent,
         WidgetListComponent,
         CanvasComponent,
@@ -3317,11 +3349,11 @@ AngularEditorLibModule.ɵinj = ɵɵdefineInjector({ factory: function AngularEdi
 /*@__PURE__*/ (function () { ɵsetClassMetadata(AngularEditorLibModule, [{
         type: NgModule,
         args: [{
-                imports: [CommonModule, BrowserAnimationsModule, HttpClientModule, FormsModule, ReactiveFormsModule, ...ANTD_MODULES, ...CDK_MODULES],
+                imports: [CommonModule, BrowserAnimationsModule, HttpClientModule, FormsModule, ReactiveFormsModule, NgZorroModule, ...CDK_MODULES],
                 declarations: [...COMPONENTS, ...DIRECTIVES, ...FORMS_COMPONENT],
                 exports: [...COMPONENTS, ...DIRECTIVES],
             }]
-    }], function () { return [{ type: Injector }]; }, null); })();
+    }], null, null); })();
 ɵɵsetComponentScope(ResizeHandleComponent, [NgIf, RotateHandleComponent, DraggableDirective], [AsyncPipe]);
 
 /*
@@ -3332,5 +3364,5 @@ AngularEditorLibModule.ɵinj = ɵɵdefineInjector({ factory: function AngularEdi
  * Generated bundle index. Do not edit.
  */
 
-export { AngularEditorLibComponent, AngularEditorLibModule, BorderedAreaComponent, BoxItemComponent, CanvasBackgroundComponent, CanvasComponent, CanvasGridComponent, CeToolbarDirective, CeUtilsService, DEFAULT_STORE, DraggableDirective, EditorStore, LayerTreeComponent, NoZoomAreaDirective, PanelComponent, PropertyFormComponent, ResizeHandleComponent, RotateHandleComponent, SelectorDirective, ToolbarComponent, WidgetListComponent, ZoomAreaDirective, genNodeId };
+export { AngularEditorLibComponent, AngularEditorLibModule, BorderedAreaComponent, BoxItemComponent, CanvasBackgroundComponent, CanvasComponent, CanvasFormsComponent, CanvasGridComponent, CeToolbarDirective, CeUtilsService, DEFAULT_STORE, DraggableDirective, EditorStore, LayerTreeComponent, NoZoomAreaDirective, PanelComponent, PropertyFormComponent, ResizeHandleComponent, RotateHandleComponent, SelectorDirective, ToolbarComponent, WidgetFormComponent, WidgetListComponent, ZoomAreaDirective, genNodeId };
 //# sourceMappingURL=angular-editor-lib.js.map

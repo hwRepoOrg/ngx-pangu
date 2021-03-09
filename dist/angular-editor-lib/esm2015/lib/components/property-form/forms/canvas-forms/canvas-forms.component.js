@@ -7,8 +7,8 @@ import * as i1 from "@angular/forms";
 import * as i2 from "../../../../services/store.service";
 import * as i3 from "ng-zorro-antd/form";
 import * as i4 from "ng-zorro-antd/grid";
-import * as i5 from "ng-zorro-antd/icon";
-import * as i6 from "ng-zorro-antd/core/transition-patch";
+import * as i5 from "ng-zorro-antd/core/transition-patch";
+import * as i6 from "ng-zorro-antd/icon";
 import * as i7 from "ng-zorro-antd/input-number";
 import * as i8 from "ng-zorro-antd/input";
 import * as i9 from "@angular/common";
@@ -186,7 +186,7 @@ CanvasFormsComponent.ɵcmp = i0.ɵɵdefineComponent({ type: CanvasFormsComponent
         i0.ɵɵproperty("formGroup", ctx.canvasBackgroundFormGroup);
         i0.ɵɵadvance(17);
         i0.ɵɵproperty("ngIf", ctx.canvasBackgroundFormGroup.controls["backgroundImage"].value);
-    } }, directives: [i1.ɵangular_packages_forms_forms_y, i1.NgControlStatusGroup, i3.NzFormDirective, i1.FormGroupDirective, i4.NzRowDirective, i4.NzColDirective, i3.NzFormItemComponent, i3.NzFormLabelComponent, i5.NzIconDirective, i6.ɵNzTransitionPatchDirective, i3.NzFormControlComponent, i7.NzInputNumberComponent, i1.NgControlStatus, i1.FormControlName, i8.NzInputDirective, i1.DefaultValueAccessor, i9.NgIf], pipes: [i10.NzSanitizerPipe], styles: ["[ceCanvasForms],ce-canvas-forms{display:block;padding:12px}"], encapsulation: 2, changeDetection: 0 });
+    } }, directives: [i1.ɵangular_packages_forms_forms_y, i1.NgControlStatusGroup, i3.NzFormDirective, i1.FormGroupDirective, i4.NzRowDirective, i4.NzColDirective, i3.NzFormItemComponent, i3.NzFormLabelComponent, i5.ɵNzTransitionPatchDirective, i6.NzIconDirective, i3.NzFormControlComponent, i7.NzInputNumberComponent, i1.NgControlStatus, i1.FormControlName, i8.NzInputDirective, i1.DefaultValueAccessor, i9.NgIf], pipes: [i10.NzSanitizerPipe], styles: ["[ceCanvasForms],ce-canvas-forms{display:block;padding:12px}"], encapsulation: 2, changeDetection: 0 });
 /*@__PURE__*/ (function () { i0.ɵsetClassMetadata(CanvasFormsComponent, [{
         type: Component,
         args: [{

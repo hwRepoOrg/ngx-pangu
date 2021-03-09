@@ -5,6 +5,7 @@ export * from './canvas-grid/canvas-grid.component';
 export * from './canvas/canvas.component';
 export * from './layer-tree/layer-tree.component';
 export * from './panel/panel.component';
+export * from './property-form/forms';
 export * from './property-form/property-form.component';
 export * from './resize-handle/resize-handle.component';
 export * from './rotate-handle/rotate-handle.component';

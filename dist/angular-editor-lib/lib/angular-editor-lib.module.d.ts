@@ -1,4 +1,3 @@
-import { Injector } from '@angular/core';
 import * as i0 from "@angular/core";
 import * as i1 from "./components/toolbar/toolbar.component";
 import * as i2 from "./components/layer-tree/layer-tree.component";
@@ -24,27 +23,10 @@ import * as i21 from "@angular/common";
 import * as i22 from "@angular/platform-browser/animations";
 import * as i23 from "@angular/common/http";
 import * as i24 from "@angular/forms";
-import * as i25 from "ng-zorro-antd/card";
-import * as i26 from "ng-zorro-antd/icon";
-import * as i27 from "ng-zorro-antd/button";
-import * as i28 from "ng-zorro-antd/input-number";
-import * as i29 from "ng-zorro-antd/tabs";
-import * as i30 from "ng-zorro-antd/tree";
-import * as i31 from "ng-zorro-antd/dropdown";
-import * as i32 from "ng-zorro-antd/pipes";
-import * as i33 from "ng-zorro-antd/tooltip";
-import * as i34 from "ng-zorro-antd/form";
-import * as i35 from "ng-zorro-antd/input";
-import * as i36 from "ng-zorro-antd/tag";
-import * as i37 from "ng-zorro-antd/divider";
-import * as i38 from "ng-zorro-antd/collapse";
-import * as i39 from "ng-zorro-antd/switch";
-import * as i40 from "ng-zorro-antd/select";
-import * as i41 from "@angular/cdk/drag-drop";
+import * as i25 from "./ng-zorro.module";
+import * as i26 from "@angular/cdk/drag-drop";
 export declare class AngularEditorLibModule {
-    private injector;
-    constructor(injector: Injector);
-    static ɵmod: i0.ɵɵNgModuleDefWithMeta<AngularEditorLibModule, [typeof i1.ToolbarComponent, typeof i2.LayerTreeComponent, typeof i3.WidgetListComponent, typeof i4.CanvasComponent, typeof i5.CanvasGridComponent, typeof i6.CanvasBackgroundComponent, typeof i7.BoxItemComponent, typeof i8.ResizeHandleComponent, typeof i9.RotateHandleComponent, typeof i10.BorderedAreaComponent, typeof i11.AngularEditorLibComponent, typeof i12.PanelComponent, typeof i13.PropertyFormComponent, typeof i14.NoZoomAreaDirective, typeof i15.ZoomAreaDirective, typeof i16.DraggableDirective, typeof i17.SelectorDirective, typeof i18.CeToolbarDirective, typeof i19.CanvasFormsComponent, typeof i20.WidgetFormComponent], [typeof i21.CommonModule, typeof i22.BrowserAnimationsModule, typeof i23.HttpClientModule, typeof i24.FormsModule, typeof i24.ReactiveFormsModule, typeof i25.NzCardModule, typeof i26.NzIconModule, typeof i27.NzButtonModule, typeof i28.NzInputNumberModule, typeof i29.NzTabsModule, typeof i30.NzTreeModule, typeof i31.NzDropDownModule, typeof i32.NzPipesModule, typeof i33.NzToolTipModule, typeof i34.NzFormModule, typeof i35.NzInputModule, typeof i36.NzTagModule, typeof i37.NzDividerModule, typeof i38.NzCollapseModule, typeof i39.NzSwitchModule, typeof i40.NzSelectModule, typeof i41.DragDropModule], [typeof i1.ToolbarComponent, typeof i2.LayerTreeComponent, typeof i3.WidgetListComponent, typeof i4.CanvasComponent, typeof i5.CanvasGridComponent, typeof i6.CanvasBackgroundComponent, typeof i7.BoxItemComponent, typeof i8.ResizeHandleComponent, typeof i9.RotateHandleComponent, typeof i10.BorderedAreaComponent, typeof i11.AngularEditorLibComponent, typeof i12.PanelComponent, typeof i13.PropertyFormComponent, typeof i14.NoZoomAreaDirective, typeof i15.ZoomAreaDirective, typeof i16.DraggableDirective, typeof i17.SelectorDirective, typeof i18.CeToolbarDirective]>;
+    static ɵmod: i0.ɵɵNgModuleDefWithMeta<AngularEditorLibModule, [typeof i1.ToolbarComponent, typeof i2.LayerTreeComponent, typeof i3.WidgetListComponent, typeof i4.CanvasComponent, typeof i5.CanvasGridComponent, typeof i6.CanvasBackgroundComponent, typeof i7.BoxItemComponent, typeof i8.ResizeHandleComponent, typeof i9.RotateHandleComponent, typeof i10.BorderedAreaComponent, typeof i11.AngularEditorLibComponent, typeof i12.PanelComponent, typeof i13.PropertyFormComponent, typeof i14.NoZoomAreaDirective, typeof i15.ZoomAreaDirective, typeof i16.DraggableDirective, typeof i17.SelectorDirective, typeof i18.CeToolbarDirective, typeof i19.CanvasFormsComponent, typeof i20.WidgetFormComponent], [typeof i21.CommonModule, typeof i22.BrowserAnimationsModule, typeof i23.HttpClientModule, typeof i24.FormsModule, typeof i24.ReactiveFormsModule, typeof i25.NgZorroModule, typeof i26.DragDropModule], [typeof i1.ToolbarComponent, typeof i2.LayerTreeComponent, typeof i3.WidgetListComponent, typeof i4.CanvasComponent, typeof i5.CanvasGridComponent, typeof i6.CanvasBackgroundComponent, typeof i7.BoxItemComponent, typeof i8.ResizeHandleComponent, typeof i9.RotateHandleComponent, typeof i10.BorderedAreaComponent, typeof i11.AngularEditorLibComponent, typeof i12.PanelComponent, typeof i13.PropertyFormComponent, typeof i14.NoZoomAreaDirective, typeof i15.ZoomAreaDirective, typeof i16.DraggableDirective, typeof i17.SelectorDirective, typeof i18.CeToolbarDirective]>;
     static ɵinj: i0.ɵɵInjectorDef<AngularEditorLibModule>;
 }
 //# sourceMappingURL=angular-editor-lib.module.d.ts.map
