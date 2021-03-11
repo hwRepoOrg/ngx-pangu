@@ -22,4 +22,4 @@ jobs:
           cmd: install
       - uses: borales/actions-yarn@v2
         with:
-          cmd: build:app
+          cmd: build:example:ci
