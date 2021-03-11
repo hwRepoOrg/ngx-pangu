@@ -1,9 +1,5 @@
 name: build
 
-author: MrHuangJser
-
-description: build lib for ghpage
-
 on:
   push:
     branches:
@@ -15,7 +11,7 @@ jobs:
     strategy:
       matrix:
         node-version: [12.x]
-    setps:
+    steps:
       - uses: actions/checkout@v2
       - uses: borales/actions-yarn@v2
         with:
