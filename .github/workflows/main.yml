@@ -8,7 +8,7 @@ on:
 jobs:
   build-app:
     env:
-      TOKEN: ${{ secrets.GH_PAGES_TOKEN }}
+      TOKEN: ${{secrets.PAGES_TOKEN}}
       USER_NAME: hwRepoOrg
       USER_EMAIL: mrhuangjser@gmail.com
       PUBLISH_DIR: ./example
@@ -32,7 +32,7 @@ jobs:
           git config --local user.name $USER_NAME
           git config --local user.email $USER_EMAIL
           git status
-          git remote add origin https://$TOKEN@github.com/hwRepoOrg/ngx-pangu.git
+          git remote add origin https://$TOKEN@github.com/$GITHUB_REPOSITORY.git
           git checkout -b gh-pages
           git add --all
           git commit -m "deploy to github pages"
