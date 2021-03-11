@@ -7,11 +7,6 @@ on:
 
 jobs:
   build-app:
-    env:
-      TOKEN: ${{secrets.PAGES_TOKEN}}
-      USER_NAME: hwRepoOrg
-      USER_EMAIL: mrhuangjser@gmail.com
-      PUBLISH_DIR: ./example
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -24,17 +19,11 @@ jobs:
       - uses: borales/actions-yarn@v2.3.0
         with:
           cmd: build:example:ci
-      - name: deploy to github pages
+      - name: Deploy to GitHub Pages
         if: success()
-        run: |
-          cd $PUBLISH_DIR
-          git init
-          git config --local user.name $USER_NAME
-          git config --local user.email $USER_EMAIL
-          git status
-          git remote add origin https://$TOKEN@github.com/$GITHUB_REPOSITORY.git
-          git checkout -b gh-pages
-          git add --all
-          git commit -m "deploy to github pages"
-          git push origin gh-pages -f
-          echo deploy gh-pages complete.
+        uses: crazy-max/ghaction-github-pages@v2
+        with:
+          target_branch: gh-pages
+          build_dir: example
+        env:
+          GH_PAT: ${{ secrets.PAGES_TOKEN }}
