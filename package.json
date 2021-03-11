@@ -7,7 +7,9 @@
     "start:hmr": "ng serve -c=hmr",
     "build:app": "ng build --project editor-example",
     "build:editor": "ng build --project ngx-pangu",
-    "build:example:ci": "run-s build:editor build:app"
+    "build:example:ci": "run-s build:editor build:app",
+    "start:editor": "ng build --watch --project ngx-pangu",
+    "start:dev": "run-s start:editor start:hmr"
   },
   "private": false,
   "dependencies": {
