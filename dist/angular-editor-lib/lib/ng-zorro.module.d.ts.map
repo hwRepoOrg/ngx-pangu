@@ -1,1 +1,0 @@
-{"version":3,"file":"ng-zorro.module.d.ts","sourceRoot":"../../../projects/angular-editor-lib/src/","sources":["lib/ng-zorro.module.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,QAAQ,EAAY,MAAM,eAAe,CAAC;;;;;;;;;;;;;;;;;;AA4CnD,qBAIa,aAAa;IACZ,OAAO,CAAC,QAAQ;gBAAR,QAAQ,EAAE,QAAQ;0CAD3B,aAAa;kCAAb,aAAa;CAIzB"}
