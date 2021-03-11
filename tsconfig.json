@@ -14,7 +14,7 @@
     "module": "es2020",
     "lib": ["es2018", "dom"],
     "paths": {
-      "angular-editor-lib": ["dist/angular-editor-lib/angular-editor-lib", "dist/angular-editor-lib"]
+      "ngx-pangu": ["dist/ngx-pangu/ngx-pangu", "dist/ngx-pangu"]
     }
   }
 }
