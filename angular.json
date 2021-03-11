@@ -3,14 +3,12 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "configuration-editor": {
+    "editor-example": {
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
           "style": "less",
-          "skipTests": true,
-          "changeDetection": "OnPush",
-          "viewEncapsulation": "None"
+          "skipTests": true
         },
         "@schematics/angular:directive": {
           "skipTests": true
@@ -24,7 +22,7 @@
           "aot": true,
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
-            "outputPath": "dist/configuration-editor",
+            "outputPath": "example",
             "index": "src/index.html",
             "main": "src/main.ts",
             "polyfills": "src/polyfills.ts",
@@ -87,84 +85,53 @@
               "browserTarget": "configuration-editor:build:hmr"
             }
           }
-        },
-        "extract-i18n": {
-          "builder": "@angular-devkit/build-angular:extract-i18n",
-          "options": {
-            "browserTarget": "configuration-editor:build"
-          }
-        },
-        "test": {
-          "builder": "@angular-devkit/build-angular:karma",
-          "options": {
-            "main": "src/test.ts",
-            "polyfills": "src/polyfills.ts",
-            "tsConfig": "tsconfig.spec.json",
-            "karmaConfig": "karma.conf.js",
-            "assets": ["src/favicon.ico", "src/assets"],
-            "styles": ["src/styles.less"],
-            "scripts": []
-          }
-        },
-        "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
-          "options": {
-            "tsConfig": ["tsconfig.app.json", "tsconfig.spec.json", "e2e/tsconfig.json"],
-            "exclude": ["**/node_modules/**"]
-          }
-        },
-        "e2e": {
-          "builder": "@angular-devkit/build-angular:protractor",
-          "options": {
-            "protractorConfig": "e2e/protractor.conf.js",
-            "devServerTarget": "configuration-editor:serve"
-          },
-          "configurations": {
-            "production": {
-              "devServerTarget": "configuration-editor:serve:production"
-            }
-          }
         }
       }
     },
-    "angular-editor-lib": {
+    "ngx-pangu": {
       "projectType": "library",
-      "root": "projects/angular-editor-lib",
-      "sourceRoot": "projects/angular-editor-lib/src",
+      "root": "projects/ngx-pangu",
+      "sourceRoot": "projects/ngx-pangu/src",
       "prefix": "",
       "architect": {
         "build": {
           "builder": "@angular-devkit/build-angular:ng-packagr",
           "options": {
-            "tsConfig": "projects/angular-editor-lib/tsconfig.lib.json",
-            "project": "projects/angular-editor-lib/ng-package.json"
+            "tsConfig": "projects/ngx-pangu/tsconfig.lib.json",
+            "project": "projects/ngx-pangu/ng-package.json"
           },
           "configurations": {
             "production": {
-              "tsConfig": "projects/angular-editor-lib/tsconfig.lib.prod.json"
+              "tsConfig": "projects/ngx-pangu/tsconfig.lib.prod.json"
             }
           }
         },
         "test": {
           "builder": "@angular-devkit/build-angular:karma",
           "options": {
-            "main": "projects/angular-editor-lib/src/test.ts",
-            "tsConfig": "projects/angular-editor-lib/tsconfig.spec.json",
-            "karmaConfig": "projects/angular-editor-lib/karma.conf.js"
+            "main": "projects/ngx-pangu/src/test.ts",
+            "tsConfig": "projects/ngx-pangu/tsconfig.spec.json",
+            "karmaConfig": "projects/ngx-pangu/karma.conf.js"
           }
         },
         "lint": {
           "builder": "@angular-devkit/build-angular:tslint",
           "options": {
-            "tsConfig": ["projects/angular-editor-lib/tsconfig.lib.json", "projects/angular-editor-lib/tsconfig.spec.json"],
+            "tsConfig": ["projects/ngx-pangu/tsconfig.lib.json", "projects/ngx-pangu/tsconfig.spec.json"],
             "exclude": ["**/node_modules/**"]
           }
+        }
+      },
+      "schematics": {
+        "@schematics/angular:component": {
+          "changeDetection": "OnPush",
+          "viewEncapsulation": "None"
         }
       }
     }
   },
-  "defaultProject": "configuration-editor",
+  "defaultProject": "editor-example",
   "cli": {
-    "packageManager": "npm"
+    "packageManager": "yarn"
   }
 }
