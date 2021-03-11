@@ -7,8 +7,7 @@
     "start:hmr": "ng serve -c=hmr",
     "build:app": "ng build --project editor-example",
     "build:editor": "ng build --project ngx-pangu",
-    "clean:dist": "rimraf ./dist",
-    "build:example:ci": "run-s build:editor build:app clean:dist"
+    "build:example:ci": "run-s build:editor build:app"
   },
   "private": false,
   "dependencies": {

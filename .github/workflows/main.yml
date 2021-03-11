@@ -19,3 +19,9 @@ jobs:
       - uses: borales/actions-yarn@v2.3.0
         with:
           cmd: build:example:ci
+      - name: deploy to github pages
+        if: success()
+        uses: crazy-max/ghaction-github-pages@v2
+        with:
+          target_branch: gh-pages
+          build_dir: example
