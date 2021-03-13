@@ -14,7 +14,7 @@
     "module": "es2020",
     "lib": ["es2018", "dom"],
     "paths": {
-      "ngx-pangu": ["dist/ngx-pangu/ngx-pangu", "dist/ngx-pangu"]
+      "@ngx-pangu/core": ["dist/ngx-pangu-core/ngx-pangu-core", "dist/ngx-pangu-core"]
     }
   }
 }
