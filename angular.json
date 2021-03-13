@@ -73,16 +73,16 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "browserTarget": "configuration-editor:build"
+            "browserTarget": "editor-example:build"
           },
           "configurations": {
             "production": {
-              "browserTarget": "configuration-editor:build:production"
+              "browserTarget": "editor-example:build:production"
             },
             "hmr": {
               "hmr": true,
               "hmrWarning": false,
-              "browserTarget": "configuration-editor:build:hmr"
+              "browserTarget": "editor-example:build:hmr"
             }
           }
         }
