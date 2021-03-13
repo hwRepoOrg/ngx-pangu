@@ -1,16 +1,15 @@
 {
-  "name": "editor-example",
+  "name": "ngx-pangu",
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve",
-    "start:hmr": "wait-on dist/ngx-pangu/public-api.d.ts && ng serve -c=hmr --project editor-example",
-    "build:app": "ng build --project editor-example",
-    "build:editor": "ng build --project ngx-pangu",
-    "build:example:ci": "run-s build:editor build:app",
-    "start:editor": "ng build --watch --project ngx-pangu",
+    "start:example": "wait-on dist/ngx-pangu/public-api.d.ts && ng serve -c=hmr --project example",
+    "build:example": "ng build --project example",
+    "build:core": "ng build --project ngx-pangu-core",
+    "build:example:ci": "run-s build:core build:example",
+    "start:core": "ng build --watch --project ngx-pangu-core",
     "clean:dist": "rimraf ./dist",
-    "start:dev": "npm run clean:dist && run-p start:editor start:hmr"
+    "start:dev": "npm run clean:dist && run-p start:core start:example"
   },
   "private": false,
   "dependencies": {

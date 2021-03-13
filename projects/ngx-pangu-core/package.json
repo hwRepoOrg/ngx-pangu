@@ -1,5 +1,5 @@
 {
-  "name": "ngx-pangu",
+  "name": "ngx-pangu-core",
   "version": "0.0.0-dev",
   "peerDependencies": {
     "@angular/common": "^10.1.0",
