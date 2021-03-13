@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "editor-example": {
+    "example": {
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
@@ -73,51 +73,51 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "browserTarget": "editor-example:build"
+            "browserTarget": "example:build"
           },
           "configurations": {
             "production": {
-              "browserTarget": "editor-example:build:production"
+              "browserTarget": "example:build:production"
             },
             "hmr": {
               "hmr": true,
               "hmrWarning": false,
-              "browserTarget": "editor-example:build:hmr"
+              "browserTarget": "example:build:hmr"
             }
           }
         }
       }
     },
-    "ngx-pangu": {
+    "ngx-pangu-core": {
       "projectType": "library",
-      "root": "projects/ngx-pangu",
-      "sourceRoot": "projects/ngx-pangu/src",
+      "root": "projects/ngx-pangu-core",
+      "sourceRoot": "projects/ngx-pangu-core/src",
       "prefix": "",
       "architect": {
         "build": {
           "builder": "@angular-devkit/build-angular:ng-packagr",
           "options": {
-            "tsConfig": "projects/ngx-pangu/tsconfig.lib.json",
-            "project": "projects/ngx-pangu/ng-package.json"
+            "tsConfig": "projects/ngx-pangu-core/tsconfig.lib.json",
+            "project": "projects/ngx-pangu-core/ng-package.json"
           },
           "configurations": {
             "production": {
-              "tsConfig": "projects/ngx-pangu/tsconfig.lib.prod.json"
+              "tsConfig": "projects/ngx-pangu-core/tsconfig.lib.prod.json"
             }
           }
         },
         "test": {
           "builder": "@angular-devkit/build-angular:karma",
           "options": {
-            "main": "projects/ngx-pangu/src/test.ts",
-            "tsConfig": "projects/ngx-pangu/tsconfig.spec.json",
-            "karmaConfig": "projects/ngx-pangu/karma.conf.js"
+            "main": "projects/ngx-pangu-core/src/test.ts",
+            "tsConfig": "projects/ngx-pangu-core/tsconfig.spec.json",
+            "karmaConfig": "projects/ngx-pangu-core/karma.conf.js"
           }
         },
         "lint": {
           "builder": "@angular-devkit/build-angular:tslint",
           "options": {
-            "tsConfig": ["projects/ngx-pangu/tsconfig.lib.json", "projects/ngx-pangu/tsconfig.spec.json"],
+            "tsConfig": ["projects/ngx-pangu-core/tsconfig.lib.json", "projects/ngx-pangu-core/tsconfig.spec.json"],
             "exclude": ["**/node_modules/**"]
           }
         }
@@ -130,7 +130,7 @@
       }
     }
   },
-  "defaultProject": "editor-example",
+  "defaultProject": "example",
   "cli": {
     "packageManager": "yarn"
   }
