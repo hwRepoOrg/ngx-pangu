@@ -4,12 +4,13 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
-    "start:hmr": "ng serve -c=hmr --project editor-example",
+    "start:hmr": "wait-on dist/ngx-pangu/public-api.d.ts && ng serve -c=hmr --project editor-example",
     "build:app": "ng build --project editor-example",
     "build:editor": "ng build --project ngx-pangu",
     "build:example:ci": "run-s build:editor build:app",
     "start:editor": "ng build --watch --project ngx-pangu",
-    "start:dev": "run-s start:editor start:hmr"
+    "clean:dist": "rimraf ./dist",
+    "start:dev": "npm run clean:dist && run-p start:editor start:hmr"
   },
   "private": false,
   "dependencies": {
@@ -56,6 +57,7 @@
     "rimraf": "^3.0.2",
     "ts-node": "~8.3.0",
     "tslint": "~6.1.0",
-    "typescript": "~4.0.2"
+    "typescript": "~4.0.2",
+    "wait-on": "^5.2.1"
   }
 }
