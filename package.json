@@ -1,10 +1,10 @@
 {
-  "name": "configuration-editor",
+  "name": "editor-example",
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
-    "start:hmr": "ng serve -c=hmr",
+    "start:hmr": "ng serve -c=hmr --project editor-example",
     "build:app": "ng build --project editor-example",
     "build:editor": "ng build --project ngx-pangu",
     "build:example:ci": "run-s build:editor build:app",
