@@ -60,7 +60,7 @@ export interface IStore<T = any> {
 export type IActionType<T = any> = (state: IStore<T>) => IStore<T>;
 
 export const DEFAULT_STORE: IStore<any> = {
-  nodes: new Array(500).fill(1).map<INode>((_,index)=>({
+  nodes: new Array(500).fill(1).map<INode>((_, index) => ({
     id: `${Date.now()}${Math.round(Math.random() * 10000000)}`,
     width: 300,
     height: 150,
@@ -68,7 +68,9 @@ export const DEFAULT_STORE: IStore<any> = {
     top: Math.round(Math.random() * 668),
     name: 'test',
     rotate: 0,
-    zIndex: index+1,
+    zIndex: index + 1,
+    borderWidth: 1,
+    borderStyle: 'dashed',
   })),
   selected: new Set(),
   bordered: new Set(),

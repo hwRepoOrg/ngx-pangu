@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
-    "start:example": "wait-on dist/ngx-pangu/public-api.d.ts && ng serve -c=hmr --project example",
+    "start:example": "wait-on dist/ngx-pangu-core/public-api.d.ts && ng serve -c=hmr --project example",
     "build:example": "ng build --project example",
     "build:core": "ng build --project ngx-pangu-core",
     "build:example:ci": "run-s build:core build:example",
