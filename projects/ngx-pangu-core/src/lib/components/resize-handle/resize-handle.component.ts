@@ -29,20 +29,22 @@ export class ResizeHandleComponent {
   }
   public selected: Set<string>;
   public selectedSize$: Observable<number>;
-  private canvasPosition: ICanvasPosition;
-  private rotate: number;
-  private nodes: INode[];
-  private resizeMode: 'GROUP' | 'SINGLE';
-  private groupRectSnapshot: IDOMRect;
-  private groupAbsolutePositionSnapshot: IAbsolutePosition;
-  private resizePointSnapshot: { absolute: [number, number]; relative: [number, number] };
-  private nodePositionSnapshotList = new Map<string, IAbsolutePosition>();
+  canvasPosition: ICanvasPosition;
+  rotate: number;
+  nodes: INode[];
+  selectedHasRotated: boolean;
+  groupRectSnapshot: IDOMRect;
+  groupAbsolutePositionSnapshot: IAbsolutePosition;
+  resizePointSnapshot: { absolute: [number, number]; relative: [number, number] };
+
+  nodePositionSnapshotList = new Map<string, IAbsolutePosition>();
 
   constructor(private store: EditorStore<IStore>, private utils: CeUtilsService, public eleRef: ElementRef<HTMLElement>) {
     this.selectedSize$ = this.store.selectDifferent((state) => state.selected.size);
     this.store
       .selectDifferent((state) => ({ selected: state.selected, canvasPosition: state.canvasPosition, nodes: state.nodes }))
       .subscribe(({ selected, canvasPosition, nodes }) => {
+        this.selectedHasRotated = this.utils.hasRotated(nodes, [...selected]);
         this.display = selected.size ? 'block' : 'none';
         this.selected = selected;
         this.canvasPosition = canvasPosition;
@@ -71,12 +73,22 @@ export class ResizeHandleComponent {
     event.stopPropagation();
     const { scale } = this.canvasPosition;
     const canvasRect = document.querySelector('ce-canvas').getBoundingClientRect();
-    this.groupRectSnapshot = { width: this.width / scale, height: this.height / scale, left: this.left / scale, top: this.top / scale };
+    this.groupRectSnapshot = {
+      width: this.width / scale,
+      height: this.height / scale,
+      left: this.left / scale,
+      top: this.top / scale,
+      cx: (this.left + this.width / 2) / scale,
+      cy: (this.top + this.height / 2) / scale,
+      bottom: (this.top + this.height) / scale,
+      right: (this.left + this.width) / scale,
+    };
     this.groupAbsolutePositionSnapshot = this.utils.getAbsolutePosition(
-      (this.left + this.width / 2) / scale,
-      (this.top + this.height / 2) / scale,
-      this.width / scale,
-      this.height / scale
+      this.groupRectSnapshot.cx,
+      this.groupRectSnapshot.cy,
+      this.groupRectSnapshot.width,
+      this.groupRectSnapshot.height,
+      this.selected.size === 1 ? this.utils.getNodeById([...this.selected.values()][0], this.nodes).rotate : 0
     );
     this.resizePointSnapshot = {
       absolute: [event.clientX, event.clientY],
@@ -91,28 +103,26 @@ export class ResizeHandleComponent {
         node.height,
         node.rotate
       );
-      if (this.selected.size > 1) {
-        this.resizeMode = 'GROUP';
-        const percentPosition = this.utils.getItemPercentPositionInGroup({ ...this.groupRectSnapshot }, nodeAbsolutePosition);
-        this.nodePositionSnapshotList.set(id, percentPosition);
-      } else {
-        this.resizeMode = 'SINGLE';
-        this.nodePositionSnapshotList.set(id, nodeAbsolutePosition);
-      }
+
+      const percentPosition = this.utils.getItemPercentPositionInGroup({ ...this.groupRectSnapshot }, nodeAbsolutePosition);
+      this.nodePositionSnapshotList.set(id, this.selected.size === 1 ? { tl: [0, 0], tr: [1, 0], bl: [0, 1], br: [1, 1] } : percentPosition);
+      console.log(percentPosition);
     });
   }
 
-  resizing(event: PointerEvent, direction: IRectDirection): void {
-    if (this.resizePointSnapshot && this.groupRectSnapshot && this.resizeMode) {
+  resizing(event: PointerEvent, direction: IRectDirection) {
+    if (this.resizePointSnapshot && this.groupRectSnapshot) {
       const [mx, my] = [event.clientX - this.resizePointSnapshot.absolute[0], event.clientY - this.resizePointSnapshot.absolute[1]];
-      switch (this.resizeMode) {
-        case 'GROUP':
-          this.resizingNodeList(direction, mx, my);
-          break;
-        case 'SINGLE':
-          this.resizingNode(direction, mx, my);
-          break;
+      if (this.selectedHasRotated) {
+        const node = this.utils.getNodeById([...this.selected.values()][0], this.nodes);
+        const childIds = node.children?.map((child) => child.id) || [];
+        const childrenHasRotated = this.utils.hasRotated(this.nodes, childIds);
+        if (this.selected.size === 1 && (!node.children?.length || !childrenHasRotated)) {
+          return this.normalResizing(direction, mx, my);
+        }
+        return this.geometricResizing(direction, mx, my);
       }
+      return this.normalResizing(direction, mx, my);
     }
   }
 
@@ -122,7 +132,7 @@ export class ResizeHandleComponent {
     this.nodePositionSnapshotList.clear();
   }
 
-  resizingNodeList(direction: IRectDirection, mx: number, my: number): void {
+  geometricResizing(direction: IRectDirection, mx: number, my: number) {
     const { scale } = this.canvasPosition;
     const { relative } = this.resizePointSnapshot;
     const endPointer: [number, number] = [relative[0] + mx / scale, relative[1] + my / scale];
@@ -144,18 +154,28 @@ export class ResizeHandleComponent {
     this.store.dispatch(updateNodesSize(nodesSizeMap));
   }
 
-  resizingNode(direction: IRectDirection, mx: number, my: number): void {
+  normalResizing(direction: IRectDirection, mx: number, my: number) {
     const { scale } = this.canvasPosition;
     const { relative } = this.resizePointSnapshot;
     const endPointer: [number, number] = [relative[0] + mx / scale, relative[1] + my / scale];
-    this.nodePositionSnapshotList.forEach((position, id) => {
-      this.store.dispatch(
-        updateNodesSize(
-          new Map<string, IDOMRect>([[id, getDOMRectByDirectionAndPosition(direction, position, endPointer)]])
-        )
+    const groupRect = getBoundingRectByDirectionAndPosition(direction, this.groupAbsolutePositionSnapshot, endPointer);
+    console.log(`mx: ${mx} my: ${my} groupRect: ${JSON.stringify(groupRect)} nodeSnapshotList:`, this.nodePositionSnapshotList.values()[0]);
+    const nodeSizeMap = new Map<string, IDOMRect>();
+    this.nodePositionSnapshotList.forEach(({ tl, bl, br, tr }, id) => {
+      nodeSizeMap.set(
+        id,
+        this.utils.getRelativePosition({
+          tl: [tl[0] * groupRect.width + groupRect.left, tl[1] * groupRect.height + groupRect.top],
+          tr: [tr[0] * groupRect.width + groupRect.left, tr[1] * groupRect.height + groupRect.top],
+          bl: [bl[0] * groupRect.width + groupRect.left, bl[1] * groupRect.height + groupRect.top],
+          br: [br[0] * groupRect.width + groupRect.left, br[1] * groupRect.height + groupRect.top],
+        })
       );
     });
+    this.store.dispatch(updateNodesSize(nodeSizeMap));
   }
+
+  resizingNodeList(direction: IRectDirection, mx: number, my: number): void {}
 }
 
 function getGroupDiagonalByDirection(direction: IRectDirection, absolutePosition: IAbsolutePosition): [[number, number], [number, number]] {
@@ -208,7 +228,7 @@ function getGroupRectByDirectionPoint(direction: IRectDirection, absolutePoint: 
   }
 }
 
-function getDOMRectByDirectionAndPosition(direction: IRectDirection, position: IAbsolutePosition, endPointer: [number, number]): IDOMRect {
+function getBoundingRectByDirectionAndPosition(direction: IRectDirection, position: IAbsolutePosition, endPointer: [number, number]): IDOMRect {
   const { bl, br, tl, tr } = position;
   let newTLPoint: [number, number];
   let newTRPoint: [number, number];

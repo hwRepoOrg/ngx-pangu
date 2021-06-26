@@ -1,44 +1,16 @@
 <ce-rotate-handle *ngIf="(selectedSize$ | async) === 1"></ce-rotate-handle>
-<div
-  *ngIf="selectedSize$ | async"
-  class="resizable-handle t"
-  ceDraggable
-  (ceOnStart)="resizeStart($event)"
-  (ceOnMove)="resizing($event, 't')"
-  (ceOnStop)="resizeEnd()"
-></div>
-<div
-  *ngIf="selectedSize$ | async"
-  class="resizable-handle r"
-  ceDraggable
-  (ceOnStart)="resizeStart($event)"
-  (ceOnMove)="resizing($event, 'r')"
-  (ceOnStop)="resizeEnd()"
-></div>
-<div
-  *ngIf="selectedSize$ | async"
-  class="resizable-handle b"
-  ceDraggable
-  (ceOnStart)="resizeStart($event)"
-  (ceOnMove)="resizing($event, 'b')"
-  (ceOnStop)="resizeEnd()"
-></div>
-<div
-  *ngIf="selectedSize$ | async"
-  class="resizable-handle l"
-  ceDraggable
-  (ceOnStart)="resizeStart($event)"
-  (ceOnMove)="resizing($event, 'l')"
-  (ceOnStop)="resizeEnd()"
-></div>
+<div class="resizable-handle t" ceDraggable (ceOnStart)="resizeStart($event)" (ceOnMove)="resizing($event, 't')" (ceOnStop)="resizeEnd()"></div>
+<div class="resizable-handle r" ceDraggable (ceOnStart)="resizeStart($event)" (ceOnMove)="resizing($event, 'r')" (ceOnStop)="resizeEnd()"></div>
+<div class="resizable-handle b" ceDraggable (ceOnStart)="resizeStart($event)" (ceOnMove)="resizing($event, 'b')" (ceOnStop)="resizeEnd()"></div>
+<div class="resizable-handle l" ceDraggable (ceOnStart)="resizeStart($event)" (ceOnMove)="resizing($event, 'l')" (ceOnStop)="resizeEnd()"></div>
 <div class="resizable-handle tr" ceDraggable (ceOnStart)="resizeStart($event)" (ceOnMove)="resizing($event, 'tr')" (ceOnStop)="resizeEnd()"></div>
 <div class="resizable-handle br" ceDraggable (ceOnStart)="resizeStart($event)" (ceOnMove)="resizing($event, 'br')" (ceOnStop)="resizeEnd()"></div>
 <div class="resizable-handle tl" ceDraggable (ceOnStart)="resizeStart($event)" (ceOnMove)="resizing($event, 'tl')" (ceOnStop)="resizeEnd()"></div>
 <div class="resizable-handle bl" ceDraggable (ceOnStart)="resizeStart($event)" (ceOnMove)="resizing($event, 'bl')" (ceOnStop)="resizeEnd()"></div>
-<div *ngIf="(selectedSize$ | async) === 1" class="t circle"></div>
-<div *ngIf="(selectedSize$ | async) === 1" class="r circle"></div>
-<div *ngIf="(selectedSize$ | async) === 1" class="b circle"></div>
-<div *ngIf="(selectedSize$ | async) === 1" class="l circle"></div>
+<div class="t circle"></div>
+<div class="r circle"></div>
+<div class="b circle"></div>
+<div class="l circle"></div>
 <div class="tr circle"></div>
 <div class="br circle"></div>
 <div class="tl circle"></div>

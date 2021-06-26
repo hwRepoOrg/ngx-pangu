@@ -48,7 +48,13 @@ export class CeUtilsService {
     return content instanceof TemplateRef;
   }
 
-  public isDeepEqual(v1: any, v2: any) {
+  /**
+   * 深度匹配是否相等
+   * @param v1
+   * @param v2
+   * @returns {Boolean}
+   */
+  public isDeepEqual(v1: any, v2: any): boolean {
     if (typeof v1 !== typeof v2) {
       return false;
     } else {
@@ -92,6 +98,26 @@ export class CeUtilsService {
           }
       }
     }
+  }
+
+  /**
+   *
+   * @param nodes 节点集合
+   * @param ids 需要判断的节点id
+   * @returns {Boolean}
+   */
+  public hasRotated<T = any>(nodes: INode<T>[], ids: string[]): boolean {
+    const list = ids.map((id) => this.getNodeById(id, nodes));
+    let flag = false;
+    while (!flag && list.length) {
+      let node = list.pop();
+      if (node.rotate !== 0) {
+        flag = true;
+      } else {
+        node.children?.length && list.push(...node.children);
+      }
+    }
+    return flag;
   }
 
   /**
@@ -169,7 +195,7 @@ export class CeUtilsService {
   }
 
   /**
-   * 通过直线的两点方程获取直线上人一点点的坐标
+   * 通过直线的两点方程获取直线上任意一点的坐标
    * y = (x-x1)*(y2-y1)/(x2-x1)+y1
    * x = (y-y1)*(x2-x1)/(y2-y1)+x1
    * @param direction 要获取点的坐标轴
@@ -386,8 +412,8 @@ export class CeUtilsService {
       height,
       left: cx - width / 2,
       top: cy - height / 2,
-      bottom: cx + width / 2,
-      right: cy + height / 2,
+      bottom: cy + height / 2,
+      right: cx + width / 2,
     };
   }
 
