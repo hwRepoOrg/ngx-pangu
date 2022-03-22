@@ -1,6 +1,6 @@
 {
   "name": "ngx-pangu",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "scripts": {
     "ng": "ng",
     "start:example": "wait-on dist/ngx-pangu-core/public-api.d.ts && ng serve -c=hmr --project example",
